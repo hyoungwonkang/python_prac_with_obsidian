@@ -2,6 +2,13 @@
 
 todo-app 프로젝트를 진행하며 만나는 기본 개념들.
 
+## 문법 기초
+
+### `def` / `async def`
+- `def` — **함수를 정의**하는 키워드. define의 약자.
+- `async def` — **비동기 함수** 정의. DB 접속 같은 대기 작업을 효율적으로 처리.
+- 예: `def hello(name):` → 일반 함수, `async def get_todos():` → 비동기 함수
+
 ## 표준 라이브러리
 
 ### `getenv(name, default)`
