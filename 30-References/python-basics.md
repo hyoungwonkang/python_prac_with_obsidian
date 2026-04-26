@@ -107,3 +107,12 @@ HTML 안에서 Python 로직을 사용하기 위한 문법. FastAPI의 Jinja2Tem
 - "문자열 또는 None, 기본값은 None" 이라는 뜻.
 - `description: str | None = None` → 선택 필드 (안 넘기면 None)
 - `title: str` → 필수 필드
+
+## 프로젝트 파일
+
+### `requirements.txt`
+- 프로젝트에 필요한 **외부 패키지 목록**을 적어놓은 파일.
+- `pip install -r requirements.txt` → 목록의 패키지를 한 번에 설치.
+- 다른 사람(또는 다른 PC)에서 프로젝트를 클론한 뒤, 같은 환경을 재현하기 위해 사용.
+- 버전 고정 예: `fastapi==0.115.0`, 최소 버전 예: `fastapi>=0.115.0`
+- `pip freeze > requirements.txt` → 현재 설치된 패키지를 파일로 내보내기.
