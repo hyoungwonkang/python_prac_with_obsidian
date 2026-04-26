@@ -36,6 +36,14 @@
 
 → 결과적으로 Phase 2 마이그레이션 작업은 **연결 URL 교체 + Alembic 스키마 적용 + 데이터 이전**으로 축소됨.
 
+### Supabase 연결 방식: IPv4 Shared Pooler
+
+- **Pooler (연결 풀러)**: DB 연결을 미리 만들어두고 재사용하는 중간 프록시 (PgBouncer 기반). 요청마다 연결을 새로 만들지 않아 빠르고 동시 접속에 강함.
+- **Shared**: Supabase 무료 플랜에서 제공. 여러 사용자가 풀러 인프라를 공유. (유료 플랜은 Dedicated 전용 풀러 제공)
+- **IPv4**: Supabase는 기본 IPv6인데, 로컬 환경이나 Vercel 등 IPv6 미지원 환경을 위해 IPv4 호환 엔드포인트를 별도 제공.
+- 포트: Shared Pooler는 `6543`, Direct 연결은 `5432`
+- 무료 플랜에서 안정적으로 접속하기 위한 권장 방식.
+
 ## UI 전환 전략 (Jinja → Next.js)
 
 DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 사실상 새 프로젝트 수준.
