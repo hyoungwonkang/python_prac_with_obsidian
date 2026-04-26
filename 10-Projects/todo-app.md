@@ -63,7 +63,7 @@ DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 
 - [x] 1.4 SQLAlchemy 비동기 엔진 + `Todo` ORM 모델
 - [x] 1.5 Alembic 초기 설정 + 첫 마이그레이션
 - [x] 1.6 CRUD 엔드포인트 — JSON API (`POST /api/todos`, `GET /api/todos`, ...)
-- [ ] 1.7 `/docs` Swagger UI에서 API 시나리오 검증
+- [x] 1.7 `/docs` Swagger UI에서 API 시나리오 검증
 
 **1.B Jinja UI**
 - [ ] 1.8 `Jinja2Templates` 설정, `app/templates/` `app/static/` 디렉터리
