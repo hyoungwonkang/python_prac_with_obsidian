@@ -76,6 +76,23 @@ todo-app 프로젝트를 진행하며 만나는 기본 개념들.
 - 프로젝트마다 독립된 패키지 공간을 만듦. 프로젝트 간 버전 충돌 방지.
 - `.venv/` 폴더에 생성되고, `source .venv/bin/activate`로 활성화.
 
+## Jinja2 템플릿 문법
+
+HTML 안에서 Python 로직을 사용하기 위한 문법. FastAPI의 Jinja2Templates가 처리.
+
+### `{% %}` — 제어문 (로직)
+- `{% extends "base.html" %}` → 베이스 템플릿을 상속
+- `{% block content %}...{% endblock %}` → 블록 정의/오버라이드
+- `{% if todos %}...{% else %}...{% endif %}` → 조건문
+- `{% for todo in todos %}...{% endfor %}` → 반복문
+
+### `{{ }}` — 변수 출력
+- `{{ todo.title }}` → todo 객체의 title 값을 HTML에 출력
+- `{{ '✓' if todo.done else '○' }}` → 삼항 표현식
+
+### `{# #}` — 주석
+- `{# 이 부분은 HTML에 출력되지 않음 #}`
+
 ## 파일 확장자
 
 ### `.ini`
