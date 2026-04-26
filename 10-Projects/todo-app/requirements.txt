@@ -1,0 +1,6 @@
+fastapi[standard]
+sqlalchemy[asyncio]
+aiosqlite
+alembic
+jinja2
+python-dotenv
