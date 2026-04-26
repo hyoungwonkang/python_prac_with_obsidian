@@ -74,12 +74,12 @@ DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 
 
 ### Phase 2: Supabase 마이그레이션 (DB만 교체)
 
-- [ ] 2.1 Supabase 가입, 새 프로젝트 생성
-- [ ] 2.2 연결 정보 확인 (Connection string, anon key)
-- [ ] 2.3 로컬에서 `DATABASE_URL`을 Supabase Postgres로 바꿔 Alembic 마이그레이션 적용
-- [ ] 2.4 SQLite의 기존 데이터 dump → Supabase로 import (선택, 학습용 데이터라면 생략 가능)
-- [ ] 2.5 로컬에서 Supabase 접속으로 CRUD + UI 동작 검증
-- [ ] 2.6 `.env`에 Supabase URL 보관, `.env.example` 작성
+- [x] 2.1 Supabase 가입, 새 프로젝트 생성
+- [x] 2.2 연결 정보 확인 (Connection string — pooler endpoint, IPv4)
+- [x] 2.3 로컬에서 `DATABASE_URL`을 Supabase Postgres로 바꿔 Alembic 마이그레이션 적용
+- [x] 2.4 ~~SQLite 데이터 이전~~ — 기존 데이터 0건, 생략
+- [x] 2.5 로컬에서 Supabase 접속으로 CRUD + UI 동작 검증
+- [x] 2.6 `.env`에 Supabase URL 보관, `.env.example` 작성
 
 ### Phase 3: Vercel 배포 v1 (Jinja 단일 앱)
 
