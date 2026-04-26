@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
@@ -24,6 +24,14 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="Todo App", version="0.1.0", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
+
+
+@app.get("/")
+async def index(request: Request):
+    async with async_session() as session:
+        result = await session.execute(select(Todo).order_by(Todo.created_at.desc()))
+        todos = result.scalars().all()
+    return templates.TemplateResponse(request, "index.html", {"todos": todos})
 
 
 @app.get("/health")

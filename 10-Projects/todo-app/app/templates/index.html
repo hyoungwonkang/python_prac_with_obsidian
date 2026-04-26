@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}할일 목록 — Todo App{% endblock %}
+
+{% block content %}
+<form class="add-form" action="/todos/add" method="post">
+    <input type="text" name="title" placeholder="새 할일 입력..." required>
+    <button type="submit">추가</button>
+</form>
+
+{% if todos %}
+<ul class="todo-list">
+    {% for todo in todos %}
+    <li class="todo-item {{ 'done' if todo.done else '' }}">
+        <form action="/todos/{{ todo.id }}/toggle" method="post">
+            <button class="btn-toggle" type="submit">{{ '✓' if todo.done else '○' }}</button>
+        </form>
+        <div class="todo-title">
+            {{ todo.title }}
+            {% if todo.description %}
+            <div class="todo-desc">{{ todo.description }}</div>
+            {% endif %}
+        </div>
+        <form action="/todos/{{ todo.id }}/delete" method="post">
+            <button class="btn-delete" type="submit">삭제</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="empty-msg">할일이 없습니다. 위에서 추가해보세요!</p>
+{% endif %}
+{% endblock %}
