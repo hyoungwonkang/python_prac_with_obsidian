@@ -60,7 +60,7 @@ DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 
 - [x] 1.1 FastAPI 프로젝트 셋업 (`requirements.txt`, `app/main.py`, 가상환경)
 - [x] 1.2 기본 헬스체크 엔드포인트 (`GET /health`)
 - [x] 1.3 Pydantic 모델 정의 (`TodoIn`, `TodoOut`, `TodoUpdate`)
-- [ ] 1.4 SQLAlchemy 비동기 엔진 + `Todo` ORM 모델
+- [x] 1.4 SQLAlchemy 비동기 엔진 + `Todo` ORM 모델
 - [ ] 1.5 Alembic 초기 설정 + 첫 마이그레이션
 - [ ] 1.6 CRUD 엔드포인트 — JSON API (`POST /api/todos`, `GET /api/todos`, ...)
 - [ ] 1.7 `/docs` Swagger UI에서 API 시나리오 검증
