@@ -66,7 +66,7 @@ DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 
 - [x] 1.7 `/docs` Swagger UI에서 API 시나리오 검증
 
 **1.B Jinja UI**
-- [ ] 1.8 `Jinja2Templates` 설정, `app/templates/` `app/static/` 디렉터리
+- [x] 1.8 `Jinja2Templates` 설정, `app/templates/` `app/static/` 디렉터리
 - [ ] 1.9 베이스 레이아웃 (`base.html`) + 정적 CSS
 - [ ] 1.10 목록 페이지 (`GET /` → `index.html`) — todo 표시
 - [ ] 1.11 추가 form (POST `/todos/add`) + 완료 토글 (POST `/todos/{id}/toggle`) + 삭제 (POST `/todos/{id}/delete`)

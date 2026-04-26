@@ -1,11 +1,17 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
 
 from app.database import async_session, engine
 from app.models import Base, Todo
 from app.schemas import TodoIn, TodoOut, TodoUpdate
+
+BASE_DIR = Path(__file__).resolve().parent
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 
 @asynccontextmanager
@@ -17,6 +23,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Todo App", version="0.1.0", lifespan=lifespan)
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
 
 @app.get("/health")
