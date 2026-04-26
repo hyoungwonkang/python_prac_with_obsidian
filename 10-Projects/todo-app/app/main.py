@@ -1,7 +1,8 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Form, HTTPException, Request
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import select
@@ -32,6 +33,37 @@ async def index(request: Request):
         result = await session.execute(select(Todo).order_by(Todo.created_at.desc()))
         todos = result.scalars().all()
     return templates.TemplateResponse(request, "index.html", {"todos": todos})
+
+
+@app.post("/todos/add")
+async def add_todo(title: str = Form()):
+    async with async_session() as session:
+        todo = Todo(title=title)
+        session.add(todo)
+        await session.commit()
+    return RedirectResponse("/", status_code=303)
+
+
+@app.post("/todos/{todo_id}/toggle")
+async def toggle_todo(todo_id: int):
+    async with async_session() as session:
+        todo = await session.get(Todo, todo_id)
+        if not todo:
+            raise HTTPException(status_code=404, detail="Todo not found")
+        todo.done = not todo.done
+        await session.commit()
+    return RedirectResponse("/", status_code=303)
+
+
+@app.post("/todos/{todo_id}/delete")
+async def delete_todo_page(todo_id: int):
+    async with async_session() as session:
+        todo = await session.get(Todo, todo_id)
+        if not todo:
+            raise HTTPException(status_code=404, detail="Todo not found")
+        await session.delete(todo)
+        await session.commit()
+    return RedirectResponse("/", status_code=303)
 
 
 @app.get("/health")
