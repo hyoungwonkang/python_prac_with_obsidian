@@ -1,0 +1,47 @@
+# Claude Code — local-only settings (per machine/user)
+.claude/settings.local.json
+
+# OMC runtime state (Claude Code)
+.omc/
+
+# Obsidian — settings는 공유, 휘발성 상태/캐시는 제외
+.obsidian/workspace*
+.obsidian/cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# IDE / editor
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Node / Vercel (todo-app 배포 대비)
+node_modules/
+.next/
+.vercel/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
