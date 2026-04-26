@@ -4,10 +4,36 @@ todo-app 프로젝트를 진행하며 만나는 기본 개념들.
 
 ## 문법 기초
 
+### `class`
+- **클래스(설계도)를 정의**하는 키워드.
+- 클래스로부터 **인스턴스(객체)**를 만들어 사용.
+- `class Todo(Base):` → Base를 **상속**한 Todo 클래스 정의.
+- 상속: 부모 클래스의 기능을 물려받아 확장하는 것.
+
 ### `def` / `async def`
 - `def` — **함수를 정의**하는 키워드. define의 약자.
 - `async def` — **비동기 함수** 정의. DB 접속 같은 대기 작업을 효율적으로 처리.
 - 예: `def hello(name):` → 일반 함수, `async def get_todos():` → 비동기 함수
+
+### `return`
+- 함수의 결과를 돌려줌. `return`이 없으면 `None` 반환.
+- 예: `return {"status": "ok"}` → 딕셔너리를 결과로 돌려줌.
+
+### `import` / `from ... import ...`
+- 다른 모듈(파일)의 코드를 가져옴.
+- `import os` → os 모듈 전체를 가져옴 (`os.getenv(...)`)
+- `from os import getenv` → getenv만 가져옴 (`getenv(...)` 바로 사용)
+- `from app.models import Base` → 계층적 import (패키지.모듈.이름)
+
+### `await`
+- 비동기 함수(`async def`) 안에서 대기 작업의 완료를 기다림.
+- 예: `await session.commit()` → DB 저장이 끝날 때까지 기다림.
+- `async def` 안에서만 사용 가능.
+
+### 데코레이터 (`@`)
+- 함수나 클래스에 기능을 덧붙이는 문법. 함수 위에 `@이름`으로 표시.
+- 예: `@app.get("/health")` → 이 함수를 GET /health 요청에 연결.
+- FastAPI에서 라우팅(URL ↔ 함수 연결)에 핵심적으로 사용.
 
 ## 표준 라이브러리
 
