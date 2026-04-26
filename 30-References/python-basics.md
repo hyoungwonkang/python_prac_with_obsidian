@@ -61,6 +61,12 @@ todo-app 프로젝트를 진행하며 만나는 기본 개념들.
 - `alembic upgrade head` → 마이그레이션 적용 (테이블 생성/수정)
 - SQLite → Postgres 전환 시에도 동일한 마이그레이션 파일로 양쪽 적용 가능.
 
+### asyncpg
+- PostgreSQL 전용 **비동기 드라이버**. `async def` + `await`로 DB에 접속.
+- SQLAlchemy URL에서 `postgresql+asyncpg://...`로 지정하면 자동으로 사용됨.
+- `aiosqlite`가 SQLite용 비동기 드라이버인 것처럼, `asyncpg`는 Postgres용.
+- DB 대기 중에도 다른 요청을 처리할 수 있어 FastAPI의 비동기 구조와 맞음.
+
 ### `load_dotenv()` (python-dotenv)
 - `from dotenv import load_dotenv`
 - `.env` 파일의 내용을 환경변수로 로드. `getenv()`로 읽을 수 있게 해줌.
