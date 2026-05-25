@@ -1,11 +1,19 @@
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import select
 
 from app.database import async_session, engine
 from app.models import Todo
 from app.schemas import TodoIn, TodoOut, TodoUpdate
+
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+    if origin.strip()
+]
 
 
 @asynccontextmanager
@@ -15,6 +23,13 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Todo App API", version="0.2.0", lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/health")
