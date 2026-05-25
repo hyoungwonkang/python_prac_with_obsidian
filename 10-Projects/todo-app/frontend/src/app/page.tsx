@@ -1,4 +1,6 @@
 import { getTodos } from "@/lib/api";
+import { AddTodoForm } from "@/components/AddTodoForm";
+import { TodoItem } from "@/components/TodoItem";
 
 export default async function Home() {
   const todos = await getTodos();
@@ -8,6 +10,7 @@ export default async function Home() {
       <h1 className="text-3xl font-semibold mb-8 text-zinc-900 dark:text-zinc-50">
         Todo App
       </h1>
+      <AddTodoForm />
       {todos.length === 0 ? (
         <p className="text-zinc-500 dark:text-zinc-400">
           아직 할 일이 없습니다.
@@ -15,20 +18,7 @@ export default async function Home() {
       ) : (
         <ul className="space-y-2">
           {todos.map((todo) => (
-            <li
-              key={todo.id}
-              className="flex items-center gap-3 p-3 border border-zinc-200 dark:border-zinc-800 rounded-lg bg-white dark:bg-zinc-950"
-            >
-              <span
-                className={
-                  todo.done
-                    ? "text-zinc-400 line-through dark:text-zinc-600"
-                    : "text-zinc-900 dark:text-zinc-100"
-                }
-              >
-                {todo.title}
-              </span>
-            </li>
+            <TodoItem key={todo.id} todo={todo} />
           ))}
         </ul>
       )}
