@@ -92,12 +92,12 @@ DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 
 ### Phase 3: Vercel 배포 v1 (Jinja 단일 앱)
 
 - [x] 3.1 `vercel.json` 작성 (Python 함수 라우팅) + `api/index.py` 진입점 + `.vercelignore` + `lifespan`에서 `create_all` 제거 (Alembic 단일 소스)
-- [ ] 3.2 Vercel 프로젝트 생성, GitHub 레포 연동
-- [ ] 3.3 환경변수 등록 (`DATABASE_URL`, Supabase 키)
-- [ ] 3.4 첫 배포 → Preview URL 확인
-- [ ] 3.5 `/docs` + Jinja 페이지 배포 환경에서 CRUD 검증
-- [ ] 3.6 데이터 영속성 검증 (함수 재시작 후 todo 유지)
-- [ ] 3.7 **🏁 v1 마일스톤 — 동작하는 배포된 앱 완성**
+- [x] 3.2 Vercel 프로젝트 생성, GitHub 레포 연동 (프로젝트명 `python-prac-with-obsidian`, Root Directory `10-Projects/todo-app`)
+- [x] 3.3 환경변수 등록 (`DATABASE_URL` — production·development. preview는 미설정, 필요 시 추후 추가)
+- [x] 3.4 첫 배포 → Preview·Production URL 확인 (`https://python-prac-with-obsidian.vercel.app`)
+- [x] 3.5 `/docs` + Jinja 페이지 배포 환경에서 CRUD 검증 (POST/GET/PATCH/DELETE 전부 통과)
+- [x] 3.6 데이터 영속성 검증 (여러 cold start 걸친 호출에서 Supabase 상태 일관)
+- [x] 3.7 **🏁 v1 마일스톤 — 동작하는 배포된 앱 완성**
 
 ### Phase 4: Next.js 분리 (대규모 리팩토링)
 
