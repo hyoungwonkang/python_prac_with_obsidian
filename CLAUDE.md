@@ -62,6 +62,16 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
 기술 스택 후보·명명 규칙 등 프로젝트 콘텐츠 관련 규칙은 `[[10-Projects/_Projects.md]]`의 "프로젝트 규칙(Conventions)" 섹션이 정본.
 이 CLAUDE.md는 Claude Code의 동작 규칙(메타)에 집중.
 
+### 4. vault 노트에 명시된 결정은 재확인 없이 따른다
+
+CLAUDE.md·`_Projects.md`·각 프로젝트 노트(예: `todo-app.md`)에 이미 결정·계획이 적혀 있으면 **다시 묻지 않고 그대로 진행**한다.
+
+- 예: `todo-app.md`의 Phase 4가 "backend·frontend 분리"로 정의되어 있으면, "1개 유지 vs 2개 분리부터 정할까요?" 같은 재확인 질문 금지.
+- 노트와 **충돌**하거나 노트에 **누락된 정보**가 있을 때만 질문.
+- 변경이 필요하다고 판단되면 먼저 vault 노트 자체를 갱신하자고 제안 (그래야 다른 PC에서도 같은 결정 유지).
+
+이유: 매번 묻는 행동은 vault가 정본이라는 [[#2-메모리와-vault-노트의-역할-분리|규칙 #2]]·다중 PC 일관성 철학과 모순. 같은 결정을 메모리·대화·vault 세 곳에서 반복 확인하면 마찰만 증가.
+
 ## Push 정책
 
 - 자동 push 금지. 사용자가 명시적으로 "푸시" 또는 "push"라고 말할 때만 실행.
