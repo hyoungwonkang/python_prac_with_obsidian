@@ -102,7 +102,7 @@ DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 
 ### Phase 4: Next.js 분리 (대규모 리팩토링)
 
 - [x] 4.1 모노레포 구조 전환: `backend/`, `frontend/`로 폴더 분리 (Vercel Root Directory도 `10-Projects/todo-app/backend`로 갱신)
-- [ ] 4.2 FastAPI를 **JSON API 전용**으로 다이어트 — Jinja·정적 파일 제거
+- [x] 4.2 FastAPI를 **JSON API 전용**으로 다이어트 — Jinja·정적 파일 제거 (app/templates/·app/static/ 삭제, vercel.json /static 라우트 제거, requirements.txt에서 jinja2 제거)
 - [ ] 4.3 CORS 설정 (`fastapi.middleware.cors`)
 - [ ] 4.4 Next.js 프로젝트 생성 (`frontend/`, TypeScript)
 - [ ] 4.5 todo 목록 페이지 (`app/page.tsx`) — fetch로 백엔드 API 호출

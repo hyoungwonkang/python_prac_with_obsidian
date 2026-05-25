@@ -3,5 +3,4 @@ sqlalchemy[asyncio]
 aiosqlite
 asyncpg
 alembic
-jinja2
 python-dotenv
