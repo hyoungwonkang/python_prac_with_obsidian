@@ -115,7 +115,7 @@ DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 
 - [x] 5.1 `vercel.json` 또는 모노레포 설정 — 백엔드는 Python 함수, 프론트는 Next.js로 라우팅 (옵션 나: 같은 GitHub 레포에 Vercel 프로젝트 2개. backend=`python-prac-with-obsidian`, frontend=`todo-app-frontend` Root=`10-Projects/todo-app/frontend`, Framework=Next.js)
 - [x] 5.2 환경변수 정비 (백엔드용 / 프론트용 분리) — backend: `DATABASE_URL` + `CORS_ORIGINS` (localhost:3000 + frontend Vercel URL), frontend: `NEXT_PUBLIC_API_BASE_URL`=backend URL
 - [x] 5.3 배포 후 Preview URL에서 Next.js → FastAPI 흐름 검증 — frontend URL에서 SSR fetch · CORS preflight 200 · POST→201 · DELETE→204 모두 통과
-- [ ] 5.4 v1과 v2 비교 메모 → `[[30-References/jinja-vs-nextjs]]`로 학습 정리
+- [x] 5.4 v1과 v2 비교 메모 → `[[30-References/jinja-vs-nextjs]]`로 학습 정리
 
 ## 검증 방법
 

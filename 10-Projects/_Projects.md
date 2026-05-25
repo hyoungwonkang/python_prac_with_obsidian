@@ -4,7 +4,7 @@
 
 ## 진행 중
 
-- [[todo-app]] — 할일관리 웹앱 (FastAPI + Vercel 배포 목표)
+- _(없음)_
 
 ## 보류
 
@@ -12,7 +12,7 @@
 
 ## 완료
 
-- _(없음)_
+- [[todo-app]] — 할일관리 웹앱. Phase 1~5 전부 완료. v1(Jinja)과 v2(FastAPI+Next.js 분리) 두 구현 모두 Vercel 배포. 비교 회고: [[../30-References/jinja-vs-nextjs]]
 
 ## 프로젝트 규칙 (Conventions)
 

@@ -15,6 +15,10 @@
 
 - [[vercel-project-switch]] — Vercel 프로젝트의 Root Directory를 바꿔 다음 학습 프로젝트로 덮어쓰는 절차
 
+## 아키텍처·학습 회고
+
+- [[jinja-vs-nextjs]] — 같은 todo 앱의 v1(Jinja 단일) vs v2(FastAPI+Next.js 분리) 비교 + 학습 회고
+
 ## 새 레퍼런스 추가 방법
 
 - 짧은 링크 모음은 이 노트에 직접 추가
