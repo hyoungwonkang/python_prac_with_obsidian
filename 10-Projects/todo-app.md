@@ -105,7 +105,7 @@ DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 
 - [x] 4.2 FastAPI를 **JSON API 전용**으로 다이어트 — Jinja·정적 파일 제거 (app/templates/·app/static/ 삭제, vercel.json /static 라우트 제거, requirements.txt에서 jinja2 제거)
 - [x] 4.3 CORS 설정 (`fastapi.middleware.cors`) — `CORS_ORIGINS` 환경변수로 분기 (기본 `http://localhost:3000`)
 - [x] 4.4 Next.js 프로젝트 생성 (`frontend/`, TypeScript) — Next.js 16.2.6 + React 19.2.4, App Router + Tailwind + src/ + ESLint
-- [ ] 4.5 todo 목록 페이지 (`app/page.tsx`) — fetch로 백엔드 API 호출
+- [x] 4.5 todo 목록 페이지 (`app/page.tsx`) — fetch로 백엔드 API 호출 (Server Component + `cache:"no-store"`, `src/lib/api.ts`에 `getTodos()` + `Todo` 타입)
 - [ ] 4.6 추가/수정/삭제 UI — 클라이언트 상태 관리
 - [ ] 4.7 환경변수 (`NEXT_PUBLIC_API_BASE_URL`)로 백엔드 주소 분리
 - [ ] 4.8 로컬에서 두 서버 동시 실행하며 검증
