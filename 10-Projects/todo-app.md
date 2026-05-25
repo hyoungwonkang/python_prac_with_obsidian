@@ -91,7 +91,7 @@ DB 교체와 달리 **아키텍처 자체가 바뀌는 큰 작업**. Phase 4는 
 
 ### Phase 3: Vercel 배포 v1 (Jinja 단일 앱)
 
-- [ ] 3.1 `vercel.json` 작성 (Python 함수 라우팅)
+- [x] 3.1 `vercel.json` 작성 (Python 함수 라우팅) + `api/index.py` 진입점 + `.vercelignore` + `lifespan`에서 `create_all` 제거 (Alembic 단일 소스)
 - [ ] 3.2 Vercel 프로젝트 생성, GitHub 레포 연동
 - [ ] 3.3 환경변수 등록 (`DATABASE_URL`, Supabase 키)
 - [ ] 3.4 첫 배포 → Preview URL 확인
