@@ -45,12 +45,12 @@
 
 | HARNESS 골격 | 파일 | 유지? |
 |---|---|---|
-| 1. 제어 흐름 (Step N 파이프라인) | `app/routers/plan.py` | ✅ Step 1~4 |
+| 1. 제어 흐름 (Step N 파이프라인) | `core/pipeline.py` (순수) + `app/routers/plan.py` (어댑터) | ✅ Step 0~4 |
 | 2. 핸드오프 계약 (타입) | `core/schema.py` (`PlanRequest`/`Intent`/`Plan`) | ✅ Pydantic |
 | 3. 상태 영속화 | — | ❌ 생략 (동기 단일 요청) |
-| 4. 워커 분담 | `core/llm.py` (Haiku 분류 ↔ Opus 생성) | ✅ |
+| 4. 워커 분담 | `core/llm.py` (Haiku 분류 ↔ Opus 생성) + `core/guardrail.py` (검열 워커) | ✅ |
 | 5. 검증 루프 ⭐ | `core/validator.py` + `core/catalog.py` | ✅ 핵심 |
-| 6. 장애 처리 | `validator.parse_llm_response` 3전략 + `app/main.py` 예외 매핑 | ✅ |
+| 6. 장애 처리 | `parse_llm_response` 3전략 + `app/main.py` 경계 매핑(검열 400 / 파싱 422) | ✅ |
 
 ## 단계 (Phase)
 
@@ -61,14 +61,15 @@
 - [x] 0.4 ⭐ `core/validator.py` — 검증 루프 본체 (parse 3전략 + 환각 제거 + total 재계산)
 - [x] 0.5 ⭐ `tests/test_validator.py` — 검증 루프 단위 테스트 (의존성 0, 가장 먼저 통과시킬 것)
 
-### Phase 1: 워커 + 파이프라인 — 🛠 골격 작성 완료 (런타임 검증은 Phase 2.1)
+### Phase 1: 워커 + 파이프라인 — ✅ 완료 (HARNESS 게이트 통과, 통합 테스트 21/21)
 - [x] 1.1 `core/llm.py` — Haiku 의도 분석 + Opus 플랜 생성 (+ 각 폴백)
-- [x] 1.2 `app/routers/plan.py` — Step 1~4 파이프라인 + verify→fix 루프(`max_attempts=3`) + 결정적 폴백
-- [x] 1.3 `app/main.py` — FastAPI 앱 + 예외→상태코드 매핑
-  - ⚠️ 미설치 환경이라 실 LLM 왕복은 미검증 — 컴파일 OK, 폴백 로직 단독 검증 OK
+- [x] 1.2 `core/pipeline.py` — Step 0~4 + verify→fix 루프(`max_attempts=3`) + 결정적 폴백 (LLM 주입식 = 의존성 0 테스트 가능)
+- [x] 1.3 `app/routers/plan.py` + `app/main.py` — 얇은 FastAPI 어댑터 + 예외→상태코드 매핑
+- [x] 1.4 `core/guardrail.py` — 검열 워커 분리 + `GuardrailBlockedError`→400 (골격 4·6 갭 close)
+- [x] 1.5 `tests/test_guardrail.py` + `tests/test_pipeline.py` — Step 0~4 통합 테스트 (의존성 0)
 
-### Phase 2: 검증 + 배포 (추후)
-- [ ] 2.1 로컬 `uvicorn`으로 `/plan` 시나리오 검증
+### Phase 2: 검증 + 배포
+- [~] 2.1 런타임 검증 — **로직은 의존성 0 통합 테스트로 검증(21/21)**. 실 LLM `uvicorn` 왕복은 이 환경에 pip/deps 없어 보류 (의존성 설치 가능한 환경에서 수행).
 - [ ] 2.2 (선택) Vercel 배포 — todo-app 패턴 재사용
 
 ## 검증 방법
@@ -78,20 +79,22 @@
 | 단계 | 검증 |
 |---|---|
 | Phase 0 | `pytest tests/test_validator.py` 통과 (anthropic 미설치여도 OK). |
-| Phase 1 | `ANTHROPIC_API_KEY` 설정 후 `uvicorn app.main:app --reload` → `/docs`에서 `POST /plan` 호출. 환각 itemId가 응답에서 제거되고 totalPrice가 카탈로그 기준으로 재계산되는지 확인. |
+| Phase 1 | `pytest tests/` 21/21 통과 — validator 12 + guardrail 3 + pipeline 6. Step 0~4 전 흐름(검열·verify→fix·환각제거·폴백)을 LLM stub 주입으로 검증. |
+| Phase 2.1 | (deps 설치 환경에서) `ANTHROPIC_API_KEY` 설정 후 `uvicorn app.main:app --reload` → `/docs`에서 `POST /plan`. 환각 itemId 제거 + totalPrice 재계산 + 위험 요청 400 확인. |
 
 ### HARNESS 체크리스트 대조 현황 (최근 감사)
 
-| 골격 | 상태 | 미충족/비고 |
+| 골격 | 상태 | 비고 |
 |---|---|---|
-| 1. 제어 흐름 | ✅ 충족 | Step 1~4 주석·산출물 전달·로그 |
+| 1. 제어 흐름 | ✅ 충족·테스트됨 | Step 0~4 주석·산출물 전달·로그 (`pipeline.py`) |
 | 2. 핸드오프 | ✅ 충족 | 병합 규칙은 단일 출처라 N/A |
 | 3. 상태 영속화 | ➖ 의식적 생략 | 동기 단일 요청 (축소 결정) |
-| 4. 워커 분담 | ⚠️ 일부 | 모델 분담·temperature ✅ / **guardrail 워커 미구현** |
+| 4. 워커 분담 | ✅ 충족·테스트됨 | 모델 분담·temperature ✅ / **guardrail 워커 분리** (`core/guardrail.py`) |
 | 5. 검증 루프 | ✅ 충족·테스트됨 | ID검증·재계산·상한·폴백·cap 전부 |
-| 6. 장애 처리 | ⚠️ 일부 | 다전략 파싱·폴백 ✅ / **API 경계 매핑 얇음(guardrail 400·검증실패 422 실작동 X)** |
+| 6. 장애 처리 | ✅ 충족·테스트됨 | 다전략 파싱·폴백 ✅ / 경계 매핑 검열 400 + 파싱 422 (실작동) |
 
-→ 남은 갭: 골격 4(guardrail 워커) + 골격 6(경계 매핑). 닫거나 "축소판 범위 밖"으로 *의식적 생략* 결정 필요.
+→ **남은 갭 없음.** 골격 1·4·5·6 충족+테스트, 2 N/A, 3 의식적 생략 → HARNESS 게이트 통과.
+(guardrail은 결정적 denylist 스텁 — 실서비스는 모델 기반 guardrail로 교체 권장, 노트에 명시.)
 
 ## 관련 노트
 

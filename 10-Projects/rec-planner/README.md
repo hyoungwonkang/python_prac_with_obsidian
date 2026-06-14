@@ -10,15 +10,17 @@
 ```
 rec-planner/
 ├── app/
-│   ├── main.py              # FastAPI 앱 + 예외→상태코드 매핑 (골격 6)
-│   └── routers/plan.py      # Step 1~4 파이프라인 + verify→fix 루프 (골격 1·5)
+│   ├── main.py              # FastAPI 앱 + 예외→상태코드 매핑: 검열 400 / 파싱 422 (골격 6)
+│   └── routers/plan.py      # 얇은 어댑터 (PlanRequest → pipeline → PlanResponse)
 ├── core/
 │   ├── schema.py            # 핸드오프 계약 PlanRequest/Intent/Plan (골격 2)
 │   ├── catalog.py           # 로컬 catalog.json 로더 (ES/SKU DB 대체)
+│   ├── guardrail.py         # 입력 검열 워커 + GuardrailBlockedError (골격 4·6)
+│   ├── pipeline.py          # ⭐ Step 0~4 + verify→fix 루프 (골격 1·5, LLM 주입식)
 │   ├── validator.py         # ⭐ 검증 루프: parse 3전략 + 환각 제거 + total 재계산 (골격 5·6)
 │   └── llm.py               # Haiku 의도분석 / Opus 플랜생성 (골격 4)
 ├── data/catalog.json        # 추천 후보 = 환각 검증의 정답지
-├── tests/test_validator.py  # 검증 루프 단위 테스트 (의존성 0)
+├── tests/                   # 의존성 0 테스트 21개 (validator·guardrail·pipeline)
 ├── requirements.txt
 └── .env.example             # ANTHROPIC_API_KEY
 ```

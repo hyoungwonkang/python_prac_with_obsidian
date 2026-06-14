@@ -15,6 +15,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.routers import plan
+from core.guardrail import GuardrailBlockedError
 
 logging.basicConfig(level=logging.INFO)
 
@@ -37,8 +38,16 @@ def health():
     return {"status": "ok"}
 
 
-# 비정형 예외 → 사용자 안내 메시지 + 적절한 상태코드 (조용히 500 던지지 않음)
+# 비정형 예외 → 사용자 안내 메시지 + 적절한 상태코드 (골격 6: API 경계 매핑)
+@app.exception_handler(GuardrailBlockedError)
+async def guardrail_handler(request: Request, exc: GuardrailBlockedError):
+    # 입력 검열 차단 → 400
+    return JSONResponse(status_code=400,
+                        content={"error": str(exc), "category": exc.category})
+
+
 @app.exception_handler(json.JSONDecodeError)
 async def json_error_handler(request: Request, exc: json.JSONDecodeError):
+    # LLM 출력 파싱 최종 실패 → 422 (조용히 500 던지지 않음)
     return JSONResponse(status_code=422,
                         content={"error": "LLM 응답을 해석하지 못했습니다. 다시 시도해 주세요."})

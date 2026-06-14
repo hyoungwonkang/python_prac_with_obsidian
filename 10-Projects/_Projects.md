@@ -4,7 +4,7 @@
 
 ## 진행 중
 
-- [[rec-planner]] — 자연어 → 검증된 추천 플랜 LLM 앱. [[../30-References/HARNESS]] 6대 골격 적용(경량). 검증 루프(Phase 0) 완료, 워커·파이프라인(Phase 1) 골격 작성.
+- [[rec-planner]] — 자연어 → 검증된 추천 플랜 LLM 앱(travel-rag 축소판). [[../30-References/HARNESS]] 6대 골격 적용. Phase 0~1 완료(HARNESS 게이트 통과, 의존성 0 테스트 21/21). Phase 2.1 실 LLM 런타임은 deps 설치 환경에서 보류.
 
 ## 보류
 
