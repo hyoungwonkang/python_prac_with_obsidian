@@ -11,6 +11,17 @@
   - 그 안의 원본 `HARNESS.md`가 정본, vault의 [[../30-References/HARNESS]]는 복사본.
 - travel-rag의 무거운 인프라(ES·Kafka·Bedrock)를 떼어낸 **경량 버전** — 인프라 0, 하네스 80%(검증 루프 + 장애 처리)는 유지.
 
+> 정체성: **travel-rag의 축소판 서비스**. HARNESS.md는 이 축소판을 짓기 위한 *설계서*, 하네스 엔지니어링은 그 설계서를 따라 짓는 *행위*. (도메인=추천, 방법=하네스)
+
+## travel-rag 대비 축소 결정
+
+| 측면 | travel-rag | rec-planner | 비고 |
+|---|---|---|---|
+| 도메인 | 여행(숙소·교통·활동, 박수×숙박가) | **당일 활동 추천** (서울 나들이) | 의식적 단순화 — 여행 아님 |
+| 검색(RAG의 R) | 임베딩 + ES 하이브리드 검색 | **카테고리 필터** | R 생략, 학습 초점은 검증 루프 |
+| 플랜 수 | 다중 티어(플랜 3개) | 단일 플랜 | 축소 |
+| 검증 루프·intent·폴백 | — | **그대로 유지** | 충실 (하네스 핵심) |
+
 ## 핵심 철학
 
 > 엔진(LLM)의 출력을 절대 신뢰하지 않는다. 검증층이 보정한다.
@@ -43,17 +54,18 @@
 
 ## 단계 (Phase)
 
-### Phase 0: 경량 골격 셋업
-- [ ] 0.1 디렉터리 구조 + `requirements.txt` + `.env.example`
-- [ ] 0.2 `core/schema.py` — 핸드오프 계약 (Pydantic)
-- [ ] 0.3 `data/catalog.json` + `core/catalog.py` — 환각 검증 정답지
-- [ ] 0.4 ⭐ `core/validator.py` — 검증 루프 본체 (parse 3전략 + 환각 제거 + total 재계산)
-- [ ] 0.5 ⭐ `tests/test_validator.py` — 검증 루프 단위 테스트 (의존성 0, 가장 먼저 통과시킬 것)
+### Phase 0: 경량 골격 셋업 — ✅ 완료 (검증 루프 테스트 12/12 통과)
+- [x] 0.1 디렉터리 구조 + `requirements.txt` + `.env.example`
+- [x] 0.2 `core/schema.py` — 핸드오프 계약 (Pydantic)
+- [x] 0.3 `data/catalog.json` + `core/catalog.py` — 환각 검증 정답지
+- [x] 0.4 ⭐ `core/validator.py` — 검증 루프 본체 (parse 3전략 + 환각 제거 + total 재계산)
+- [x] 0.5 ⭐ `tests/test_validator.py` — 검증 루프 단위 테스트 (의존성 0, 가장 먼저 통과시킬 것)
 
-### Phase 1: 워커 + 파이프라인
-- [ ] 1.1 `core/llm.py` — Haiku 의도 분석 + Opus 플랜 생성 (+ 각 폴백)
-- [ ] 1.2 `app/routers/plan.py` — Step 1~4 파이프라인 + verify→fix 루프(`max_attempts=3`) + 결정적 폴백
-- [ ] 1.3 `app/main.py` — FastAPI 앱 + 예외→상태코드 매핑
+### Phase 1: 워커 + 파이프라인 — 🛠 골격 작성 완료 (런타임 검증은 Phase 2.1)
+- [x] 1.1 `core/llm.py` — Haiku 의도 분석 + Opus 플랜 생성 (+ 각 폴백)
+- [x] 1.2 `app/routers/plan.py` — Step 1~4 파이프라인 + verify→fix 루프(`max_attempts=3`) + 결정적 폴백
+- [x] 1.3 `app/main.py` — FastAPI 앱 + 예외→상태코드 매핑
+  - ⚠️ 미설치 환경이라 실 LLM 왕복은 미검증 — 컴파일 OK, 폴백 로직 단독 검증 OK
 
 ### Phase 2: 검증 + 배포 (추후)
 - [ ] 2.1 로컬 `uvicorn`으로 `/plan` 시나리오 검증
