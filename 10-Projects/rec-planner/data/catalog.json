@@ -1,0 +1,14 @@
+[
+  {"id": 101, "name": "국립중앙박물관 관람", "category": "문화", "indoor": true,  "area": "서울", "adultPrice": 0,     "childPrice": 0},
+  {"id": 102, "name": "서울숲 피크닉",       "category": "야외", "indoor": false, "area": "서울", "adultPrice": 0,     "childPrice": 0},
+  {"id": 103, "name": "롯데월드 자유이용권",   "category": "테마파크", "indoor": false, "area": "서울", "adultPrice": 62000, "childPrice": 50000},
+  {"id": 104, "name": "아쿠아리움 코엑스",     "category": "체험", "indoor": true,  "area": "서울", "adultPrice": 33000, "childPrice": 29000},
+  {"id": 105, "name": "한강 자전거 대여",     "category": "야외", "indoor": false, "area": "서울", "adultPrice": 6000,  "childPrice": 6000},
+  {"id": 106, "name": "키즈 카페 플레이타임",  "category": "체험", "indoor": true,  "area": "서울", "adultPrice": 12000, "childPrice": 18000},
+  {"id": 107, "name": "남산타워 전망대",      "category": "관광", "indoor": true,  "area": "서울", "adultPrice": 21000, "childPrice": 16000},
+  {"id": 108, "name": "도자기 공방 원데이클래스", "category": "체험", "indoor": true,  "area": "서울", "adultPrice": 35000, "childPrice": 30000},
+  {"id": 109, "name": "북한산 둘레길 트레킹",  "category": "야외", "indoor": false, "area": "서울", "adultPrice": 0,     "childPrice": 0},
+  {"id": 110, "name": "영화관 4DX 관람",     "category": "문화", "indoor": true,  "area": "서울", "adultPrice": 18000, "childPrice": 15000},
+  {"id": 111, "name": "보드게임 카페",       "category": "실내놀이", "indoor": true,  "area": "서울", "adultPrice": 10000, "childPrice": 8000},
+  {"id": 112, "name": "동대문 야시장 투어",    "category": "야외", "indoor": false, "area": "서울", "adultPrice": 0,     "childPrice": 0}
+]
