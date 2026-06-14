@@ -96,6 +96,28 @@
 → **남은 갭 없음.** 골격 1·4·5·6 충족+테스트, 2 N/A, 3 의식적 생략 → HARNESS 게이트 통과.
 (guardrail은 결정적 denylist 스텁 — 실서비스는 모델 기반 guardrail로 교체 권장, 노트에 명시.)
 
+## 현 환경 한계점 / 남은 작업
+
+작업 환경(WSL, Python 3.10, **pip·외부 패키지 없음**)의 제약으로 다음은 **이 환경에서 검증하지 못함**:
+
+- 실 LLM 왕복 (Haiku 의도분석 / Opus 플랜생성) — `anthropic` 미설치 + `ANTHROPIC_API_KEY` 미설정
+- FastAPI 앱 기동 (`uvicorn app.main:app`) — `fastapi`/`uvicorn` 미설치
+- Pydantic 모델 런타임 동작 (`schema.py`) — `pydantic` 미설치
+- `pytest` 정식 러너 — 미설치 (수동 하니스로 대체 실행)
+
+**이 환경에서 검증한 것** (의존성 0 경로):
+- 통합 테스트 21/21 통과 (validator 12 + guardrail 3 + pipeline 6) — Step 0~4 전 흐름을 LLM stub으로
+- 전체 `.py` 컴파일 OK
+- HARNESS 6대 골격 체크리스트 게이트 통과 (1·4·5·6 테스트됨, 2 N/A, 3 생략)
+
+**deps 설치 가능한 환경에서 이어서 할 일** (Phase 2.1~):
+1. `pip install -r requirements.txt` → `python -m pytest tests/ -v` (21개 정식 실행)
+2. `cp .env.example .env`, `ANTHROPIC_API_KEY` 설정 → `uvicorn app.main:app --reload`
+3. `/docs`에서 `POST /plan` — 환각 itemId 제거 / totalPrice 재계산 / 위험 요청 400 확인
+4. (선택) Vercel 배포 — todo-app 패턴 재사용
+
+> 결론: **로직·하네스 골격은 완성·검증**, 실 LLM 런타임만 환경 제약으로 보류. 코드는 그대로 두고 위 4단계만 다른 환경에서 수행하면 됨.
+
 ## 관련 노트
 
 - `[[_Projects]]` (인덱스)
