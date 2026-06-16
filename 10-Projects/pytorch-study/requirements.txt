@@ -1,0 +1,6 @@
+# 인텔 맥(x86_64) 로컬 학습 환경
+# Colab은 자체 설치 사용 (이 파일 불필요)
+torch==2.2.2
+torchvision==0.17.2
+torchaudio==2.2.2
+numpy<2
