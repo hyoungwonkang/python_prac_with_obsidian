@@ -19,6 +19,10 @@
 
 - [[jinja-vs-nextjs]] — 같은 todo 앱의 v1(Jinja 단일) vs v2(FastAPI+Next.js 분리) 비교 + 학습 회고
 
+## ML 환경
+
+- [[pytorch-env-hybrid]] — **정본**. PyTorch 환경 가이드(인텔 맥 2.2.2 + Colab 2.6.0 하이브리드, 제약·근거·코드 표준). [[../10-Projects/pytorch-study]]에서 사용.
+
 ## 새 레퍼런스 추가 방법
 
 - 짧은 링크 모음은 이 노트에 직접 추가
