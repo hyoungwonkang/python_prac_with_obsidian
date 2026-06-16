@@ -94,3 +94,104 @@ optimizer.zero_grad()         # 다음 step 위해 grad 초기화
 - 새로운 옵티마이저나 정규화 기법 설계
 
 그 전에는 "PyTorch가 알아서 계산해주는 기계장치" 추상화로 모델을 만들고 훈련하는 데 막힘이 없다.
+
+---
+
+# 부록: 훈련 루프의 `x, y`는 어디서 오는가 — Dataset / DataLoader
+
+backprop 루프 의사코드의 `x, y`가 실제 코드에서 어디서 만들어져 흘러오는지를 `dataloader.py`로 추적한 정리.
+
+## 변수 명명 관습
+
+ML 표준 관습:
+
+| 이름 | 의미 | 관습 |
+|------|------|------|
+| `X_train`, `X_test` | 입력 데이터 (대문자 X) | **2D 이상 행렬**일 때 대문자 |
+| `y_train`, `y_test` | 정답 레이블 (소문자 y) | **1D 벡터**일 때 소문자 |
+| `x, y` (루프 안) | 한 배치 분량의 입력·정답 | 위와 같은 의미, 한 배치로 좁아진 것 |
+| `y_hat` (ŷ) | 모델의 *예측값*. 정답 `y`와 비교용 | hat 기호 = "추정값" 표준 관습 |
+
+## 3단 구조 — Dataset → DataLoader → 루프
+
+```
+원본 텐서 (X_train, y_train)
+        │
+        ▼
+ToyDataset(Dataset)  ← __getitem__(idx)로 한 개씩 꺼낼 수 있게 감싸기
+        │
+        ▼
+DataLoader(batch_size=2, shuffle=True)  ← 미니배치 단위로 묶어 무작위로 던지기
+        │
+        ▼
+for x, y in train_loader:   ← 매 iteration마다 한 배치의 (입력, 정답)
+    y_hat = model(x)
+    loss = loss_fn(y_hat, y)
+    ...
+```
+
+## 각 단계의 역할
+
+### 1) `Dataset` — 데이터 한 개를 꺼내는 인터페이스 정의
+
+```python
+class ToyDataset(Dataset):
+    def __init__(self, X, y):
+        self.features = X
+        self.labels = y
+
+    def __getitem__(self, idx):
+        return self.features[idx], self.labels[idx]   # (입력, 정답) 쌍
+
+    def __len__(self):
+        return self.labels.shape[0]
+```
+
+- `__getitem__`: idx를 받아 **샘플 한 개**를 `(x, y)` 튜플로 반환
+- `__len__`: 전체 샘플 수
+
+여기서 (입력, 정답) 쌍으로 묶이는 패턴이 정해진다.
+
+### 2) `DataLoader` — 배치 단위로 묶고 셔플
+
+```python
+train_loader = DataLoader(dataset=train_ds, batch_size=2, shuffle=True, num_workers=0)
+```
+
+- `batch_size=2`: 2개씩 묶어 던짐
+- `shuffle=True`: epoch마다 순서 무작위화 → 모델이 데이터 순서에 의존하지 않게 함
+- `num_workers=0`: 단일 프로세스로 로드 (학습 환경, 인텔 맥은 0이 안전)
+
+### 3) 루프 안의 `x, y`
+
+```python
+for idx, (x, y) in enumerate(train_loader):
+    print(f"배치 {idx + 1}:", x, y)
+```
+
+매 iteration의 `x, y`:
+- **`x`**: shape `[batch_size, num_features]` — 입력 미니배치
+- **`y`**: shape `[batch_size]` — 정답 레이블 미니배치
+
+5개 샘플을 `batch_size=2`로 돌리면 → **3개 배치** (`[2,2,1]`)가 나온다.
+
+## DataLoader가 backprop 루프와 어떻게 맞물리는가
+
+위에서 본 의사 코드를 실제 훈련 루프로 펼치면:
+
+```python
+for epoch in range(num_epochs):
+    for x, y in train_loader:        # ← DataLoader가 한 배치씩 공급
+        y_hat = model(x)             # forward
+        loss = loss_fn(y_hat, y)     # loss 계산
+        loss.backward()              # 역전파 — 모든 param.grad 채워짐
+        optimizer.step()             # 가중치 업데이트
+        optimizer.zero_grad()        # grad 초기화
+```
+
+- `epoch` = 전체 데이터셋을 한 번 통과
+- 한 epoch 안에 미니배치 수만큼의 step이 들어감 (위 예: 3 step / epoch)
+- shuffle 덕분에 각 epoch의 배치 구성은 달라짐
+
+이렇게 **Dataset이 "한 개 꺼내는 법"을 정하고, DataLoader가 "배치로 묶어 던지는 법"을 담당**한다. 모델 훈련 코드는 그저 `for x, y in loader:` 한 줄로 모든 로딩·셔플·배칭을 받아쓰면 됨.
+
