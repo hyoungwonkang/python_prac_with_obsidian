@@ -67,10 +67,23 @@ python .notion-sync/sync.py --all --dry-run
 cat > .git/hooks/post-commit <<'SH'
 #!/bin/sh
 # vault .md commit 시 Notion 미러 자동 동기 (토큰 없으면 조용히 skip)
-python "$(git rev-parse --show-toplevel)/.notion-sync/sync.py" || true
+ROOT="$(git rev-parse --show-toplevel)"
+VENV="$ROOT/.notion-sync/.cache/venv/bin/python"
+if [ -x "$VENV" ]; then PY="$VENV"
+elif command -v python3 >/dev/null 2>&1; then PY=python3
+else PY=python
+fi
+"$PY" "$ROOT/.notion-sync/sync.py" || true
 SH
 chmod +x .git/hooks/post-commit
 ```
+
+> 인터프리터 우선순위: `.notion-sync/.cache/venv`(deps 설치된 venv) → `python3` → `python`.
+> 시스템 Python 에 `notion-client` 등이 없으면 venv 를 먼저 만들어 둔다:
+> ```bash
+> uv venv .notion-sync/.cache/venv      # 또는 python3 -m venv
+> uv pip install --python .notion-sync/.cache/venv -r .notion-sync/requirements.txt
+> ```
 
 > 토큰이 없거나 동기 대상이 없으면 스크립트가 안전하게 빠져나오므로
 > 일반 커밋 흐름을 막지 않는다.

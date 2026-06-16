@@ -229,15 +229,20 @@ def _inline(tokens: list[dict], ann: dict | None = None, link: str | None = None
 
 
 def _text(content: str, ann: dict, link: str | None) -> list[dict]:
-    """content 를 2000자 단위로 잘라 rich_text 객체 리스트로."""
+    """content 를 2000자 단위로 잘라 rich_text 객체 리스트로.
+
+    Notion 은 절대 URL(http/https/mailto)만 링크로 허용. 상대경로·위키링크
+    잔재(예: `[[todo-app]](완료)` → url='완료') 같은 비URL 은 링크를 버리고 평문 처리.
+    """
     if content == "":
         return []
+    valid_link = link if (link and link.startswith(("http://", "https://", "mailto:"))) else None
     out = []
     for i in range(0, len(content), MAX_TEXT_LEN):
         chunk = content[i:i + MAX_TEXT_LEN]
         text_obj = {"content": chunk}
-        if link:
-            text_obj["link"] = {"url": link}
+        if valid_link:
+            text_obj["link"] = {"url": valid_link}
         out.append({"type": "text", "text": text_obj, "annotations": dict(ann)})
     return out
 

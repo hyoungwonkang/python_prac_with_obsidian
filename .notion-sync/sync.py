@@ -132,8 +132,12 @@ def _source_callout(rel_path: str) -> dict:
 
 # ── Notion 교체 ───────────────────────────────────────────────────────────
 
+# 삭제하면 하위 페이지/DB 자체가 휴지통으로 가므로 절대 지우지 않고 보존한다.
+PRESERVE_TYPES = {"child_page", "child_database"}
+
+
 def replace_page_content(client, page_id: str, blocks: list[dict], batch_size: int) -> None:
-    # 1) 기존 children 전부 archive
+    # 1) 기존 children 조회 → 콘텐츠 블록만 삭제 (child_page/child_database 는 보존)
     cursor = None
     existing = []
     while True:
@@ -143,9 +147,14 @@ def replace_page_content(client, page_id: str, blocks: list[dict], batch_size: i
         if not resp.get("has_more"):
             break
         cursor = resp.get("next_cursor")
+    deleted = preserved = 0
     for blk in existing:
+        if blk.get("type") in PRESERVE_TYPES:
+            preserved += 1
+            continue
         client.blocks.delete(blk["id"])
-    log(f"  기존 블록 {len(existing)}개 삭제")
+        deleted += 1
+    log(f"  기존 블록 {deleted}개 삭제, 하위 페이지 {preserved}개 보존")
 
     # 2) 새 블록 append (배치)
     for i in range(0, len(blocks), batch_size):
