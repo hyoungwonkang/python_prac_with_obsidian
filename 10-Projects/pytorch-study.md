@@ -55,20 +55,20 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 - [x] Colab → vault 동기화 워크플로 확정 — Colab "파일 → GitHub에 사본 저장" → 로컬 merge
 
 ### A.1 파이토치란 무엇인가요?
-- [ ] 교재 본문 학습
-- [ ] 핵심 메모 정리 → [[../30-References/python-basics]]
+- [x] 교재 본문 학습
+- [x] 핵심 메모 정리 → [[../30-References/python-basics]]
 
 ### A.2 텐서 이해하기
-- [ ] 교재 본문 학습
+- [x] 교재 본문 학습
 - 작성한 실습 코드:
 	- `ch01_tensor_dtypes.py` — 0d/1d/2d/3d 텐서 생성, `dtype` 변환
 
 ### A.3 모델을 계산 그래프로 보기
-- [ ] 교재 본문 학습
-- [ ] 실습 코드 — forward 그래프 시각화
+- [x] 교재 본문 학습
+- [x] 실습 코드 — forward 그래프 시각화
 
 ### A.4 자동 미분을 손쉽게
-- [ ] 교재 본문 학습
+- [x] 교재 본문 학습
 - 작성한 실습 코드:
 	- `logistic.py` — 선형 → sigmoid → BCE forward 한 스텝
 	- `gradient.py` — autograd로 ∂loss/∂w1, ∂loss/∂b 직접 계산 (2026-06-16: `(-0.0898, -0.0817)`)
@@ -76,21 +76,21 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 	- [[../30-References/python-basics]]에 PyTorch autograd 섹션 신설
 
 ### A.5 다층 신경망 만들기
-- [ ] 교재 본문 학습
+- [x] 교재 본문 학습
 - 작성한 실습 코드:
 	- `neural.py` — `nn.Module` 서브클래싱한 다층 신경망
 
 ### A.6 효율적인 데이터 로더 설정하기
-- [ ] 교재 본문 학습
+- [x] 교재 본문 학습
 - 작성한 실습 코드:
 	- `dataloader.py` — 훈련 데이터 텐서 + `DataLoader` 실습
 
 ### A.7 일반적인 훈련 루프
-- [ ] 교재 본문 학습
-- [ ] 실습 코드 — forward → loss → backward → optimizer.step
+- [x] 교재 본문 학습
+- [x] 실습 코드 — forward → loss → backward → optimizer.step
 
 ### A.8 모델 저장과 로드
-- [ ] 교재 본문 학습
+- [x] 교재 본문 학습
 
 ### A.9 GPU로 훈련 성능 최적화하기
 - [ ] 교재 본문 학습
