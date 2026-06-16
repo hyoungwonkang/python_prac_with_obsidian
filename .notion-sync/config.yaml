@@ -1,0 +1,39 @@
+# .notion-sync/config.yaml
+# vault .md → Notion 페이지 미러 동기 설정 (B-1 자동 동기)
+# 정본 규칙: 30-References/notion-mcp.md
+#
+# vault가 단일 진실 공급원. 이 파일의 매핑에 있는 .md만 동기 대상.
+
+# Notion Internal Integration Token 경로 (vault 밖, mode 600)
+# 우선순위: 환경변수 NOTION_TOKEN > 이 경로의 파일 내용
+token_path: "~/.config/notion-sync/token"
+
+github:
+  # 실습 코드 링크 카드용 blob base URL (repo는 public)
+  owner: "hyoungwonkang"
+  repo: "python_prac_with_obsidian"
+  branch: "main"
+
+sync:
+  # 변경 검출 기준: post-commit 직후 HEAD~1..HEAD 비교
+  diff_base: "HEAD~1"
+  diff_head: "HEAD"
+  # 페이지 본문 교체 시 한 번에 append 가능한 블록 수 (Notion API 한도)
+  batch_size: 100
+  # 페이지 상단에 정본 출처 callout 삽입
+  source_callout: true
+
+# vault 경로(레포 루트 기준) → Notion page_id
+# page_id 출처: 30-References/notion-mcp.md "Notion 페이지 매핑"
+pages:
+  "10-Projects/llm-from-scratch.md": "38147515-0358-81f4-9b5f-c2fb013fa88a"  # 마스터
+  "10-Projects/pytorch-study.md":    "38147515-0358-81e7-88be-edf4c2a76be2"  # 부록 A
+
+  # 본문 1~7장은 vault 노트가 생기면(10-Projects/llm-ch{n}-*.md) 주석 해제하여 매핑.
+  # "10-Projects/llm-ch1-overview.md":  "38147515-0358-819e-8466-f57e31b34bbd"  # 1장
+  # "10-Projects/llm-ch2-text.md":      "38147515-0358-8138-95fb-e841ae4fb52a"  # 2장
+  # "10-Projects/llm-ch3-attention.md": "38147515-0358-815c-af30-c8728d23b5ce"  # 3장
+  # "10-Projects/llm-ch4-gpt.md":       "38147515-0358-81d8-b465-f9faab13fe3a"  # 4장
+  # "10-Projects/llm-ch5-pretrain.md":  "38147515-0358-812e-a3c4-e1f404b0a6a0"  # 5장
+  # "10-Projects/llm-ch6-classify.md":  "38147515-0358-8167-a267-ce0d17b844f1"  # 6장
+  # "10-Projects/llm-ch7-instruct.md":  "38147515-0358-817c-8e13-eae2e416690a"  # 7장

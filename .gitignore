@@ -46,3 +46,6 @@ node_modules/
 .coverage
 htmlcov/
 .vercel
+
+# Notion 동기 — 캐시/로그만 제외 (스크립트·config는 git 포함, 토큰은 vault 밖)
+.notion-sync/.cache/

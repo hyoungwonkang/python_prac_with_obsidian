@@ -1,0 +1,5 @@
+# .notion-sync 동기 스크립트 의존성
+# 설치: python -m pip install -r .notion-sync/requirements.txt
+notion-client>=2.4.0
+pyyaml>=6.0
+mistune>=3.0
