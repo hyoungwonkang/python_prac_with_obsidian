@@ -60,7 +60,8 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 
 ### A.2 텐서 이해하기
 - [ ] 교재 본문 학습
-- [ ] 실습 코드 — dtype·shape·broadcasting·indexing
+- 작성한 실습 코드:
+	- `ch01_tensor_dtypes.py` — 0d/1d/2d/3d 텐서 생성, `dtype` 변환
 
 ### A.3 모델을 계산 그래프로 보기
 - [ ] 교재 본문 학습
@@ -71,15 +72,18 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 - 작성한 실습 코드:
 	- `logistic.py` — 선형 → sigmoid → BCE forward 한 스텝
 	- `gradient.py` — autograd로 ∂loss/∂w1, ∂loss/∂b 직접 계산 (2026-06-16: `(-0.0898, -0.0817)`)
+	- `backprop_intuition.md` — 역전파(연쇄 법칙)의 직관 정리 메모
 	- [[../30-References/python-basics]]에 PyTorch autograd 섹션 신설
 
 ### A.5 다층 신경망 만들기
 - [ ] 교재 본문 학습
-- [ ] 실습 코드 — `nn.Module` 서브클래싱
+- 작성한 실습 코드:
+	- `neural.py` — `nn.Module` 서브클래싱한 다층 신경망
 
 ### A.6 효율적인 데이터 로더 설정하기
 - [ ] 교재 본문 학습
-- [ ] 실습 코드 — `Dataset` / `DataLoader`
+- 작성한 실습 코드:
+	- `dataloader.py` — 훈련 데이터 텐서 + `DataLoader` 실습
 
 ### A.7 일반적인 훈련 루프
 - [ ] 교재 본문 학습
@@ -102,8 +106,12 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 | 파일 | 내용 | 관련 절 |
 |---|---|---|
 | `ch00_env_check.py` | 디바이스 자동선택, 양 환경 결과 일치 확인 | 선행 / A.1 |
+| `ch01_tensor_dtypes.py` | 0d/1d/2d/3d 텐서 생성, `dtype` 변환 | A.2 |
 | `logistic.py` | 선형 → sigmoid → BCE forward 한 스텝 | A.4 부근 |
 | `gradient.py` | autograd로 ∂loss/∂w1, ∂loss/∂b 직접 계산 | A.4 |
+| `backprop_intuition.md` | 역전파(연쇄 법칙) 직관 정리 메모 | A.4 |
+| `neural.py` | `nn.Module` 서브클래싱한 다층 신경망 | A.5 |
+| `dataloader.py` | 훈련 데이터 텐서 + `DataLoader` 실습 | A.6 |
 | `notebooks/ch01_basics.ipynb` | Colab 환경 검증 노트북 | 선행 |
 
 ## 작업 분담 원칙
