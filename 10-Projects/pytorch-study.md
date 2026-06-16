@@ -91,7 +91,6 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 
 ### A.8 모델 저장과 로드
 - [ ] 교재 본문 학습
-- [ ] 실습 시 `torch.save(state_dict)` + `torch.load(..., weights_only=True)`
 
 ### A.9 GPU로 훈련 성능 최적화하기
 - [ ] 교재 본문 학습
