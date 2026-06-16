@@ -35,28 +35,36 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 10-Projects/pytorch-study/
 ├── README.md
 ├── requirements.txt           ← 로컬 2.2.2 환경용
-├── ch01_basics.py             ← 텐서 기초 (디바이스 자동선택 동작 확인)
-└── notebooks/                 ← Colab 노트북 백업 (.ipynb)
+├── ch00_env_check.py          ← 디바이스 자동선택 + 환경 검증 (로컬 mps + Colab cuda 양쪽 통과)
+├── ch01_tensor_dtypes.py      ← 텐서 dtype·shape 첫 실습
+├── logistic.py                ← forward: 선형 → sigmoid → BCE
+├── gradient.py                ← autograd로 ∂loss/∂w1, ∂loss/∂b 직접 계산
+└── notebooks/
+    └── ch01_basics.ipynb      ← Colab에서 GitHub에 직접 커밋, 첫 셀에 Colab 배지
 ```
 
 ## 단계 (Phase)
 
-### Phase 0 — 환경 셋업
+### Phase 0 — 환경 셋업 ✅ 완료 (2026-06-16)
 - [x] Homebrew Python 3.12 + `~/ml-env` venv 생성
 - [x] 로컬 PyTorch 2.2.2 설치 + MPS 동작 확인 ([[../30-References/pytorch-env-hybrid]])
 - [x] 레포 클론 + vault에 프로젝트 등록
-- [ ] Colab 새 노트북 + GPU 활성화 + 환경 검증 셀
-- [ ] Colab → vault 동기화 워크플로 결정 (수동 다운로드 vs `gh` API)
+- [x] Colab 새 노트북 + T4 GPU 활성화 + 환경 검증 셀 (PyTorch 2.6.0+cu124, Tesla T4)
+- [x] Colab → vault 동기화 워크플로 확정 — Colab "파일 → GitHub에 사본 저장" → 로컬 merge
 
-### Phase 1 — 텐서 기초
-- [x] `ch01_basics.py` — 텐서 생성·연산, 디바이스 자동선택 (로컬 동작 확인됨)
-- [ ] dtype·shape·broadcasting·indexing 실습
+### Phase 1 — 텐서 기초 (진행 중)
+- [x] `ch00_env_check.py` — 디바이스 자동선택, 양 환경에서 동일 결과 확인
+- [x] `logistic.py` — 로지스틱 회귀 forward 한 스텝 (선형 → sigmoid → BCE)
+- [x] `gradient.py` — autograd로 ∂loss/∂w1, ∂loss/∂b 직접 계산 (2026-06-16: `(-0.0898, -0.0817)`)
+- [x] [[../30-References/python-basics]]에 PyTorch 기초(autograd) 섹션 신설
+- [ ] `ch01_tensor_dtypes.py` 보강 — dtype·shape·broadcasting·indexing 실습 확장
 - [ ] CPU ↔ MPS 이동(`.to(device)`) 성능 차이 측정
-- [ ] [[../30-References/python-basics]]에 PyTorch 기초 개념 정리 시작
+- [ ] 같은 `gradient.py`를 Colab cuda에서 실행해 결과 일치 재확인
 
 ### Phase 2 — autograd & 첫 학습 루프
-- [ ] `requires_grad`, `.backward()`, `.grad` 개념 실습
-- [ ] 선형 회귀 from-scratch (loss/optimizer 없이)
+- [x] `requires_grad`, `autograd.grad`, `retain_graph` 개념 실습 (Phase 1 `gradient.py`에서 선행)
+- [ ] `.backward()` 방식 — `loss.backward()` 호출 후 `.grad` 채워지는 흐름
+- [ ] 선형 회귀 from-scratch (loss/optimizer 없이, 수동 파라미터 업데이트)
 - [ ] `nn.Module` + `optim.SGD` 도입
 - [ ] 동일 코드 Colab(2.6.0)·로컬(2.2.2) 결과 비교
 
