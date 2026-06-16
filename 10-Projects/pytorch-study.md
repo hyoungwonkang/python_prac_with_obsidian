@@ -43,45 +43,68 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
     └── ch01_basics.ipynb      ← Colab에서 GitHub에 직접 커밋, 첫 셀에 Colab 배지
 ```
 
-## 단계 (Phase)
+## 단계 (교재 부록 A 절 + 선행 셋업)
 
-### Phase 0 — 환경 셋업 ✅ 완료 (2026-06-16)
+> 출처: Raschka, *밑바닥부터 만들면서 배우는 LLM* 부록 A. 각 절을 교재 따라 진행하면서 필요한 실습 코드는 직접 작성한다.
+
+### 선행: 환경 셋업 ✅ 완료 (2026-06-16)
 - [x] Homebrew Python 3.12 + `~/ml-env` venv 생성
 - [x] 로컬 PyTorch 2.2.2 설치 + MPS 동작 확인 ([[../30-References/pytorch-env-hybrid]])
 - [x] 레포 클론 + vault에 프로젝트 등록
 - [x] Colab 새 노트북 + T4 GPU 활성화 + 환경 검증 셀 (PyTorch 2.6.0+cu124, Tesla T4)
 - [x] Colab → vault 동기화 워크플로 확정 — Colab "파일 → GitHub에 사본 저장" → 로컬 merge
 
-### Phase 1 — 텐서 기초 (진행 중)
-- [x] `ch00_env_check.py` — 디바이스 자동선택, 양 환경에서 동일 결과 확인
-- [x] `logistic.py` — 로지스틱 회귀 forward 한 스텝 (선형 → sigmoid → BCE)
-- [x] `gradient.py` — autograd로 ∂loss/∂w1, ∂loss/∂b 직접 계산 (2026-06-16: `(-0.0898, -0.0817)`)
-- [x] [[../30-References/python-basics]]에 PyTorch 기초(autograd) 섹션 신설
-- [ ] `ch01_tensor_dtypes.py` 보강 — dtype·shape·broadcasting·indexing 실습 확장
-- [ ] CPU ↔ MPS 이동(`.to(device)`) 성능 차이 측정
-- [ ] 같은 `gradient.py`를 Colab cuda에서 실행해 결과 일치 재확인
+### A.1 파이토치란 무엇인가요?
+- [ ] 교재 본문 학습
+- [ ] 핵심 메모 정리 → [[../30-References/python-basics]]
 
-### Phase 2 — autograd & 첫 학습 루프
-- [x] `requires_grad`, `autograd.grad`, `retain_graph` 개념 실습 (Phase 1 `gradient.py`에서 선행)
-- [ ] `.backward()` 방식 — `loss.backward()` 호출 후 `.grad` 채워지는 흐름
-- [ ] 선형 회귀 from-scratch (loss/optimizer 없이, 수동 파라미터 업데이트)
-- [ ] `nn.Module` + `optim.SGD` 도입
-- [ ] 동일 코드 Colab(2.6.0)·로컬(2.2.2) 결과 비교
+### A.2 텐서 이해하기
+- [ ] 교재 본문 학습
+- [ ] 실습 코드 — dtype·shape·broadcasting·indexing
 
-### Phase 3 — 첫 분류 모델 (MNIST)
-- [ ] `torchvision.datasets.MNIST` + `DataLoader`
-- [ ] MLP → CNN 단계적 도입
-- [ ] 학습/평가 루프 구조화 (train/eval mode, no_grad)
-- [ ] **Colab T4에서 풀 학습, 로컬은 코드 작성·디버그용**
+### A.3 모델을 계산 그래프로 보기
+- [ ] 교재 본문 학습
+- [ ] 실습 코드 — forward 그래프 시각화
 
-### Phase 4 — 검증·재현성·실험 관리
-- [ ] random seed 고정, `torch.backends.cudnn.deterministic`
-- [ ] 체크포인트 저장/로드 (`weights_only=True` 명시)
-- [ ] 실험 결과를 [[../90-Daily]] 데일리 노트에 기록하는 흐름 만들기
+### A.4 자동 미분을 손쉽게
+- [ ] 교재 본문 학습
+- 작성한 실습 코드:
+	- `logistic.py` — 선형 → sigmoid → BCE forward 한 스텝
+	- `gradient.py` — autograd로 ∂loss/∂w1, ∂loss/∂b 직접 계산 (2026-06-16: `(-0.0898, -0.0817)`)
+	- [[../30-References/python-basics]]에 PyTorch autograd 섹션 신설
 
-### Phase 5 — 응용 (선택)
-- [ ] Transfer learning (사전학습 모델 fine-tune)
-- [ ] [[rec-planner]]와 접점: 임베딩 추출 등
+### A.5 다층 신경망 만들기
+- [ ] 교재 본문 학습
+- [ ] 실습 코드 — `nn.Module` 서브클래싱
+
+### A.6 효율적인 데이터 로더 설정하기
+- [ ] 교재 본문 학습
+- [ ] 실습 코드 — `Dataset` / `DataLoader`
+
+### A.7 일반적인 훈련 루프
+- [ ] 교재 본문 학습
+- [ ] 실습 코드 — forward → loss → backward → optimizer.step
+
+### A.8 모델 저장과 로드
+- [ ] 교재 본문 학습
+- [ ] 실습 시 `torch.save(state_dict)` + `torch.load(..., weights_only=True)`
+
+### A.9 GPU로 훈련 성능 최적화하기
+- [ ] 교재 본문 학습
+- [ ] CPU ↔ MPS 이동(`.to(device)`) 성능 차이 측정 (로컬)
+- [ ] 같은 코드를 Colab cuda에서 실행해 결과·속도 비교
+
+### A.10 요약
+- [ ] 부록 A 전체 회고 메모 → [[../30-References/python-basics]]
+
+## 지금까지 만든 실습 코드 (절 매핑)
+
+| 파일 | 내용 | 관련 절 |
+|---|---|---|
+| `ch00_env_check.py` | 디바이스 자동선택, 양 환경 결과 일치 확인 | 선행 / A.1 |
+| `logistic.py` | 선형 → sigmoid → BCE forward 한 스텝 | A.4 부근 |
+| `gradient.py` | autograd로 ∂loss/∂w1, ∂loss/∂b 직접 계산 | A.4 |
+| `notebooks/ch01_basics.ipynb` | Colab 환경 검증 노트북 | 선행 |
 
 ## 작업 분담 원칙
 
