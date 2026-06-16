@@ -114,6 +114,49 @@ HTML 안에서 Python 로직을 사용하기 위한 문법. FastAPI의 Jinja2Tem
 - `description: str | None = None` → 선택 필드 (안 넘기면 None)
 - `title: str` → 필수 필드
 
+## PyTorch 기초 (autograd)
+
+[[../10-Projects/pytorch-study|pytorch-study]] 진행 중 만난 개념. 환경 정본은 [[pytorch-env-hybrid]].
+
+### `torch.tensor(data, requires_grad=False)`
+- PyTorch의 기본 컨테이너. NumPy 배열 + GPU + 자동미분 지원.
+- `requires_grad=True`를 주면 PyTorch가 이 텐서에 대한 **연산 그래프를 추적**한다.
+- 일반적으로 **학습 대상(가중치 w, 편향 b)에만 True**, 입력/정답에는 False(기본).
+
+### autograd 한눈에
+```
+forward:  x → (w, b 사용) → 예측 ŷ → 손실 L
+backward: ∂L/∂w, ∂L/∂b 를 자동으로 구함 (체인 룰을 라이브러리가 대신 해줌)
+```
+- PyTorch는 forward 중 모든 연산을 그래프로 기록 → backward 호출 시 거꾸로 미분.
+- 두 가지 호출 방식 (등가):
+  - `loss.backward()` → `w.grad`, `b.grad`에 결과가 자동으로 쌓임 (대부분의 학습 루프 방식)
+  - `torch.autograd.grad(loss, [w, b])` → 결과를 변수로 직접 받음 (값을 보고 싶을 때 편함)
+
+### `torch.sigmoid(z)`
+- 시그모이드 함수 σ(z) = 1 / (1 + e^(-z)). 출력 범위 (0, 1) → **이진 분류 확률**로 해석.
+- 단, **이진 분류 학습에는 `BCEWithLogitsLoss`가 수치 안정**: 시그모이드+BCE를 한 번에. 따로 쓰면 매우 큰 z에서 log(0) 위험.
+
+### `F.binary_cross_entropy(input, target)`
+- 이진 교차 엔트로피 손실. `input`은 **확률**(0~1 범위, 시그모이드 통과한 값)이어야 함.
+- 로짓(시그모이드 통과 전)을 그대로 넣으면 안 됨 → 그땐 `F.binary_cross_entropy_with_logits` 사용.
+
+### `torch.autograd.grad(outputs, inputs, retain_graph=False)`
+- 명시적으로 ∂outputs/∂inputs를 계산. `.backward()` 안 부르고 값을 직접 받고 싶을 때.
+- 반환값은 **튜플** — 입력이 하나여도 `(tensor,)` 형태로 옴.
+- `retain_graph=True` — 같은 그래프에서 두 번 이상 grad/backward를 부를 때 필수. 기본은 한 번 쓰고 그래프 메모리 해제.
+
+### `requires_grad` vs `grad` vs `grad_fn` (헷갈리기 쉬움)
+| 속성 | 의미 |
+|------|------|
+| `t.requires_grad` | 이 텐서를 추적하라(True/False 플래그) |
+| `t.grad` | **`.backward()` 호출 후** 채워지는 ∂loss/∂t 값 (그 전엔 None) |
+| `t.grad_fn` | 이 텐서를 만든 연산(예: `<AddBackward0>`). leaf 텐서는 None |
+
+### 실습 흐름 (이 프로젝트의 두 파일)
+- [[../10-Projects/pytorch-study/logistic.py]] — forward만: 선형결합 → sigmoid → BCE
+- [[../10-Projects/pytorch-study/gradient.py]] — 같은 forward + `requires_grad=True` + `grad()`로 ∂L/∂w1, ∂L/∂b 직접 계산
+
 ## 프로젝트 파일
 
 ### `requirements.txt`
