@@ -93,12 +93,11 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 - [x] 교재 본문 학습
 
 ### A.9 GPU로 훈련 성능 최적화하기
-- [ ] 교재 본문 학습
-- [ ] CPU ↔ MPS 이동(`.to(device)`) 성능 차이 측정 (로컬)
-- [ ] 같은 코드를 Colab cuda에서 실행해 결과·속도 비교
+- [x] 교재 본문 학습
+- [x] CPU ↔ MPS 이동(`.to(device)`) 성능 차이 측정 (로컬)
 
 ### A.10 요약
-- [ ] 부록 A 전체 회고 메모 → [[../30-References/python-basics]]
+- [ ] 부록 A 전체 회고 메모 → [[../30-References/python-basics#PyTorch 부록 A 회고]] (스켈레톤 신설, 본문은 학습 회고 직접 작성)
 
 ## 지금까지 만든 실습 코드 (절 매핑)
 
