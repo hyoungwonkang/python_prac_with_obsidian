@@ -90,7 +90,7 @@ chmod +x .git/hooks/post-commit
 
 ## 새 페이지 매핑 추가
 
-본문 1~7장 노트(`10-Projects/llm-ch{n}-*.md`)를 만들면
+본문 1~7장 노트(`10-Projects/llm-from-scratch/llm-ch{n}-*.md`)를 만들면
 `config.yaml` `pages:` 의 주석 처리된 매핑을 해제한다. page_id 목록은
 `notion-mcp.md` "Notion 페이지 매핑" 표가 정본.
 

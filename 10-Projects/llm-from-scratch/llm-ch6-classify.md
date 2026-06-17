@@ -21,10 +21,10 @@
 
 ## 별도 트랙 접점
 
-이 장 완료 직후가 [[../30-References/bert_ocr_practice_plan]]의 **BERT 실습 진입 시점**(정본 결정). GPT에 분류 head를 직접 붙여 FT한 경험을 바탕으로 → "같은 분류 FT를 BERT+HF Transformers로는 이렇게" 비교 학습하면 효과가 가장 크다.
+이 장 완료 직후가 [[../../30-References/bert_ocr_practice_plan]]의 **BERT 실습 진입 시점**(정본 결정). GPT에 분류 head를 직접 붙여 FT한 경험을 바탕으로 → "같은 분류 FT를 BERT+HF Transformers로는 이렇게" 비교 학습하면 효과가 가장 크다.
 
 ## 관련 노트
 
 - [[llm-from-scratch]] — 마스터 플랜 (인덱스)
-- [[../30-References/bert_ocr_practice_plan]] — BERT·OCR 라이브러리 실습 트랙 (이 장 직후 진입)
-- [[../30-References/pytorch-env-hybrid]] — 환경 정본
+- [[../../30-References/bert_ocr_practice_plan]] — BERT·OCR 라이브러리 실습 트랙 (이 장 직후 진입)
+- [[../../30-References/pytorch-env-hybrid]] — 환경 정본

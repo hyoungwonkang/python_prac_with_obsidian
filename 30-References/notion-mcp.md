@@ -161,13 +161,13 @@ vault 노트가 있는 페이지만 동기 대상.
 |---|---|---|
 | `10-Projects/llm-from-scratch.md` | `38147515-0358-81f4-9b5f-c2fb013fa88a` | 마스터 (인덱스) |
 | `10-Projects/pytorch-study.md` | `38147515-0358-81e7-88be-edf4c2a76be2` | 부록 A |
-| `10-Projects/llm-ch1-overview.md` | `38147515-0358-819e-8466-f57e31b34bbd` | 1장 |
-| `10-Projects/llm-ch2-text.md` | `38147515-0358-8138-95fb-e841ae4fb52a` | 2장 |
-| `10-Projects/llm-ch3-attention.md` | `38147515-0358-815c-af30-c8728d23b5ce` | 3장 |
-| `10-Projects/llm-ch4-gpt.md` | `38147515-0358-81d8-b465-f9faab13fe3a` | 4장 |
-| `10-Projects/llm-ch5-pretrain.md` | `38147515-0358-812e-a3c4-e1f404b0a6a0` | 5장 |
-| `10-Projects/llm-ch6-classify.md` | `38147515-0358-8167-a267-ce0d17b844f1` | 6장 |
-| `10-Projects/llm-ch7-instruct.md` | `38147515-0358-817c-8e13-eae2e416690a` | 7장 |
+| `10-Projects/llm-from-scratch/llm-ch1-overview.md` | `38147515-0358-819e-8466-f57e31b34bbd` | 1장 |
+| `10-Projects/llm-from-scratch/llm-ch2-text.md` | `38147515-0358-8138-95fb-e841ae4fb52a` | 2장 |
+| `10-Projects/llm-from-scratch/llm-ch3-attention.md` | `38147515-0358-815c-af30-c8728d23b5ce` | 3장 |
+| `10-Projects/llm-from-scratch/llm-ch4-gpt.md` | `38147515-0358-81d8-b465-f9faab13fe3a` | 4장 |
+| `10-Projects/llm-from-scratch/llm-ch5-pretrain.md` | `38147515-0358-812e-a3c4-e1f404b0a6a0` | 5장 |
+| `10-Projects/llm-from-scratch/llm-ch6-classify.md` | `38147515-0358-8167-a267-ce0d17b844f1` | 6장 |
+| `10-Projects/llm-from-scratch/llm-ch7-instruct.md` | `38147515-0358-817c-8e13-eae2e416690a` | 7장 |
 
 ### Python 의존성
 

@@ -23,4 +23,4 @@ LayerNorm·GELU·FeedForward·residual을 조립해 transformer 블록을 만들
 ## 관련 노트
 
 - [[llm-from-scratch]] — 마스터 플랜 (인덱스)
-- [[../30-References/pytorch-env-hybrid]] — 환경 정본
+- [[../../30-References/pytorch-env-hybrid]] — 환경 정본

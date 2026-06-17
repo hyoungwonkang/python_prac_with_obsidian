@@ -23,4 +23,4 @@ LLM이 무엇이고 왜 트랜스포머 기반인지, 책 전체에서 무엇을
 
 - [[llm-from-scratch]] — 마스터 플랜 (인덱스)
 - [[pytorch-study]] — 부록 A (선행)
-- [[../30-References/pytorch-env-hybrid]] — 환경 정본
+- [[../../30-References/pytorch-env-hybrid]] — 환경 정본

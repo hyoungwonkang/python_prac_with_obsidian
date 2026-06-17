@@ -22,4 +22,4 @@ instruction 데이터셋과 프롬프트 템플릿으로 모델이 지시를 따
 ## 관련 노트
 
 - [[llm-from-scratch]] — 마스터 플랜 (인덱스)
-- [[../30-References/pytorch-env-hybrid]] — 환경 정본
+- [[../../30-References/pytorch-env-hybrid]] — 환경 정본

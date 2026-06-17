@@ -7,7 +7,7 @@
 
 - 사용자의 ML 학습 트랙 **최상위 목표**: LLM을 처음부터 구현해 보면서 동작 원리를 이해.
 - 교재 본문은 1~7장으로 구성. **부록 A(PyTorch)**는 본문 진입 전 필수 기초 → 이미 [[pytorch-study]]로 분리 진행 중.
-- 이 노트는 **마스터 인덱스**: 각 장(Phase)의 큰 흐름·체크리스트만 관리하고, 분량이 커지는 장은 별도 `10-Projects/llm-ch{n}-*.md` 노트로 분리.
+- 이 노트는 **마스터 인덱스**: 각 장(Phase)의 큰 흐름·체크리스트만 관리하고, 분량이 커지는 장은 별도 `10-Projects/llm-from-scratch/llm-ch{n}-*.md` 노트로 분리.
 - 환경 정본은 [[../30-References/pytorch-env-hybrid]] (인텔 맥 로컬 2.2.2 + Colab 2.6.0 하이브리드)를 그대로 따른다.
 
 ## 교재 구성과 진행 현황
@@ -70,7 +70,7 @@
 ## Notion 미러
 
 [[../30-References/notion-mcp]] 운영 원칙에 따라 이 노트는 **vault 정본 = 원본**.
-구조: **이 마스터 노트 = 인덱스(체크박스 없음)**, 각 장(부록A·1~7장)은 **자식 페이지**로 분리되어 각 정본 노트(`pytorch-study.md`, `llm-ch{n}-*.md`)와 1:1 미러. config 매핑은 `.notion-sync/config.yaml`, page_id는 [[../30-References/notion-mcp]] 참조.
+구조: **이 마스터 노트 = 인덱스(체크박스 없음)**, 각 장(부록A·1~7장)은 **자식 페이지**로 분리되어 각 정본 노트(`pytorch-study.md`, `llm-from-scratch/llm-ch{n}-*.md`)와 1:1 미러. config 매핑은 `.notion-sync/config.yaml`, page_id는 [[../30-References/notion-mcp]] 참조.
 
 ## 관련 노트
 
