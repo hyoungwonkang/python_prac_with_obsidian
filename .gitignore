@@ -49,3 +49,6 @@ htmlcov/
 
 # Notion 동기 — 캐시/로그만 제외 (스크립트·config는 git 포함, 토큰은 vault 밖)
 .notion-sync/.cache/
+
+# 실습 중 다운로드되는 데이터셋 (tokenization.py가 재다운로드 — 코드만 git 추적)
+10-Projects/llm-from-scratch/input.txt
