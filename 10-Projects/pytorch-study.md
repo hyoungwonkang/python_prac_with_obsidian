@@ -87,7 +87,8 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 
 ### A.7 일반적인 훈련 루프
 - [x] 교재 본문 학습
-- [x] 실습 코드 — forward → loss → backward → optimizer.step
+- 작성한 실습 코드:
+	- `training.py` — forward → loss → backward → optimizer.step + 정확도 측정
 
 ### A.8 모델 저장과 로드
 - [x] 교재 본문 학습
@@ -95,6 +96,9 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 ### A.9 GPU로 훈련 성능 최적화하기
 - [x] 교재 본문 학습
 - [x] CPU ↔ MPS 이동(`.to(device)`) 성능 차이 측정 (로컬)
+- 작성한 실습 코드:
+	- `gpu.py` — 단일 GPU 디바이스 이동 + 학습 루프
+	- `multi-gpu.py` — DDP(`DistributedDataParallel`) 분산 학습 실습
 
 ### A.10 요약 ✅ 부록 A 완료 (2026-06-17)
 - [x] 부록 A 전체 회고 메모 → [[../30-References/python-basics#PyTorch 부록 A 회고]]
@@ -110,6 +114,9 @@ PyTorch 입문 학습 프로젝트. 교재(Colab/PyTorch 2.6.0 기준)를 따라
 | `backprop_intuition.md` | 역전파(연쇄 법칙) 직관 정리 메모 | A.4 |
 | `neural.py` | `nn.Module` 서브클래싱한 다층 신경망 | A.5 |
 | `dataloader.py` | 훈련 데이터 텐서 + `DataLoader` 실습 | A.6 |
+| `training.py` | 학습 루프 + 정확도 측정 실습 | A.7 |
+| `gpu.py` | 단일 GPU 디바이스 이동·학습 | A.9 |
+| `multi-gpu.py` | DDP(`DistributedDataParallel`) 분산 학습 실습 | A.9 |
 | `notebooks/ch01_basics.ipynb` | Colab 환경 검증 노트북 | 선행 |
 
 ## 작업 분담 원칙
