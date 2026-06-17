@@ -51,6 +51,7 @@
   학습 루프·사전훈련, GPT-2 공개 가중치 로드. 실학습은 Colab T4 메인.
 - **Phase 6 — 6장. 분류를 위해 미세 튜닝하기** → [[llm-ch6-classify]]
   분류 head 추가 + 레이어 freeze로 분류 FT.
+  📌 **별도 트랙 접점:** 이 장 완료 직후가 [[../30-References/bert_ocr_practice_plan]] BERT 실습 진입 시점(정본 결정). GPT 분류 FT를 직접 짠 뒤 → 같은 걸 BERT+HF로 비교 학습. OCR은 7장 완주 후 최하 우선순위.
 - **Phase 7 — 7장. 지시를 따르도록 미세 튜닝하기** → [[llm-ch7-instruct]]
   instruction 데이터셋·프롬프트 템플릿으로 지시 따르기 FT.
 
@@ -78,3 +79,4 @@
 - [[llm-ch1-overview]] · [[llm-ch2-text]] · [[llm-ch3-attention]] · [[llm-ch4-gpt]] · [[llm-ch5-pretrain]] · [[llm-ch6-classify]] · [[llm-ch7-instruct]] — 1~7장 정본
 - [[../30-References/pytorch-env-hybrid]] — 환경 정본
 - [[../30-References/notion-mcp]] — Notion 미러 운영 규칙
+- [[../30-References/bert_ocr_practice_plan]] — 별도 트랙(BERT·OCR 라이브러리 실습). 진입 시점은 6장 직후(BERT)·7장 후(OCR).
