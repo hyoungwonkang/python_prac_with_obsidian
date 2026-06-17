@@ -1,0 +1,33 @@
+---
+description: python_prac_with_obsidian vault 작업 규칙 — 정본은 CLAUDE.md
+globs:
+alwaysApply: true
+---
+
+# 이 레포의 정본은 `CLAUDE.md` 입니다
+
+이 레포(`python_prac_with_obsidian`)는 **파이썬 학습용 Obsidian vault**입니다.
+Cursor(및 모든 AI 어시스턴트)는 작업 전에 **레포 루트의 `CLAUDE.md`를 정본(Single Source of Truth)으로 따르세요.**
+
+이 파일은 Cursor가 `CLAUDE.md`를 자동으로 읽지 않기 때문에 두는 **얇은 포인터**일 뿐입니다.
+실제 규칙은 중복하지 않습니다 — 항상 `CLAUDE.md`의 최신 내용을 기준으로 합니다.
+
+## 반드시 지킬 핵심 규칙 (요약 — 상세는 `CLAUDE.md`)
+
+1. **모든 답변은 한국어가 기본.**
+2. **정본 우선순위**: vault 노트(`CLAUDE.md`, `10-Projects/_Projects.md`, 각 프로젝트 노트, `30-References/*`)가 정본.
+   같은 결정이 여러 곳에 있으면 vault 노트 기준.
+3. **의미있는 결정·변경은 질문 없이 즉시 `git commit`** (Conventional Commits).
+   단, **push는 사용자가 명시적으로 지시할 때만** — 자동 push 금지.
+4. **vault 노트에 이미 결정된 사항은 재확인 없이 그대로 진행.** 충돌·누락 시에만 질문.
+5. 진행 중인 프로젝트·프로젝트 규칙(Conventions)은 `10-Projects/_Projects.md` 참조.
+
+## vault 구조
+
+- `10-Projects/` — 프로젝트 단위 노트
+- `20-Snippets/` — 재사용 코드 조각
+- `30-References/` — 외부 문서·링크 (PyTorch 환경 정본: `30-References/pytorch-env-hybrid.md`)
+- `90-Daily/` — 데일리 노트
+- `99-Archive/` — 보관
+
+> 작업을 시작하기 전에 `CLAUDE.md`와 `10-Projects/_Projects.md`를 먼저 읽으세요.
