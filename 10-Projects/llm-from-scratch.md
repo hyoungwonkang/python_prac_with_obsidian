@@ -15,8 +15,8 @@
 | 부 | 제목 | vault 노트 | 상태 |
 |---|---|---|---|
 | 부록 A | PyTorch 기초 | [[pytorch-study]] | ✅ 완료 (2026-06-17) |
-| 1장 | 대규모 언어 모델 이해하기 | [[llm-ch1-overview]] | 미시작 |
-| 2장 | 텍스트 데이터 다루기 | [[llm-ch2-text]] | 미시작 |
+| 1장 | 대규모 언어 모델 이해하기 | [[llm-ch1-overview]] | ✅ 완료 (2026-06-18, 1.5 용어집 선택) |
+| 2장 | 텍스트 데이터 다루기 | [[llm-ch2-text]] | ✅ 완료 (2026-06-18) |
 | 3장 | 어텐션 메커니즘 구현하기 | [[llm-ch3-attention]] | 미시작 |
 | 4장 | 밑바닥부터 GPT 모델 구현하기 | [[llm-ch4-gpt]] | 미시작 |
 | 5장 | 레이블이 없는 데이터를 활용한 사전 훈련 | [[llm-ch5-pretrain]] | 미시작 |
@@ -39,10 +39,10 @@
 
 - **Phase 0 — 부록 A: PyTorch 기초 (선행)** ✅ 완료 (2026-06-17) → [[pytorch-study]]
   교재 부록 A(A.1~A.10) 전 항목 완료. 회고: [[../30-References/python-basics#PyTorch 부록 A 회고]]. 다음: 본문 1장 진입.
-- **Phase 1 — 1장. 대규모 언어 모델 이해하기** → [[llm-ch1-overview]]
-  LLM·트랜스포머의 큰 그림. 코드 작성 거의 없음.
-- **Phase 2 — 2장. 텍스트 데이터 다루기** → [[llm-ch2-text]]
-  토큰화·임베딩·`DataLoader`로 입력 파이프라인 구축.
+- **Phase 1 — 1장. 대규모 언어 모델 이해하기** ✅ 완료 (2026-06-18) → [[llm-ch1-overview]]
+  LLM·트랜스포머의 큰 그림. 코드 작성 거의 없음. (1.5 용어집은 선택 후속.)
+- **Phase 2 — 2장. 텍스트 데이터 다루기** ✅ 완료 (2026-06-18) → [[llm-ch2-text]]
+  토큰화·임베딩·`DataLoader`로 입력 파이프라인 구축. 실습 4파일(`tokenization.py`·`tokenizerV2.py`·`gpt_datasampling.py`·`gpt_embedding.py`)로 2.1~2.5 재현.
 - **Phase 3 — 3장. 어텐션 메커니즘 구현하기** → [[llm-ch3-attention]]
   self-attention → Q/K/V → causal → multi-head 단계적 구현.
 - **Phase 4 — 4장. 밑바닥부터 GPT 모델 구현하기** → [[llm-ch4-gpt]]
