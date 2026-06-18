@@ -31,6 +31,10 @@ venv/
 env/
 ENV/
 
+# direnv — venv 자동 활성화 (PC별 venv 경로가 달라 로컬 전용)
+.envrc
+.direnv/
+
 # Environment variables / secrets
 .env
 .env.*
