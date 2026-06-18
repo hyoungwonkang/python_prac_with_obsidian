@@ -9,7 +9,7 @@
 
 ## 체크리스트
 
-- [~] 3.1 단순 self-attention (가중치 학습 없이 dot-product) — 개념 정리 완료, 코드 실습 예정
+- [x] 3.1 단순 self-attention (가중치 학습 없이 dot-product) — 개념 정리 + `attention.py` 실습 완료
 - [ ] 3.2 학습 가능한 가중치(Q, K, V) 도입
 - [ ] 3.3 scaled dot-product attention
 - [ ] 3.4 causal(마스킹) attention
