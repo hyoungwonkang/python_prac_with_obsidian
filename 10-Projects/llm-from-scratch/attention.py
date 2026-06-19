@@ -1,9 +1,5 @@
 import torch
 
-# 3장 3.1 단순 self-attention (학습 가중치 없이 dot-product)
-# 교재: Sebastian Raschka, 밑바닥부터 만들면서 배우는 LLM
-# 예제 텍스트: "Your journey starts with one step" — 6 토큰, 각 3차원 임베딩
-# 아래 값은 랜덤이 아니라 계산 과정을 보여주려 박아둔 고정 예시값.
 inputs = torch.tensor(
     [[0.43, 0.15, 0.89],  # Your    (x^1)
      [0.55, 0.87, 0.66],  # journey (x^2)
@@ -42,3 +38,21 @@ print("\n모든 문맥 벡터:\n", all_context_vecs)
 
 # 검증: 행렬 연산 결과의 2번째 행이 위 루프의 z^2와 같아야 함
 print("\nz^2 일치 확인:", torch.allclose(all_context_vecs[1], context_vec_2))
+
+
+d_in = inputs.shape[1]
+d_out = 2
+
+torch.manual_seed(123)
+W_query = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad=False)
+W_key = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad=False)
+W_value = torch.nn.Parameter(torch.rand(d_in, d_out), requires_grad=False)
+
+keys = inputs @ W_key
+query_2 = inputs[1] @ W_query   # journey 도 W_query 로 2차원 투영해야 keys 와 내적 가능
+
+attn_scores_2 = query_2 @ keys.T
+
+d_k = keys.shape[-1]
+attn_weights_2 = torch.softmax(attn_scores_2 / (d_k ** 0.5), dim=-1)
+print(attn_weights_2)
