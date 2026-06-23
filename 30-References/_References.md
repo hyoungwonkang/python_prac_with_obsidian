@@ -25,7 +25,7 @@
 
 ## ML 개념 학습
 
-- [[mlops-mlflow]] — MLOps·MLflow 기초 학습 노트. 실습 없이 **질문→답변 누적**으로 작성, Notion 미러 예정.
+- [[mlops]] — MLOps 기초 학습 정리. 개념 전반(수명주기·4대 원칙·이점·성숙도·DevOps 비교)을 [[bert_ocr_practice_plan|BERT·OCR]]과 같은 하우스 스타일로 정리. MLflow는 학습 전이라 주석으로 보류. Notion 수동 미러.
 
 ## 새 레퍼런스 추가 방법
 

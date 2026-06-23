@@ -1,6 +1,6 @@
 ---
-title: MLOps · MLflow 기초 학습
-tags: [reference, mlops, mlflow, ml]
+title: MLOps 기초 학습
+tags: [reference, mlops, ml]
 ---
 
 # MLOps 학습 정리
@@ -9,7 +9,7 @@ tags: [reference, mlops, mlflow, ml]
 
 이 문서는 MLOps를 처음 접하는 개발자 관점에서, 개념과 작동 원리를 비유와 함께 정리한 학습 노트입니다. "높은 레벨(high-level)"이라는 말의 의미부터 ML 수명 주기 전체 흐름, MLOps를 떠받치는 4대 원칙과 이점, 조직별 성숙도 레벨, 수동·자동 워크플로, 그리고 DevOps와의 차이까지 단계별로 다룹니다. LLM 학습 트랙([[../10-Projects/llm-from-scratch]])과 병행하는 개념 학습 노트입니다.
 
-> 정본 출처 = `~/dev/python_prac_with_obsidian/30-References/mlops-mlflow.md`
+> 정본 출처 = `~/dev/python_prac_with_obsidian/30-References/mlops.md`
 
 ## 목차
 
@@ -59,10 +59,12 @@ Data Prep → Train & Tune → Deploy & Monitor → Inference
 
 ### ② Train & Tune — 학습·튜닝
 
-알고리즘을 골라 모델을 학습시키고 성능을 검증·튜닝하는 단계입니다. **MLflow가 가장 직접적으로 닿는 영역**입니다.
+알고리즘을 골라 모델을 학습시키고 성능을 검증·튜닝하는 단계입니다.
+
+<!-- TODO(MLflow): 아직 학습 전 — "MLflow가 가장 직접적으로 닿는 영역" 설명을 학습 후 여기에 정리 -->
 
 - **Algorithm Selection**(알고리즘 선택) → **Model Training**(학습) → **Metrics Validation**(지표 검증)
-- 학습 추적: **Experiments → Trials → Trial Components**(실험/시도/구성요소 단위 기록) ← MLflow의 핵심 기능
+- 학습 추적: **Experiments → Trials → Trial Components**(실험/시도/구성요소 단위 기록) <!-- TODO(MLflow): 이 추적이 MLflow 핵심 기능 — 학습 후 보강 -->
 - 실행 위치: **Local** / **Hosted**, 이후 **Hyper-param Tuning**(하이퍼파라미터 튜닝)
 - 산출물: **Code Artifact**, **Model Artifact** → **Model Registry**(모델 저장소)에 등록
 
@@ -86,7 +88,9 @@ Data Prep → Train & Tune → Deploy & Monitor → Inference
 | **Artifact Lineage** | Data → Code → Model 산출물의 **계보 추적**. "이 모델이 어떤 데이터·코드로 만들어졌나"를 역추적 |
 | **Feature Store (Offline/Online)** | 학습용(offline)·서빙용(online) 특성을 **일관되게 공유** |
 
-> 한 문장으로: ML 수명 주기는 **데이터 준비 → 학습·튜닝 → 배포·모니터링 → 추론**의 4단계이며, MLflow 관점에서 가장 중요한 접점은 **Experiments/Trials(실험 추적)**, **Model Registry**, **Artifact Lineage**입니다.
+> 한 문장으로: ML 수명 주기는 **데이터 준비 → 학습·튜닝 → 배포·모니터링 → 추론**의 4단계이며, 산출물 관리의 핵심 접점은 **Experiments/Trials(실험 추적)**, **Model Registry**, **Artifact Lineage**입니다.
+
+<!-- TODO(MLflow): 위 3개 접점(실험 추적·Model Registry·Artifact Lineage)이 MLflow가 닿는 지점 — 학습 후 정리 -->
 
 ---
 
@@ -155,7 +159,7 @@ ML은 본질적으로 실험적·혁신적이라 통제 없이 두면 비용 폭
 ### ② 생산성 향상 — "보일러플레이트와 재사용"
 
 - **개발/실험 환경 표준화** → 새 프로젝트 착수, 여러 프로젝트 전환, 여러 앱에서 **모델 재사용**이 쉬움
-- **반복 가능한(repeatable) 실험·학습 프로세스** 구축 (여기서 MLflow가 실험 기록 도구로 등장)
+- **반복 가능한(repeatable) 실험·학습 프로세스** 구축 <!-- TODO(MLflow): 여기서 MLflow가 실험 기록 도구로 등장 — 학습 후 보강 -->
 - SW 엔지니어링 팀이 ML 개발 수명 주기 전반에서 **협업·조정** → 효율↑
 
 ### ③ 효율적인 모델 배포 — "관측 가능성 + 버전 관리"
@@ -251,7 +255,9 @@ ML은 본질적으로 실험적·혁신적이라 통제 없이 두면 비용 폭
 
 > ML 수명 주기는 **데이터 준비 → 학습·튜닝 → 배포·모니터링 → 추론**(2장)으로 흐르고, 이를 **버전 제어·자동화·지속적 X·거버넌스**(3장)라는 4대 원칙으로 운영하면 **출시 단축·생산성·효율적 배포**(4장)의 이점이 나옵니다. 조직은 **수동(레벨0) → 파이프라인 자동화(레벨1) → CI/CD 자동화(레벨2)**(5장) 순으로 성숙해지며, 이 모든 것은 **DevOps를 ML(데이터+모델+드리프트)에 맞게 확장**(6장)한 것입니다.
 
-"높은 레벨"에서 보면 MLOps는 *ML을 일회성 실험이 아니라 반복 가능한 엔지니어링으로 만드는 일*이고, **MLflow**는 그중 ②학습·튜닝 단계의 **실험 추적·모델 레지스트리·아티팩트 관리**를 담당하는 도구입니다.
+"높은 레벨"에서 보면 MLOps는 *ML을 일회성 실험이 아니라 반복 가능한 엔지니어링으로 만드는 일*입니다.
+
+<!-- TODO(MLflow): MLflow는 ②학습·튜닝 단계의 실험 추적·모델 레지스트리·아티팩트 관리를 담당하는 도구 — 학습 후 본문에 정리 -->
 
 ## 용어집
 
@@ -268,7 +274,9 @@ ML은 본질적으로 실험적·혁신적이라 통제 없이 두면 비용 폭
 
 ## 참고 링크
 
-- MLflow 공식 문서: https://mlflow.org/docs/latest/index.html
+_(MLflow 등 도구 학습 후 추가)_
+
+<!-- TODO(MLflow): 학습 후 추가 — MLflow 공식 문서: https://mlflow.org/docs/latest/index.html -->
 
 ## 관련 노트
 
