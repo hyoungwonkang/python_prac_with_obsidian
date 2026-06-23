@@ -23,6 +23,10 @@
 
 - [[pytorch-env-hybrid]] — **정본**. PyTorch 환경 가이드(인텔 맥 2.2.2 + Colab 2.6.0 하이브리드, 제약·근거·코드 표준). [[../10-Projects/pytorch-study]]에서 사용.
 
+## ML 개념 학습
+
+- [[mlops-mlflow]] — MLOps·MLflow 기초 학습 노트. 실습 없이 **질문→답변 누적**으로 작성, Notion 미러 예정.
+
 ## 새 레퍼런스 추가 방법
 
 - 짧은 링크 모음은 이 노트에 직접 추가
