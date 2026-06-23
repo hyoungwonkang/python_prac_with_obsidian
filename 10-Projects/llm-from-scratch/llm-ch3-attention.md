@@ -13,7 +13,7 @@
 - [x] 3.2 학습 가능한 가중치(Q, K, V) 도입 — `attention.py`(절차형) + `self-attention.py`(v1/v2 클래스)
 - [x] 3.3 scaled dot-product attention — √d_k 스케일링 적용
 - [x] 3.4 causal(마스킹) attention — `causal-attention.py`, 마스킹+dropout+배치
-- [ ] 3.5 multi-head attention 구현
+- [x] 3.5 multi-head attention 구현 — `mha.py` (헤드 분할/`view`+`transpose`, GPT-2 사양: d_out 768·12헤드)
 - [ ] 3.6 텐서 shape 변화를 손으로 추적해 노트로 정리
 
 ## 학습 정리

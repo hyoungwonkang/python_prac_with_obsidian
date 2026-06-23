@@ -17,8 +17,8 @@
 | 부록 A | PyTorch 기초 | [[pytorch-study]] | ✅ 완료 (2026-06-17) |
 | 1장 | 대규모 언어 모델 이해하기 | [[llm-ch1-overview]] | ✅ 완료 (2026-06-18, 1.5 용어집 선택) |
 | 2장 | 텍스트 데이터 다루기 | [[llm-ch2-text]] | ✅ 완료 (2026-06-18) |
-| 3장 | 어텐션 메커니즘 구현하기 | [[llm-ch3-attention]] | 미시작 |
-| 4장 | 밑바닥부터 GPT 모델 구현하기 | [[llm-ch4-gpt]] | 미시작 |
+| 3장 | 어텐션 메커니즘 구현하기 | [[llm-ch3-attention]] | ✅ 완료 (2026-06-23, MHA `mha.py`) |
+| 4장 | 밑바닥부터 GPT 모델 구현하기 | [[llm-ch4-gpt]] | ✅ 완료 (2026-06-23, `transformer.py`·`Gpt.py`) |
 | 5장 | 레이블이 없는 데이터를 활용한 사전 훈련 | [[llm-ch5-pretrain]] | 미시작 |
 | 6장 | 분류를 위해 미세 튜닝하기 | [[llm-ch6-classify]] | 미시작 |
 | 7장 | 지시를 따르도록 미세 튜닝하기 | [[llm-ch7-instruct]] | 미시작 |
@@ -43,10 +43,10 @@
   LLM·트랜스포머의 큰 그림. 코드 작성 거의 없음. (1.5 용어집은 선택 후속.)
 - **Phase 2 — 2장. 텍스트 데이터 다루기** ✅ 완료 (2026-06-18) → [[llm-ch2-text]]
   토큰화·임베딩·`DataLoader`로 입력 파이프라인 구축. 실습 4파일(`tokenization.py`·`tokenizerV2.py`·`gpt_datasampling.py`·`gpt_embedding.py`)로 2.1~2.5 재현.
-- **Phase 3 — 3장. 어텐션 메커니즘 구현하기** → [[llm-ch3-attention]]
-  self-attention → Q/K/V → causal → multi-head 단계적 구현.
-- **Phase 4 — 4장. 밑바닥부터 GPT 모델 구현하기** → [[llm-ch4-gpt]]
-  LayerNorm·GELU·residual 블록 조립 → GPT 아키텍처 완성.
+- **Phase 3 — 3장. 어텐션 메커니즘 구현하기** ✅ 완료 (2026-06-23) → [[llm-ch3-attention]]
+  self-attention → Q/K/V → causal → multi-head 단계적 구현. MHA `mha.py`(GPT-2 사양).
+- **Phase 4 — 4장. 밑바닥부터 GPT 모델 구현하기** ✅ 완료 (2026-06-23) → [[llm-ch4-gpt]]
+  LayerNorm·GELU·residual 블록 조립 → GPT 아키텍처 완성. `transformer.py`(블록)·`Gpt.py`(전체 모델·greedy 생성·파라미터 계산). 환경: M4 Max 로컬(torch 2.8.0).
 - **Phase 5 — 5장. 레이블이 없는 데이터를 활용한 사전 훈련** → [[llm-ch5-pretrain]]
   학습 루프·사전훈련, GPT-2 공개 가중치 로드. 실학습은 Colab T4 메인.
 - **Phase 6 — 6장. 분류를 위해 미세 튜닝하기** → [[llm-ch6-classify]]

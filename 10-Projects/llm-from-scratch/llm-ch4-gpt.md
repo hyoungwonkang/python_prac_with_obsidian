@@ -11,10 +11,14 @@ LayerNorm·GELU·FeedForward·residual을 조립해 transformer 블록을 만들
 
 - [x] 4.1 LayerNorm 직접 구현 — `layer_normalization.py`
 - [x] 4.2 GELU 활성화·FeedForward 블록 — `feed_forward.py`
-- [ ] 4.3 Residual connection 포함 transformer 블록
-- [~] 4.4 GPT 모델 아키텍처 조립 — `dummy_gpt_model.py`로 **더미 골격** 완성(블록·Norm은 자리표시)
-- [ ] 4.5 초기화된 모델로 텍스트 생성 (greedy → top-k → temperature)
-- [ ] 4.6 파라미터 수 계산·디바이스 메모리 점검
+- [x] 4.3 Residual connection 포함 transformer 블록 — `transformer.py`(`TransformerBlock`)
+- [x] 4.4 GPT 모델 아키텍처 조립 — `Gpt.py`(실제 `GPTModel`, 더미 골격 → 실블록 교체 완료)
+- [x] 4.5 초기화된 모델로 텍스트 생성 — `Gpt.py` `generate_text_simple`(greedy). top-k·temperature는 5장
+- [x] 4.6 파라미터 수 계산·메모리 점검 — `Gpt.py`(`numel` 합·weight tying·MB)
+- [x] 연습 4.1 GPT-2 4종(124M/Medium/Large/XL) config 추가·크기별 파라미터 비교 — `Gpt.py`
+- [ ] 연습: 드롭아웃 3곳(임베딩·숏컷·어텐션) 분리 설정 (`drop_rate`→3개 키)
+
+> **4장 본문 완료 (2026-06-23).** 환경: Apple Silicon M4 Max 로컬(`~/ml-env`, torch 2.8.0). 다음: 5장 사전훈련.
 
 ## 학습 정리
 
@@ -44,6 +48,37 @@ LayerNorm·GELU·FeedForward·residual을 조립해 transformer 블록을 만들
 - 검증 출력 평균≈0(부동소수점 잔차 `1e-8`), 분산=1. `-0.0000`/`0.0000` 부호 차이는 행별 반올림 오차 방향일 뿐 의미 없음.
 - `set_printoptions(sci_mode=False)`는 `1.19e-8`을 `0.0000`으로 **보기 좋게** 표시할 뿐 값은 동일.
 - 정규화 대상은 **텐서 rank(축 개수)** 가 아니라 **특징 개수**. mean은 특징을 6→1로 줄여도 rank(2)는 유지.
+
+### 4.3 TransformerBlock 조립 (`transformer.py`)
+
+- 구조(Pre-LN): `norm1 → 어텐션 → drop → +shortcut` → `norm2 → FFN → drop → +shortcut`. residual로 그레이디언트 흐름 보존(아래 복습 참조).
+- 입출력 모양 동일 `(2,4,768) → (2,4,768)` → 블록을 N개 쌓을 수 있는 근거.
+- 🐛 버그: `x = self.norm2`(모듈 객체 대입) → `x = self.norm2(x)`(호출)로 수정. 미호출 시 `Linear`가 텐서 대신 모듈을 받아 `F.linear`에서 에러.
+
+### 셀프 어텐션 vs FFN — 소통 vs 개별 소화
+
+- **어텐션 = 수평(토큰↔토큰)**: 시퀀스 원소 *사이*의 관계 파악, 정보 섞음(communication).
+- **FFN = 수직(토큰 내부)**: 각 위치를 독립 변환(다른 토큰 안 봄), 모든 위치에 같은 가중치 공유(computation).
+- FFN = **F**eed-**F**orward **N**etwork(앞으로만 흐르는 신경망, = MLP). 트랜스포머 블록 = "섞기(어텐션)→혼자 소화(FFN)"를 한 세트로 N번 반복.
+
+### 4.4 GPTModel 실제 조립 (`Gpt.py`)
+
+- 흐름: `tok_emb`(단어→벡터) + `pos_emb`(위치→벡터) → `+`(둘 다 `emb_dim`이라 더할 수 있음) → `drop_emb` → `trf_blocks(×n_layers)` → `final_norm` → `out_head`(logits).
+- `__init__`은 cfg로 부품을 *생성/준비*만, 실제 변환은 `forward`. 임베딩 가중치는 랜덤 시작 → 학습으로 채워짐.
+- **`n_layers` = 트랜스포머 블록 개수**(12). `n_heads`(블록 내 어텐션 갈래 수)와 **다른 축**(둘 다 우연히 12).
+- **`tok_emb`·`out_head`가 유독 큰 이유:** 둘 다 **어휘 크기 50257**에 닿음(각 50257×768 ≈ 3,860만). 내부 블록은 768차원이라 상대적으로 작음. 원조 GPT-2는 두 층 **weight tying**(공유)으로 124M.
+
+### 4.5 텍스트 생성 — `generate_text_simple`(greedy)
+
+- `logits → softmax → argmax`로 다음 토큰 선택, 자기회귀로 반복.
+- **softmax는 단조(순서 보존) 함수** → 최댓값의 *위치*가 로짓과 동일 → greedy에선 **softmax 생략하고 `argmax(logits)`로 같은 결과**(계산 절약). 단 top-k·temperature 샘플링은 확률값이 필요해 생략 불가(5장).
+- 미학습 모델이라 생성 텍스트는 의미 없는 토큰 나열(정상).
+
+### 4.6 파라미터 수·메모리
+
+- `sum(p.numel() for p in model.parameters())`로 집계. `out_head` 제외(weight tying 가정) 시 124M.
+- 메모리 ≈ `total_params × 4바이트 / 1024²` MB(float32 기준).
+- 연습 4.1: GPT-2 4종(124M/Medium emb1024·L24 / Large emb1280·L36 / XL emb1600·L48) config로 크기별 파라미터 비교.
 
 ### 그레이디언트 복습 — backward/step·흐름 보존 (2026-06-23)
 
