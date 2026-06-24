@@ -52,3 +52,9 @@ htmlcov/
 
 # 실습 중 다운로드되는 데이터셋 (tokenization.py가 재다운로드 — 코드만 git 추적)
 10-Projects/llm-from-scratch/input.txt
+10-Projects/llm-from-scratch/the-verdict.txt
+10-Projects/llm-from-scratch/tinyshakespeare.txt
+
+# MLflow 실험 추적 데이터 (로컬 실험 기록 — 코드만 git 추적)
+mlruns/
+mlartifacts/

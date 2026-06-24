@@ -61,10 +61,10 @@ Data Prep → Train & Tune → Deploy & Monitor → Inference
 
 알고리즘을 골라 모델을 학습시키고 성능을 검증·튜닝하는 단계입니다.
 
-<!-- TODO(MLflow): 아직 학습 전 — "MLflow가 가장 직접적으로 닿는 영역" 설명을 학습 후 여기에 정리 -->
+> 📌 **이 단계가 MLflow가 가장 직접적으로 닿는 영역.** 상세는 [8장](#8-mlflow--실험-추적-도구-학습-시작-2026-06-24) 참조.
 
 - **Algorithm Selection**(알고리즘 선택) → **Model Training**(학습) → **Metrics Validation**(지표 검증)
-- 학습 추적: **Experiments → Trials → Trial Components**(실험/시도/구성요소 단위 기록) <!-- TODO(MLflow): 이 추적이 MLflow 핵심 기능 — 학습 후 보강 -->
+- 학습 추적: **Experiments → Trials → Trial Components**(실험/시도/구성요소 단위 기록) — MLflow Tracking이 이를 구현 ([8장](#8-mlflow--실험-추적-도구-학습-시작-2026-06-24))
 - 실행 위치: **Local** / **Hosted**, 이후 **Hyper-param Tuning**(하이퍼파라미터 튜닝)
 - 산출물: **Code Artifact**, **Model Artifact** → **Model Registry**(모델 저장소)에 등록
 
@@ -90,7 +90,7 @@ Data Prep → Train & Tune → Deploy & Monitor → Inference
 
 > 한 문장으로: ML 수명 주기는 **데이터 준비 → 학습·튜닝 → 배포·모니터링 → 추론**의 4단계이며, 산출물 관리의 핵심 접점은 **Experiments/Trials(실험 추적)**, **Model Registry**, **Artifact Lineage**입니다.
 
-<!-- TODO(MLflow): 위 3개 접점(실험 추적·Model Registry·Artifact Lineage)이 MLflow가 닿는 지점 — 학습 후 정리 -->
+> 📌 이 3개 접점(실험 추적·Model Registry·Artifact Lineage)이 MLflow가 닿는 지점 → [8장](#8-mlflow--실험-추적-도구-학습-시작-2026-06-24).
 
 ---
 
@@ -159,7 +159,7 @@ ML은 본질적으로 실험적·혁신적이라 통제 없이 두면 비용 폭
 ### ② 생산성 향상 — "보일러플레이트와 재사용"
 
 - **개발/실험 환경 표준화** → 새 프로젝트 착수, 여러 프로젝트 전환, 여러 앱에서 **모델 재사용**이 쉬움
-- **반복 가능한(repeatable) 실험·학습 프로세스** 구축 <!-- TODO(MLflow): 여기서 MLflow가 실험 기록 도구로 등장 — 학습 후 보강 -->
+- **반복 가능한(repeatable) 실험·학습 프로세스** 구축 — MLflow가 run마다 설정+지표+모델을 묶어 기록 ([8장](#8-mlflow--실험-추적-도구-학습-시작-2026-06-24))
 - SW 엔지니어링 팀이 ML 개발 수명 주기 전반에서 **협업·조정** → 효율↑
 
 ### ③ 효율적인 모델 배포 — "관측 가능성 + 버전 관리"
@@ -257,7 +257,52 @@ ML은 본질적으로 실험적·혁신적이라 통제 없이 두면 비용 폭
 
 "높은 레벨"에서 보면 MLOps는 *ML을 일회성 실험이 아니라 반복 가능한 엔지니어링으로 만드는 일*입니다.
 
-<!-- TODO(MLflow): MLflow는 ②학습·튜닝 단계의 실험 추적·모델 레지스트리·아티팩트 관리를 담당하는 도구 — 학습 후 본문에 정리 -->
+---
+
+## 8. MLflow — 실험 추적 도구 (학습 시작 2026-06-24)
+
+> 2장의 **②Train & Tune** 단계에서 가장 직접적으로 닿는 도구. [[../10-Projects/llm-from-scratch]] 5.2 학습 루프와 병행하며 학습 시작.
+
+### 한 줄 정의
+**MLflow = "실험 기록장(experiment tracker)".** 학습을 돌릴 때마다 *"무슨 설정으로 → 결과가 어땠나 → 어떤 모델이 나왔나"* 를 자동 기록·비교한다. 2장의 **Experiments → Trials(runs)** 추적이 이것의 구현체.
+
+### 핵심 3동사 (이것만 알면 시작 가능)
+| 동사 | 기록 대상 | 예 (Iris) | 예 (LLM 5.2) |
+| --- | --- | --- | --- |
+| `log_params` | 하이퍼파라미터 | solver·max_iter | GPT_CONFIG·lr·batch_size |
+| `log_metric` | 성능 지표 | accuracy | train_loss·val_loss (step별 곡선) |
+| `log_model` | 학습된 모델 | LogisticRegression | GPTModel |
+
+```python
+import mlflow
+mlflow.set_tracking_uri("file:./mlruns")   # 기록 저장 위치
+mlflow.set_experiment("실험이름")            # 실험(묶음) 생성
+with mlflow.start_run():                    # 실행 1회 시작
+    mlflow.log_params(params)               # ① 설정
+    mlflow.log_metric("accuracy", acc)      # ② 성능 (step= 인자로 곡선)
+    mlflow.sklearn.log_model(model, name="m")  # ③ 모델  (torch는 mlflow.pytorch)
+```
+
+### 저장 구조 = 2장의 계층 그대로
+```
+mlruns/<실험ID>/<runID>/
+   ├ params/   ← log_params
+   ├ metrics/  ← log_metric
+   ├ tags/     ← set_tag
+   └ artifacts/← log_model
+```
+- `mlruns`는 **파이썬을 실행한 폴더** 기준으로 생성(`file:./mlruns`). UI는 `mlflow ui` → `localhost:5000`.
+- `load_model(uri)`로 저장한 모델을 다시 불러와 예측 → **재현성(3장 ①원칙)** 을 도구로 체험.
+
+### 어디에 닿나 (앞 장과 연결)
+- **②Train & Tune**: 실험 추적(Experiments/runs) = MLflow Tracking. → 2장 67줄.
+- **Model Registry**(2장 69줄): `log_model`에 `registered_model_name` 주면 버전 관리되는 레지스트리에 등록 → 4장 ③이점·5장 레벨2.
+- **재현 가능한 실험 프로세스**(4장 ②이점 162줄): run마다 params+metrics+model이 한 묶음으로 남아 "이 결과 = 이 설정"이 추적됨 = 3장 **Artifact Lineage**.
+
+### 진행 현황
+- ✅ 공식 Iris quickstart 실행(3동사·UI·저장→로드 재현 확인).
+- ✅ LLM 5.2 학습 루프(`train_gpt.py`)에 통합(설정→params, train/val loss→metric(step), GPTModel→model).
+- ⬜ Model Registry 등록, 하이퍼파라미터 비교 실험(run 여러 개), 자동화(레벨1) 연계.
 
 ## 용어집
 
@@ -274,13 +319,13 @@ ML은 본질적으로 실험적·혁신적이라 통제 없이 두면 비용 폭
 
 ## 참고 링크
 
-_(MLflow 등 도구 학습 후 추가)_
-
-<!-- TODO(MLflow): 학습 후 추가 — MLflow 공식 문서: https://mlflow.org/docs/latest/index.html -->
+- MLflow 공식 문서: https://mlflow.org/docs/latest/index.html
+- MLflow quickstart(Iris): https://mlflow.org/docs/latest/getting-started/intro-quickstart/
 
 ## 관련 노트
 
 - [[../10-Projects/llm-from-scratch]] — 병행 중인 LLM 학습 트랙(5장 사전훈련·6장 분류 FT에 학습 추적 접점)
+- [[../10-Projects/llm-from-scratch/llm-ch5-pretrain]] — MLflow를 실제로 붙인 5.2 학습 루프(`train_gpt.py`)
 - [[bert_ocr_practice_plan]] — 같은 하우스 스타일의 학습정리(BERT·OCR)
 - [[notion-mcp]] — Notion 미러 등록·동기 규칙
 - [[_References]] — 레퍼런스 인덱스
