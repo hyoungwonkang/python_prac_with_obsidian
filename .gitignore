@@ -58,3 +58,6 @@ htmlcov/
 # MLflow 실험 추적 데이터 (로컬 실험 기록 — 코드만 git 추적)
 mlruns/
 mlartifacts/
+
+# 학습 산출물 (그래프 등 — 코드만 git 추적)
+10-Projects/llm-from-scratch/loss-plot.png
