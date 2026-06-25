@@ -42,7 +42,8 @@
 
 - 인텔 맥의 2.2.2 상한·CUDA·소스빌드 제약은 **이 머신에는 적용되지 않음**. 최신 torch를 그대로 설치.
 - 36GB 통합 메모리 + M4 Max → 본문 3·4장 실습 코드는 로컬에서 쾌적. GPT-2 가중치 로드급 무거운 사전훈련은 여전히 Colab T4 권장.
-- ⚠️ **Python 3.9 캐비엇**: 시스템 파이썬 3.9.6은 비교적 구버전(상위 EOL 임박). 현재 torch 2.8.0과 호환되어 실습엔 문제없으나, 추후 더 새 파이썬이 필요하면 Homebrew(`brew install python@3.12`)로 재구성 가능. 그 전까지는 3.9.6 `~/ml-env` 재사용.
+- ⚠️ **Python 3.9 캐비엇**: 시스템 파이썬 3.9.6은 비교적 구버전(상위 EOL 임박). 현재 torch 2.8.0과 호환되어 실습엔 문제없으나, 추후 더 새 파이썬이 필요하면 Homebrew(`brew install python@3.12`)로 재구성 가능. 그 전까지는 3.9.6 `~/ml-env` 재사용. (Homebrew는 이미 설치됨: brew 6.0.3)
+- 🔴 **TensorFlow 로컬 불가 (2026-06-25 확인)**: 시스템 파이썬 3.9.6 `~/ml-env`에서 `import tensorflow`가 **C++ 레벨 크래시**(`libc++abi: mutex lock failed: Invalid argument`). macOS CLT 파이썬 빌드 비호환 이슈. → **TF 필요 작업(5.6 GPT-2 가중치 로드)은 Colab에서**(정본 분담대로). 로컬 고집 시 대안: ① `transformers`로 TF 우회, ② Homebrew `python@3.12` 별도 venv 재구성(미검증). torch/tiktoken 등은 정상.
 
 ---
 

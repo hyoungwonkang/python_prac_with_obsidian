@@ -55,6 +55,11 @@ htmlcov/
 10-Projects/llm-from-scratch/the-verdict.txt
 10-Projects/llm-from-scratch/tinyshakespeare.txt
 
+# 외부에서 받는 스크립트/모델 체크포인트 (코드만 git 추적)
+10-Projects/llm-from-scratch/gpt_download.py
+10-Projects/llm-from-scratch/*.pth
+10-Projects/llm-from-scratch/gpt2/
+
 # MLflow 실험 추적 데이터 (로컬 실험 기록 — 코드만 git 추적)
 mlruns/
 mlartifacts/
