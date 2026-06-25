@@ -10,6 +10,24 @@ tags: [reference, mlflow, mlops]
 
 개념 학습 원칙: **단계마다 직전 위에 "새로운 것"을 보강(누적)** — 같은 걸 반복하지 않고 한 칸씩 새 능력을 더한다.
 
+## MLflow 공식 문서 두 경로 — ML vs GenAI (어느 걸 먼저?)
+
+공식 문서 대분류가 **Machine Learning**과 **LLMs & Agents(GenAI)**로 나뉜다. 둘은 목적이 정반대.
+
+| | **Machine Learning** (이 노트가 따라간 것) | **LLMs & Agents (GenAI Tracing)** |
+|---|---|---|
+| 대상 | **모델 학습(training)** 추적 | **LLM 앱 호출(inference)** 관찰 |
+| 기록 | params·metrics(loss/accuracy)·model | 프롬프트·응답·토큰·지연시간·트레이스 |
+| 핵심 | `log_params/metric/model`, autolog | `mlflow.openai.autolog()` 등 호출 트레이싱 |
+| 라이브러리 | sklearn·pytorch·xgboost | OpenAI·Anthropic API·LangChain |
+| 비유 | 선수 **훈련 일지** | 경기 **실시간 중계 로그** |
+
+**선택 기준: "모델을 만드는 중" → ML 경로 / "LLM 앱을 부르는 중" → GenAI 경로.**
+
+- **지금은 ML 경로 먼저.** Raschka 책(GPT 밑바닥 학습)·`train_gpt.py`(GPT_CONFIG→params, train/val loss→metric, GPTModel→model)가 전부 ML 경로와 1:1. Iris quickstart도 ML 경로.
+- **GenAI 경로는 나중에** — LLM을 *호출하는 앱*을 만들 때(예: [[../../10-Projects/rec-planner]], 또는 학습 모델 서빙·관찰). 밑바닥 학습 책에는 안 쓰임.
+- 링크: ML quickstart `mlflow.org/docs/latest/ml/getting-started/quickstart/` · GenAI tracing `mlflow.org/docs/latest/genai/tracing/quickstart/`
+
 ## 단계별 요약 (2~6단계)
 
 | 단계 | 핵심 | 새로 보강된 것 |
