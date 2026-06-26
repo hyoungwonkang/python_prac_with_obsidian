@@ -25,6 +25,8 @@
 
 ## ML 개념 학습
 
+- [[llm-glossary]] — LLM/ML 개념 용어집(AI/ML/DL 계층·파운데이션 모델·백본 등, 누적). PyTorch API 용어는 [[python-basics]].
+
 - [[mlops]] — MLOps 기초 학습 정리. 개념 전반(수명주기·4대 원칙·이점·성숙도·DevOps 비교)을 [[bert_ocr_practice_plan|BERT·OCR]]과 같은 하우스 스타일로 정리.
 - [[mlflow-practice/quickstart-notes]] — MLflow Quickstart(Iris) 실습 학습 노트(2~6단계: autolog·수동로깅·로드/추론·flavor·위치일치 원칙). 코드: `mlflow-practice/mlflow_quickstart.py`.
 - [[mlflow-practice/mlflow-llm-tracking]] — MLflow 실전: LLM 학습 train/val 추적·run 비교(데이터 크기→일반화, 오래≠많이 학습). 코드: `10-Projects/llm-from-scratch/train_with_mlflow.py`.

@@ -13,7 +13,7 @@ LLM이 무엇이고 왜 트랜스포머 기반인지, 책 전체에서 무엇을
 - [x] 1.2 트랜스포머 아키텍처 개요 (encoder/decoder, GPT는 decoder-only)
 - [x] 1.3 LLM 학습 단계 개요 (사전훈련 → 미세튜닝)
 - [x] 1.4 책 전체 구조·코드 레포·실습 환경 파악
-- [ ] 1.5 핵심 용어 정리 노트 신설 (예: `30-References/llm-glossary.md`) — 선택(미작성, 필요 시 후속)
+- [x] 1.5 핵심 용어 정리 노트 신설 → [[../../30-References/llm-glossary]] (AI/ML/DL·파운데이션 모델·백본 등 누적)
 
 ## 검증
 
@@ -24,3 +24,4 @@ LLM이 무엇이고 왜 트랜스포머 기반인지, 책 전체에서 무엇을
 - [[llm-from-scratch]] — 마스터 플랜 (인덱스)
 - [[pytorch-study]] — 부록 A (선행)
 - [[../../30-References/pytorch-env-hybrid]] — 환경 정본
+- [[../../30-References/llm-glossary]] — 개념 용어집 (AI/ML/DL·파운데이션 모델·백본)
