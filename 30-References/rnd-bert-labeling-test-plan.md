@@ -71,9 +71,14 @@ tags: [reference, bert, labeling, testing, rnd, deliverable, plan]
 | 자산 | 이유 |
 |---|---|
 | `finetune_bert_spam.py` (BERT 스팸분류 코드) | **02 소스코드 산출물 = 이걸 작성하는 것** |
-| 로컬 `transformers` 패키지 | 미설치 → **실행은 Colab**에서 (`pip install transformers`) |
 
-> 결론: **데이터·라벨링 코드·BERT 개념 = 다 있음.** 빠진 건 **BERT 모델 코드 한 개(=오늘 작성 대상)** 와 **실행 환경(Colab)** 뿐.
+### ✅ 실행 환경 — 로컬 가능 확인됨 (2026-06-26 smoke test)
+- `~/ml-env`에 **`transformers 4.57.6`·`scikit-learn 1.6.1` 설치 완료.**
+- `BertForSequenceClassification` 로드 + **MPS forward 통과** (params 109M, logits `(2,2)` 정상).
+- **TensorFlow 불필요** — HF는 PyTorch 백엔드 사용. (과거 GPT-2 Colab行은 *TF 체크포인트* 때문이었고 BERT엔 해당 없음. `USE_TF=0`로 TF 임포트 차단까지 함.)
+
+> 결론: **데이터·라벨링 코드·BERT 개념·실행 환경 모두 확보.** 빠진 건 **BERT 모델 코드 한 개(=오늘 작성 대상)** 뿐.
+> → **로컬 M4 Max에서 학습·평가까지 오늘 가능** → 03·04도 오늘 검증 가능. Colab은 *속도용 선택지*로 강등.
 
 ## 4. 기술 스택
 
@@ -83,15 +88,15 @@ tags: [reference, bert, labeling, testing, rnd, deliverable, plan]
 | 토크나이저 | `BertTokenizer.from_pretrained` |
 | 데이터 | SMS Spam Collection (라벨링·분할 완료된 CSV 재사용) |
 | 평가 | accuracy + confusion matrix (sklearn) |
-| 실행 환경 | **Colab GPU** (로컬은 작성만, 실행은 Colab) → [[pytorch-env-hybrid]] |
+| 실행 환경 | **로컬 M4 Max (MPS)** — 확인됨, TF 불필요. Colab GPU는 속도용 선택 → [[pytorch-env-hybrid]] |
 
 ## 5. 진행 순서
 
-1. **오늘 (A 경로 = 원래 업무) — 4종 md 전부 작성**
-   - `01-연구문서.md` → `02-소스코드.md` + `finetune_bert_spam.py` → `03-사용법.md` → `04-가이드.md`
-   - 작업 팁: **02 코드 먼저** 확정해야 03·04(사용법·가이드)가 정확.
-2. **화요일 (B 경로) — 시연·검증**
-   - `finetune_bert_spam.py`를 **Colab GPU에서 실제 실행** → 03·04를 실행 결과로 확정·정정, 데모.
+1. **오늘 (A 경로 = 원래 업무) — 4종 md 전부 작성 + 로컬 실행 검증**
+   - `01-연구문서.md` → `02-소스코드.md` + `finetune_bert_spam.py` → **로컬 학습·평가 1회** → `03-사용법.md` → `04-가이드.md`
+   - 작업 팁: **02 코드 먼저** 확정·실행해야 03·04(사용법·가이드)가 **검증된 실제 결과**로 채워짐.
+2. **화요일 (B 경로) — 시연**
+   - 검증된 `finetune_bert_spam.py`로 데모 (필요 시 Colab GPU로 더 빠르게/큰 epoch 재현).
 
 ## 6. 진행 가능성 재확인 (feasibility)
 
@@ -99,14 +104,14 @@ tags: [reference, bert, labeling, testing, rnd, deliverable, plan]
 |---|---|---|
 | 01 연구문서 (오늘) | ✅ | 기존 [[BERT_학습정리]] + 갭 2개, 자료 다 있음 |
 | 02 소스코드 작성 (오늘) | ✅ | HF 표준 패턴, 데이터·라벨링 코드 재활용 |
-| 03·04 작성 (오늘) | ✅ (미검증) | 절차 기술은 가능, 실행 검증은 화요일 |
+| 03·04 작성 (오늘) | ✅ **검증 가능** | 로컬 실행되므로 실제 결과로 작성 |
 | `finetune_bert_spam.py` 작성 (오늘) | ✅ | 신규 1파일 |
-| 로컬 실행 | ❌ | `transformers` 미설치 → Colab |
-| 화요일 시연 | ✅ (조건부) | Colab GPU 런타임 필요 |
+| 로컬 실행 | ✅ **확인됨** | `transformers 4.57.6` 설치, MPS forward 통과 (TF 불필요) |
+| 화요일 시연 | ✅ | 로컬에서 이미 검증, 데모만. (Colab은 속도용 선택) |
 | 한국어 확장 | △ | `bert-base-uncased`는 영어. 한국어는 `klue/bert-base`(별도) |
 
-> **재확인 결론: 계획대로 진행 가능.** 오늘 안에 4종 md + 실행코드 1개 작성 완료 가능(작성 ≠ 실행).
-> 유일한 미결은 **03·04의 실행 검증**인데, 이는 화요일 시연(B)으로 해소 — 원래 업무(A) 완수에는 지장 없음.
+> **재확인 결론: 계획대로 진행 가능 + 상향.** 로컬 실행이 되므로 오늘 안에 **4종 md를 모두 "검증된 상태"로 완성** 가능 —
+> 03·04도 더 이상 미검증이 아님. 화요일은 미결 해소가 아니라 **순수 시연/확장**.
 
 ## 관련 노트
 - [[BERT_학습정리]] — **BERT 개념 학습정리(7섹션). 01 연구문서의 정본 재사용 소스.**
