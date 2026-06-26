@@ -29,7 +29,7 @@
 
 - [[mlops]] — MLOps 기초 학습 정리. 개념 전반(수명주기·4대 원칙·이점·성숙도·DevOps 비교)을 [[bert_ocr_practice_plan|BERT·OCR]]과 같은 하우스 스타일로 정리.
 - [[bert_ocr_practice_plan]] — BERT/OCR 실습 학습 로드맵(개념·진입 시점 정본, PyTorch+HF/docTR).
-- [[bert-rnd-deliverable-plan]] — **업무 산출물 계획**. BERT 스팸분류 R&D(연구문서·소스·사용법·가이드 4종 + 시연). 오늘 문서, 화요일 데모.
+- [[rnd-bert-labeling-test-plan]] — **업무 산출물 계획**. R&D 3주제(BERT 모델·라벨링 방법론·테스트)를 형식 4종(연구문서·소스·사용법·가이드)으로. 사례=SMS 스팸분류. 오늘 문서, 화요일 시연.
 - [[mlflow-practice/quickstart-notes]] — MLflow Quickstart(Iris) 실습 학습 노트(2~6단계: autolog·수동로깅·로드/추론·flavor·위치일치 원칙). 코드: `mlflow-practice/mlflow_quickstart.py`.
 - [[mlflow-practice/mlflow-llm-tracking]] — MLflow 실전: LLM 학습 train/val 추적·run 비교(데이터 크기→일반화, 오래≠많이 학습). 코드: `10-Projects/llm-from-scratch/train_with_mlflow.py`.
 

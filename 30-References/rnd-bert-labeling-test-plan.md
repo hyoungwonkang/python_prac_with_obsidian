@@ -1,12 +1,13 @@
 ---
-title: BERT R&D 산출물 계획 (스팸분류)
-tags: [reference, bert, rnd, deliverable, plan]
+title: R&D 산출물 계획 — BERT 모델·라벨링 방법론·테스트
+tags: [reference, bert, labeling, testing, rnd, deliverable, plan]
 ---
 
-# BERT R&D 산출물 계획 (스팸 분류)
+# R&D 산출물 계획 — BERT 모델 · 라벨링 방법론 · 테스트
 
-> 업무 요청 대응 계획. BERT 개념 정본은 [[BERT_학습정리]]·[[bert_ocr_practice_plan]], 데이터/라벨링 실습은 [[../10-Projects/llm-from-scratch/llm-ch6-classify]].
-> 학습 트랙: [[../10-Projects/llm-from-scratch]] 6장(분류 파인튜닝) 진행 중.
+> **업무 요청 대응 계획.** R&D 주제는 **① BERT 모델 ② 라벨링 방법론 ③ 테스트** 세 가지(동등).
+> 이 세 주제를 한 번에 실증할 **구체 사례(vehicle) = SMS 스팸분류**를 사용 — 분류 하나로 BERT 모델·라벨링·테스트가 모두 드러남.
+> 참고 정본: BERT 개념 [[BERT_학습정리]]·[[bert_ocr_practice_plan]], 라벨링/분할 실습 [[../10-Projects/llm-from-scratch/llm-ch6-classify]], 환경 [[pytorch-env-hybrid]].
 
 ## 0. 요청 내용 (업무 메시지)
 
@@ -46,7 +47,7 @@ tags: [reference, bert, rnd, deliverable, plan]
 
 ## 2. 산출물 파일 목록 (신설)
 
-폴더: `30-References/bert-spam-rnd/`
+폴더: `30-References/rnd-bert-labeling-test/`
 
 | 파일 | 내용 | 오늘(A) | 비고 |
 |---|---|---|---|
