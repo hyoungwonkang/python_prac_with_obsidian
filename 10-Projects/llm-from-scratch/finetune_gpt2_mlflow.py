@@ -11,6 +11,8 @@ Colab 실행 순서:
 UI: Drive의 mlruns 를 로컬로 받아 `mlflow ui` 하거나 Colab 포트 연결.
 """
 import os
+# 최신 MLflow는 파일 저장소(file:./mlruns)를 기본 거부 → 허용 (DB 백엔드 대신 파일 사용)
+os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
 import urllib.request
 
 import numpy as np
