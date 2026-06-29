@@ -129,6 +129,9 @@ def main():
     print("\nclassification report:")
     print(classification_report(gold, pred, target_names=["ham(0)", "spam(1)"], digits=4))
 
+    torch.save(model.state_dict(), "spam_bert.pt")   # 저장
+    model.load_state_dict(torch.load("spam_bert.pt")) # 로드
+
 
 if __name__ == "__main__":
     main()
