@@ -76,3 +76,4 @@ mlartifacts/
 30-References/rnd-bert-labeling-test/export/*.pt
 30-References/rnd-bert-labeling-test/export/sms_spam_collection.zip
 30-References/rnd-bert-labeling-test/export/sms_spam_collection/
+30-References/rnd-bert-labeling-test/export/ko/

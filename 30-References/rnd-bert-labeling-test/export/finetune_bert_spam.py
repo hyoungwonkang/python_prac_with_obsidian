@@ -26,20 +26,21 @@ from torch.optim import AdamW
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 # ── 설정 ──────────────────────────────────────────────────────────
-MODEL_NAME = "bert-base-uncased"
+# MODEL_NAME·DATA_DIR은 환경변수로 교체 가능 (기본=영어). 한국어는 MODEL_NAME=klue/bert-base.
+MODEL_NAME = os.environ.get("MODEL_NAME", "bert-base-uncased")
 MAX_LENGTH = 128          # SMS는 짧아 128이면 충분 (긴 것은 잘림)
 BATCH_SIZE = 16
 EPOCHS = int(os.environ.get("EPOCHS", 3))
 LR = 2e-5                  # BERT 파인튜닝 표준 학습률
 SEED = 123
 
-# CSV는 이 스크립트와 같은 폴더에 있다고 가정 (dataset_finetuning.py 산출물)
-DATA_DIR = Path(__file__).resolve().parent
+# CSV는 이 스크립트와 같은 폴더에 있다고 가정 (dataset_finetuning.py 산출물). DATA_DIR로 교체 가능.
+DATA_DIR = Path(os.environ.get("DATA_DIR") or Path(__file__).resolve().parent)
 
 torch.manual_seed(SEED)
 device = "mps" if torch.backends.mps.is_available() else (
     "cuda" if torch.cuda.is_available() else "cpu")
-print(f"device: {device} | epochs: {EPOCHS}")
+print(f"device: {device} | epochs: {EPOCHS} | model: {MODEL_NAME} | data: {DATA_DIR}")
 
 
 # ── ② Dataset: SMS 1건을 토크나이즈+패딩해 모델 입력으로 ────────────
@@ -129,8 +130,10 @@ def main():
     print("\nclassification report:")
     print(classification_report(gold, pred, target_names=["ham(0)", "spam(1)"], digits=4))
 
-    torch.save(model.state_dict(), "spam_bert.pt")   # 저장
-    model.load_state_dict(torch.load("spam_bert.pt")) # 로드
+    # 학습된 가중치 저장 (WEIGHTS 환경변수로 파일명 교체 — 모델별 분리해 덮어쓰기 방지)
+    weights_out = os.environ.get("WEIGHTS", "spam_bert.pt")
+    torch.save(model.state_dict(), weights_out)
+    print(f"\n저장 완료: {weights_out}")
 
 
 if __name__ == "__main__":
