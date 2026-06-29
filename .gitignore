@@ -66,6 +66,8 @@ mlartifacts/
 
 # 학습 산출물 (그래프 등 — 코드만 git 추적)
 10-Projects/llm-from-scratch/loss-plot.png
+10-Projects/llm-from-scratch/*-plot.pdf
+10-Projects/llm-from-scratch/*-plot.png
 
 # 분류 실습 데이터·모델 (코드로 재생성 — dataset_finetuning.py로 데이터, 학습으로 .pt)
 10-Projects/llm-from-scratch/*.csv

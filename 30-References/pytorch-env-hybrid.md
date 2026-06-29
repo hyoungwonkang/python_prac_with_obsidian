@@ -43,7 +43,8 @@
 - 인텔 맥의 2.2.2 상한·CUDA·소스빌드 제약은 **이 머신에는 적용되지 않음**. 최신 torch를 그대로 설치.
 - 36GB 통합 메모리 + M4 Max → 본문 3·4장 실습 코드는 로컬에서 쾌적. GPT-2 가중치 로드급 무거운 사전훈련은 여전히 Colab T4 권장.
 - ⚠️ **Python 3.9 캐비엇**: 시스템 파이썬 3.9.6은 비교적 구버전(상위 EOL 임박). 현재 torch 2.8.0과 호환되어 실습엔 문제없으나, 추후 더 새 파이썬이 필요하면 Homebrew(`brew install python@3.12`)로 재구성 가능. 그 전까지는 3.9.6 `~/ml-env` 재사용. (Homebrew는 이미 설치됨: brew 6.0.3)
-- 🔴 **TensorFlow 로컬 불가 (2026-06-25 확인)**: 시스템 파이썬 3.9.6 `~/ml-env`에서 `import tensorflow`가 **C++ 레벨 크래시**(`libc++abi: mutex lock failed: Invalid argument`). macOS CLT 파이썬 빌드 비호환 이슈. → **TF 필요 작업(5.6 GPT-2 가중치 로드)은 Colab에서**(정본 분담대로). 로컬 고집 시 대안: ① `transformers`로 TF 우회, ② Homebrew `python@3.12` 별도 venv 재구성(미검증). torch/tiktoken 등은 정상.
+- 🔴 **TensorFlow 로컬 불가 (2026-06-25 확인)**: 시스템 파이썬 3.9.6 `~/ml-env`에서 `import tensorflow`가 **C++ 레벨 크래시**(`libc++abi: mutex lock failed: Invalid argument`). macOS CLT 파이썬 빌드 비호환 이슈. → 로컬 고집 시 대안: ① `transformers`로 TF 우회, ② Homebrew `python@3.12` 별도 venv 재구성(미검증). torch/tiktoken 등은 정상.
+- 🟢 **GPT-2 가중치 로컬 로드 해결 (2026-06-29)**: 위 대안 ①을 구현. `10-Projects/llm-from-scratch/hf_weight_adapter.py`가 HF `GPT2LMHeadModel.from_pretrained`(PyTorch)로 받아 교재 `GPTModel`에 로드(**TF 불필요**, `USE_TF=0`). 가능 이유: HF Conv1D 가중치 방향이 TF `gpt_download` 형식과 동일 → 기존 `load_weights_into_gpt` 재사용. → **GPT-2 분류 파인튜닝 전체를 M4 Max 로컬에서 완주(1.88분, val acc 97.5%)**. 이제 GPT-2 트랙도 BERT처럼 완전 로컬. (단 OpenAI 원본 TF 체크포인트를 직접 읽는 `gpt_download.py`는 여전히 TF→Colab.)
 
 ---
 
@@ -92,7 +93,8 @@
 | 텐서 기초·autograd·작은 모델·코드 작성/디버그 | **로컬 (M4 Max 우선)** | 빠른 반복, MPS 가속, 최신 torch |
 | 본문 3·4장 실습 코드 실행 | **로컬 M4 Max** | 36GB·MPS로 충분 |
 | 교재 코드 결과 정확 재현 | **Colab 2.6.0** | 교재와 100% 동일 환경 |
-| GPT-2 가중치 로드·사전훈련·대형 미세튜닝 | **Colab T4** | NVIDIA GPU 메인 |
+| GPT-2 가중치 로드(분류 FT) | **로컬 M4 Max OK** | `hf_weight_adapter.py`(HF, TF 우회) — 1.88분 |
+| GPT-2 원본 TF 체크포인트(`gpt_download`)·대형 사전훈련 | **Colab T4** | TF 필요 / NVIDIA GPU |
 | (인텔 맥 사용 시) 텐서 문법·소규모 실험 | 인텔 로컬 2.2.2 | 2.2.2 상한 내에서만 |
 
 ## ⚠️ 버전 차이 (작성 시 주의)

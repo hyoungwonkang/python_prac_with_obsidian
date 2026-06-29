@@ -10,10 +10,10 @@
 ## 체크리스트
 
 - [x] 6.1 분류 데이터셋 준비 (`dataset_finetuning.py` + `data_loader.py`)
-- [ ] 6.2 모델에 분류 head 추가 (GPT-2 out_head 768→2 교체)
-- [ ] 6.3 일부 레이어 freeze 전략
-- [ ] 6.4 fine-tuning 학습 루프 + 평가 지표 (accuracy)
-- [ ] 6.5 결과 정리
+- [x] 6.2 모델에 분류 head 추가 (`heads.py`, out_head 768→2)
+- [x] 6.3 일부 레이어 freeze 전략 (마지막 블록+final_norm+head만 학습)
+- [x] 6.4 fine-tuning 학습 루프 + 평가 (`model_finetune.py`, **로컬 1.88분, val 97.5%**)
+- [ ] 6.8 학습된 모델로 실제 스팸 분류 추론
 
 ## 학습 메모 (실습으로 익힌 것)
 
@@ -50,6 +50,31 @@
 | 토크나이저 | tiktoken gpt2 (pad 50256) | BertTokenizer ([CLS]/[SEP]) |
 | 분류 | 마지막 토큰 출력 → head 50257→2 | `[CLS]` 벡터 → 분류층 |
 | 데이터 준비 | `dataset_finetuning.py` 공유 | 〃 (같은 코드 재사용) |
+
+### GPT-2 분류 파인튜닝 (6.4~6.7) — `heads.py`·`model_finetune.py`
+- **out_head 교체**: 768→50257(생성) → 768→**2**(정상/스팸). 새 `nn.Linear`는 requires_grad=True 기본 → 자동 학습 대상.
+- **마지막 토큰으로 분류**: `model(x)[:, -1, :]` → `(batch, 2)`. GPT는 왼→오라 **마지막 토큰이 문장 전체를 봄**(BERT의 `[CLS]` 대신). 출력 `(b, seq, 2)` 중 마지막만 사용.
+- **freeze 전략**: 전체 동결 → **마지막 트랜스포머 블록 + final_norm + 새 head만 해제**. 백본 보존, 끝부분만 미세조정.
+- **순서 함정**: 가중치 로드 → 동결 → out_head 교체. (교체를 먼저 하면 `load_weights_into_gpt`가 out_head=wte(50257) 대입에서 **shape mismatch** 크래시.)
+
+### 정확도 vs 크로스 엔트로피 (대리 손실)
+- 진짜 목표=정확도지만 **미분 불가**(argmax=계단함수, 기울기 0/끊김) → 경사하강법 못 씀.
+- **크로스 엔트로피**(매끄럽고 미분 가능)를 **대리(surrogate)** 로 최소화 → 정답 확률↑ → 정확도 간접 최대화.
+- 학습 전 baseline 손실 ≈ **ln(2)=0.693** = "50:50 찍기"(정확도 ~50%). **낮은 손실 ≠ 좋음**(확신 없이 어정쩡).
+- 사전훈련 백본은 초기 손실이 오히려 **높음**(강한 활성화 → 랜덤 head가 자신있게 틀림) → 그러나 학습 후 훨씬 우수.
+
+### 프롬프팅 baseline (파인튜닝 전, 6.x)
+- 파인튜닝 전 GPT-2에게 "yes/no로 답해" 명령 프롬프트로 분류 시도 → **작은 모델이라 부정확** → 파인튜닝 필요성을 보여주는 도입.
+
+### no_grad vs requires_grad / autograd 디폴트
+- `requires_grad=False`: **특정 파라미터 영구 동결**(freeze).
+- `torch.no_grad()`: **코드 블록 임시로** 기울기 추적 끔(평가·추론 → 메모리·속도↑).
+- autograd 디폴트: 전역 grad 모드 ON(`torch.is_grad_enabled()`) + 모델 파라미터 `requires_grad=True` 기본. (내가 만든 `torch.tensor`는 False)
+
+### ★ 로컬 실행 돌파 — HF 가중치 어댑터 (`hf_weight_adapter.py`)
+- GPT-2 가중치 로드가 그동안 **Colab 전용**이었던 유일 이유 = `gpt_download.py`의 **TF import**(로컬 mutex 크래시).
+- 해결: **HF `GPT2LMHeadModel.from_pretrained("gpt2")`(PyTorch)** 로 받아 → 같은 `params` 형식으로 변환 → **기존 `load_weights_into_gpt` 재사용**. TF 불필요. (HF Conv1D 가중치 방향이 TF 형식과 동일해서 가능)
+- 결과: **로컬 M4 Max에서 전체 파인튜닝 완주 — 1.88분, val/test acc ~97%** (교재 M3 Air 6분의 ~3배 빠름). → GPT-2 트랙도 BERT처럼 **완전 로컬화**.
 
 ## 별도 트랙 접점 — BERT 실습은 업무 R&D로 선행/병행됨
 
