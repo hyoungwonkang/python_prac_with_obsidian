@@ -8,9 +8,21 @@ BERT 스팸 분류 파인튜닝 — BERT 모델 · 라벨링 · 테스트 실증
   ④ 학습 루프          → BERT 파인튜닝
   ⑤ 테스트셋 평가      → 테스트 (accuracy·confusion matrix·precision/recall)
 
-사전 준비: dataset_finetuning.py 를 먼저 실행해 train/validation/test.csv 를 만든다.
-실행:      python finetune_bert_spam.py   (이 스크립트와 같은 폴더의 CSV를 읽음)
-환경:      Apple Silicon(MPS)·GPU·CPU 모두 동작. TensorFlow 불필요.
+이 스크립트는 영어·한국어 공용(범용)이다. 환경변수로 모델·데이터·저장경로를 교체한다:
+  MODEL_NAME : 사전학습 모델     (기본 bert-base-uncased=영어 / 한국어는 klue/bert-base)
+  DATA_DIR   : CSV 폴더          (기본 스크립트 폴더=영어 / 한국어는 ./ko)
+  WEIGHTS    : 저장 .pt 파일명    (기본 spam_bert.pt / 한국어는 spam_klue.pt 로 분리)
+  EPOCHS     : 에포크 수          (기본 3)
+
+[영어] 사전 준비: python dataset_finetuning.py        → train/validation/test.csv
+       학습:      python finetune_bert_spam.py        → spam_bert.pt
+
+[한국어] 사전 준비: python dataset_finetuning_ko.py    → ko/train·validation·test.csv
+        학습:      WEIGHTS=spam_klue.pt MODEL_NAME=klue/bert-base DATA_DIR=./ko \
+                   python finetune_bert_spam.py        → spam_klue.pt
+        (코드 로직은 동일. 모델·데이터만 환경변수로 교체)
+
+환경: Apple Silicon(MPS)·GPU·CPU 모두 동작. TensorFlow 불필요.
 """
 import os
 os.environ["USE_TF"] = "0"        # Hugging Face가 TF/Flax를 임포트하지 않도록 차단
