@@ -66,3 +66,13 @@ mlartifacts/
 
 # 학습 산출물 (그래프 등 — 코드만 git 추적)
 10-Projects/llm-from-scratch/loss-plot.png
+
+# 분류 실습 데이터·모델 (코드로 재생성 — dataset_finetuning.py로 데이터, 학습으로 .pt)
+10-Projects/llm-from-scratch/*.csv
+10-Projects/llm-from-scratch/sms_spam_collection.zip
+10-Projects/llm-from-scratch/sms_spam_collection/
+# BERT R&D export — 데이터·학습가중치(.pt, 438MB)는 제외, 문서·코드만 git 추적
+30-References/rnd-bert-labeling-test/export/*.csv
+30-References/rnd-bert-labeling-test/export/*.pt
+30-References/rnd-bert-labeling-test/export/sms_spam_collection.zip
+30-References/rnd-bert-labeling-test/export/sms_spam_collection/
