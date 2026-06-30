@@ -1,5 +1,6 @@
 import torch
-from heads import calc_accuracy_loader, calc_loss_batch, calc_loss_loader, model, train_loader, val_loader, test_loader, device
+import tiktoken
+from heads import calc_accuracy_loader, calc_loss_batch, calc_loss_loader, model, train_loader, val_loader, test_loader, device, train_dataset
 
 def train_classifier_simple(
         model, train_loader, val_loader, optimizer, device,
@@ -102,7 +103,7 @@ def plot_values(
 
 # plot_values(epochs_tensor, examples_seen_tensor, train_losses, val_losses)
 
-epochs_tensor = torch.linspace(0, num_epochs, len(train_losses))
+epochs_tensor = torch.linspace(0, num_epochs, len(train_accs))
 examples_seen_tensor = torch.linspace(0, examples_seen, len(train_accs))
 
 plot_values(epochs_tensor, examples_seen_tensor, train_accs, val_accs,
@@ -115,3 +116,58 @@ test_accuracy = calc_accuracy_loader(test_loader, model, device)
 print(f"훈련 정확도: {train_accuracy*100:.2f}%")
 print(f"검증 정확도: {val_accuracy*100:.2f}%")
 print(f"테스트 정확도: {test_accuracy*100:.2f}%")
+
+def classify_review(
+        text, model, tokenizer, device, max_length=None,
+        pad_token_id=50256):
+    model.eval()
+
+    input_ids = tokenizer.encode(text)
+    supported_context_length = model.pos_emb.weight.shape[0]
+
+    assert max_length is not None, (
+        "max_length가 지정되지 않았습니다. 모델의 최대 문맥 길이를 사용하려면 "
+        "max_length=model.pos_emb.weight.shape[0]"
+    )
+    assert max_length <= supported_context_length, (
+        f"max_length({max_length})가 모델이 지원하는 문맥 길이"
+        f"({supported_context_length})를 초과했습니다."
+    )
+
+    input_ids = input_ids[:min(max_length, supported_context_length)]
+    input_ids += [pad_token_id] * (max_length - len(input_ids))
+
+    input_tensor = torch.tensor(
+        input_ids, device=device
+    ).unsqueeze(0)
+
+    with torch.no_grad():
+        logits = model(input_tensor)[:, -1, :]
+    predicted_label = torch.argmax(logits, dim=-1).item()
+
+    return "스팸" if predicted_label == 1 else "스팸 아님"
+
+tokenizer = tiktoken.get_encoding("gpt2")
+
+text_1 = (
+    "You are a winner you have been specially selected "
+    "to receive $1000 cash or a $2000 award. Call now!"
+)
+
+print(classify_review(
+    text_1, model, tokenizer, device, max_length=train_dataset.max_length
+))
+
+text_2 = (
+    "Hey, are we still meeting for lunch today? "
+    "Let me know what time works for you."
+)
+
+print(classify_review(
+    text_2, model, tokenizer, device, max_length=train_dataset.max_length
+))
+
+torch.save(model.state_dict(), "review_classifier.pth")
+
+model_state_dict = torch.load("review_classifier.pth", map_location=device)
+model.load_state_dict(model_state_dict)
