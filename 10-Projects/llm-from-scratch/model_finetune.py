@@ -1,6 +1,7 @@
 import torch
 import tiktoken
-from heads import calc_accuracy_loader, calc_loss_batch, calc_loss_loader, model, train_loader, val_loader, test_loader, device, train_dataset
+import mlflow
+from heads import calc_accuracy_loader, calc_loss_batch, calc_loss_loader, model, train_loader, val_loader, test_loader, device, train_dataset, BASE_CONFIG
 
 def train_classifier_simple(
         model, train_loader, val_loader, optimizer, device,
@@ -30,6 +31,8 @@ def train_classifier_simple(
                       f"훈련 손실 {train_loss:.3f}, "
                       f"검증 손실 {val_loss:.3f}"
                 )
+                mlflow.log_metric("train_loss", train_loss, step=global_step)
+                mlflow.log_metric("val_loss", val_loss, step=global_step)
 
         train_accuracy = calc_accuracy_loader(
             train_loader, model, device, num_batches=eval_iter
@@ -42,6 +45,8 @@ def train_classifier_simple(
         print(f"검증 정확도: {val_accuracy*100:.2f}%")
         train_accs.append(train_accuracy)
         val_accs.append(val_accuracy)
+        mlflow.log_metric("train_acc", train_accuracy, step=epoch)
+        mlflow.log_metric("val_acc", val_accuracy, step=epoch)
 
     return train_losses, val_losses, train_accs, val_accs, examples_seen
 
@@ -59,10 +64,17 @@ def evaluate_model(model, train_loader, val_loader, device, eval_iter):
 
 import time
 
+mlflow.set_tracking_uri("file:./mlruns")
+mlflow.set_experiment("gpt2-spam-classify")
+mlflow.start_run()
+
 start_time = time.time()
 torch.manual_seed(123)
-optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5, weight_decay=0.1)
+lr, weight_decay = 5e-5, 0.1
+optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
 num_epochs = 5
+mlflow.log_params({**BASE_CONFIG, "lr": lr, "weight_decay": weight_decay,
+                   "num_epochs": num_epochs, "batch_size": 8, "device": str(device)})
 
 train_losses, val_losses, train_accs, val_accs, examples_seen = \
     train_classifier_simple(
@@ -116,6 +128,14 @@ test_accuracy = calc_accuracy_loader(test_loader, model, device)
 print(f"훈련 정확도: {train_accuracy*100:.2f}%")
 print(f"검증 정확도: {val_accuracy*100:.2f}%")
 print(f"테스트 정확도: {test_accuracy*100:.2f}%")
+
+mlflow.log_metric("final_train_acc", train_accuracy)
+mlflow.log_metric("final_val_acc", val_accuracy)
+mlflow.log_metric("final_test_acc", test_accuracy)
+mlflow.log_metric("train_minutes", execution_time_minutes)
+mlflow.log_artifact("accuracy-plot.pdf")
+mlflow.pytorch.log_model(model, name="gpt2_spam_classifier")
+mlflow.end_run()
 
 def classify_review(
         text, model, tokenizer, device, max_length=None,
