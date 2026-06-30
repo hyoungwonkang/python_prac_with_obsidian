@@ -77,6 +77,10 @@
 - 벽②: 영어 SMS만 학습 → 한국어 스팸 패턴 본 적 없음. → **에러 없이 그럴듯하게 틀림**.
 - 한국어는 [[../../30-References/rnd-bert-labeling-test-plan|BERT klue 트랙]](`predict_spam_ko.py`, klue/bert-base)이 담당하도록 분리. 교재 6장(GPT-2)은 영어 학습용으로 유지.
 
+### MLflow 실험 추적 추가 (model_finetune.py)
+- 분류 파인튜닝에 MLflow 연동: `log_params`(설정)·`log_metric(step=)`(loss/acc 곡선)·`log_model`. experiment `gpt2-spam-classify`로 분리해 5장·BERT와 같은 mlruns에서 비교.
+- 상세(log_params vs metric, step 유무, mlruns cwd 함정)는 [[../../30-References/mlflow-practice/mlflow-llm-tracking]] 참조.
+
 ### 프롬프팅 baseline (파인튜닝 전, 6.x)
 - 파인튜닝 전 GPT-2에게 "yes/no로 답해" 명령 프롬프트로 분류 시도 → **작은 모델이라 부정확** → 파인튜닝 필요성을 보여주는 도입.
 

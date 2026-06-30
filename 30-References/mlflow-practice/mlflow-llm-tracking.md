@@ -78,7 +78,28 @@ print(mlflow.search_runs(experiment_names=["gpt2-finetune"])[
      "metrics.final_train_loss","metrics.final_val_loss"]])
 ```
 
+## 분류 파인튜닝(6장)에도 적용 (2026-06-30)
+
+코드: `10-Projects/llm-from-scratch/model_finetune.py`. 같은 `./mlruns`를 공유하되 **experiment만 분리**(`gpt2-spam-classify`) → UI에서 `gpt2-from-scratch`(5장)·`bert-spam-classification`(업무)과 나란히 비교.
+
+### log_params vs log_metric vs log_metrics
+| | log_params | log_metric | log_metrics |
+|---|---|---|---|
+| 무엇 | **설정값**(입력, 내가 정함) | **결과 수치**(출력) 1개 | 여러 결과 한 번에 |
+| 예 | lr·epochs·batch_size·emb_dim | loss·acc | (dict로 묶음) |
+| step | (해당 없음) | `step=`로 **곡선** 가능 | 보통 생략 |
+- **param=다이얼 설정(실험 전 고정), metric=계기판 눈금(학습 중 변함).** 둘을 짝지어야 "어떤 설정이 좋았나" 비교·재현 가능.
+- 곡선용은 step 줌: `log_metric("train_loss", v, step=global_step)`(반복). **최종 1회 결과**(final_test_acc 등)는 step 생략 = 점 1개.
+- 평가 전용 스크립트(`eval_mlflow_spam.py`)는 학습된 `.pt`를 test셋으로 **1회 채점** → 곡선 아님 → **step 없음**(전부 점 1개). `log_metrics`로 여러 지표 묶어 기록.
+
+### ⚠️ mlruns 위치 함정 — `file:./mlruns`는 상대경로 (cwd 의존)
+- 스크립트를 **어느 폴더에서 실행했나**에 따라 mlruns가 다른 곳에 생김. IDE 실행은 cwd가 레포 루트가 되기 쉬움.
+- `mlflow ui`도 **켠 폴더의 ./mlruns**를 봄 → 저장 폴더와 다르면 "실험 안 보임"(데이터는 멀쩡, UI가 다른 곳 봄).
+- 해결: UI를 같은 폴더에서(`cd .../llm-from-scratch && mlflow ui`) 또는 `--backend-store-uri file:///절대경로/mlruns`. 재발 방지는 스크립트에서 `Path(__file__).parent/"mlruns"` 절대경로 사용.
+- `log_model` 시 "logged without a signature" 경고는 무해(스키마 자동추론 못 함). `input_example=` 주면 사라짐.
+
 ## 관련 노트
 - [[quickstart-notes]] — MLflow Iris quickstart(기초 3동사)
 - [[../mlops]] — MLOps·MLflow 개념 정본
 - [[../../10-Projects/llm-from-scratch/llm-ch5-pretrain]] — 5장(이 학습의 모델·loss 토대)
+- [[../../10-Projects/llm-from-scratch/llm-ch6-classify]] — 6장 분류 FT(이 MLflow 적용 대상)
