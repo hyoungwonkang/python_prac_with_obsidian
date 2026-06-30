@@ -60,6 +60,9 @@ htmlcov/
 10-Projects/llm-from-scratch/*.pth
 10-Projects/llm-from-scratch/gpt2/
 
+# 7장 instruction 데이터 (스크립트로 재다운로드 — 코드만 git 추적)
+10-Projects/llm-from-scratch/instruction-data.json
+
 # MLflow 실험 추적 데이터 (로컬 실험 기록 — 코드만 git 추적)
 mlruns/
 mlartifacts/
