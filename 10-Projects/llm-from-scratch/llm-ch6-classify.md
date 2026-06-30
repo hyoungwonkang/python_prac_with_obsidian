@@ -13,7 +13,7 @@
 - [x] 6.2 모델에 분류 head 추가 (`heads.py`, out_head 768→2)
 - [x] 6.3 일부 레이어 freeze 전략 (마지막 블록+final_norm+head만 학습)
 - [x] 6.4 fine-tuning 학습 루프 + 평가 (`model_finetune.py`, **로컬 1.88분, val 97.5%**)
-- [ ] 6.8 학습된 모델로 실제 스팸 분류 추론
+- [x] 6.8 학습된 모델로 실제 스팸 분류 추론 (`classify_review`, **로컬 검증: 스팸/정상 정확 분류, test 95.67%**)
 
 ## 학습 메모 (실습으로 익힌 것)
 
@@ -51,6 +51,8 @@
 | 분류 | 마지막 토큰 출력 → head 50257→2 | `[CLS]` 벡터 → 분류층 |
 | 데이터 준비 | `dataset_finetuning.py` 공유 | 〃 (같은 코드 재사용) |
 
+> 두 모델의 구조·분류 방식 상세 비교는 [[../../30-References/bert-vs-gpt2-classification]] 참조.
+
 ### GPT-2 분류 파인튜닝 (6.4~6.7) — `heads.py`·`model_finetune.py`
 - **out_head 교체**: 768→50257(생성) → 768→**2**(정상/스팸). 새 `nn.Linear`는 requires_grad=True 기본 → 자동 학습 대상.
 - **마지막 토큰으로 분류**: `model(x)[:, -1, :]` → `(batch, 2)`. GPT는 왼→오라 **마지막 토큰이 문장 전체를 봄**(BERT의 `[CLS]` 대신). 출력 `(b, seq, 2)` 중 마지막만 사용.
@@ -62,6 +64,18 @@
 - **크로스 엔트로피**(매끄럽고 미분 가능)를 **대리(surrogate)** 로 최소화 → 정답 확률↑ → 정확도 간접 최대화.
 - 학습 전 baseline 손실 ≈ **ln(2)=0.693** = "50:50 찍기"(정확도 ~50%). **낮은 손실 ≠ 좋음**(확신 없이 어정쩡).
 - 사전훈련 백본은 초기 손실이 오히려 **높음**(강한 활성화 → 랜덤 head가 자신있게 틀림) → 그러나 학습 후 훨씬 우수.
+
+### 학습된 모델로 추론 (6.8) — `classify_review` (`model_finetune.py`)
+- **입력 형식은 사전훈련과 동일** = "텍스트 → 토큰 ID 텐서". 바뀌는 건 출력단(head 50257→2)·목표(다음 단어→클래스)뿐 → 그래서 백본 재활용 가능.
+- 절차: `tokenizer.encode` → (assert로 길이 가드) → `max_length`까지 자름 → 패딩 → `unsqueeze(0)` 배치차원 → `model(x)[:, -1, :]` 마지막 토큰 → `argmax` → "스팸"/"스팸 아님".
+- 함정(실제 겪음): ① `pos_emb.weight`(점) — `pos_emb_weight`는 AttributeError. ② assert는 함수 안으로 들여쓰고 **자르기보다 앞**(기본 `max_length=None`을 `min()`에 먼저 쓰면 TypeError). ③ 저장/로드 `torch.load("f.pth", map_location=...)`(따옴표 위치)·`load_state_dict`(laod 오타).
+- 정확도 그래프 x축은 `len(train_accs)`(에포크당 1개=5), 손실 그래프는 `len(train_losses)`(50스텝당 1개=13) — **그래프마다 x축 기준 다름**(섞으면 `x and y must have same first dimension`).
+- 로컬 검증: 1.86분, test 95.67%, 스팸 문장→`스팸` / 일상 대화→`스팸 아님` 정확.
+
+### GPT-2(이 트랙)는 한국어 불가 — 한국어는 BERT klue 트랙
+- 벽①: tiktoken `gpt2`는 영어 바이트 기반 → 한국어는 의미단위 안 잡히고 바이트로 쪼개짐(에러는 안 남, 의미만 깨짐).
+- 벽②: 영어 SMS만 학습 → 한국어 스팸 패턴 본 적 없음. → **에러 없이 그럴듯하게 틀림**.
+- 한국어는 [[../../30-References/rnd-bert-labeling-test-plan|BERT klue 트랙]](`predict_spam_ko.py`, klue/bert-base)이 담당하도록 분리. 교재 6장(GPT-2)은 영어 학습용으로 유지.
 
 ### 프롬프팅 baseline (파인튜닝 전, 6.x)
 - 파인튜닝 전 GPT-2에게 "yes/no로 답해" 명령 프롬프트로 분류 시도 → **작은 모델이라 부정확** → 파인튜닝 필요성을 보여주는 도입.
@@ -87,6 +101,7 @@
 ## 관련 노트
 
 - [[llm-from-scratch]] — 마스터 플랜 (인덱스)
+- [[../../30-References/bert-vs-gpt2-classification]] — BERT↔GPT-2 분류 비교(트랜스포머·[CLS]·잔차연결·SpamDataset 차이 정리)
 - [[../../30-References/rnd-bert-labeling-test-plan]] — BERT 분류 R&D(업무 산출물, HF). 같은 스팸분류를 BERT로 실증.
 - [[../../30-References/bert_ocr_practice_plan]] — BERT·OCR 라이브러리 실습 트랙
 - [[../../30-References/pytorch-env-hybrid]] — 환경 정본
