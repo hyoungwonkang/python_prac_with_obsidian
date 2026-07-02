@@ -91,7 +91,7 @@ instruction 데이터셋과 프롬프트 템플릿으로 모델이 지시를 따
 ### mutex 크래시 재발과 어댑터 자급자족화 (7.4 진입, 2026-07-02)
 - 교재 7장 코드를 그대로 치다 `from gpt_download import ...` 부활 → **로컬 TF import 크래시 재발**(`mutex lock failed`). 전역 설정으로 못 막는 import-시점 크래시 — 상세·표준 절차는 [[../../30-References/pytorch-env-hybrid]] 참조.
 - 해결하며 `hf_weight_adapter.py`를 **자급자족화**(load_weights_into_gpt 내장, previous_N 의존 제거) → 이후 장에서도 어댑터 한 줄로 사용. 355M(gpt2-medium) 로컬 로드 검증.
-- 덤으로 발견: `previous_7.py`가 빈 파일(import 시 지연 폭탄) → 당분간 `previous_6`의 GPTModel 사용, 채우면 교체.
+- 덤으로 발견: `previous_7.py`가 빈 파일(import 시 지연 폭탄) → 임시로 `previous_6`의 GPTModel 연결. **같은 날 해소**: rasbt 공식 `previous_chapters`(2~6장 모음, TF 없음, generate·train_model_simple·calc_loss 계열 포함)로 채워 `previous_7` import로 복귀, 355M 로드 재검증.
 
 ### 배치 처리가 빠른 이유 (GPU 병렬)
 - 여러 샘플을 한 텐서로 묶어 넣으면 GPU **코어 수천 개**가 동시 계산 → 1개 처리 시간 ≈ 배치 처리 시간(노는 코어를 채움). 버스 빈 좌석 채우기 비유.

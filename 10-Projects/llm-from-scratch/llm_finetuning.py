@@ -1,5 +1,5 @@
 from hf_weight_adapter import load_hf_weights_into_gpt   # TF 없이 HF에서 가중치 로드 (로컬 mutex 크래시 우회)
-from previous_6 import GPTModel   # previous_7.py가 아직 빈 파일 — 채우면 교체
+from previous_7 import GPTModel
 
 BASE_CONFIG = {
     "vocab_size": 50257,
