@@ -12,7 +12,7 @@ instruction 데이터셋과 프롬프트 템플릿으로 모델이 지시를 따
 - [x] 7.1 instruction 데이터셋 구성 — 다운로드+분할 (`instruction_dataset_finetune.py`, rasbt 1100건)
 - [x] 7.2 입력 포맷팅(프롬프트 템플릿) `format_input` 적용 (Alpaca식)
 - [x] 7.3 `InstructionDataset`(토큰화) + **사용자 정의 콜레이트 함수**(배치 시 패딩·타깃·-100) — draft 1·2 + `custom_collate_fn`, 토이 예제 loss 확인, DataLoader 3종 배치 shape 검증까지 완료
-- [ ] 7.4 instruction fine-tuning 학습
+- [~] 7.4 instruction fine-tuning 학습 — `llm_finetuning.py`: gpt2-medium(355M) 로컬 로드까지 완료 (hf_weight_adapter 경유)
 - [ ] 7.5 정성 평가 + 간단한 자동 평가 루프
 - [ ] 7.6 회고 — 사전훈련 vs 분류 FT vs 지시 FT의 차이 노트화
 
@@ -87,6 +87,11 @@ instruction 데이터셋과 프롬프트 템플릿으로 모델이 지시를 따
 - IFT가 가르치는 것: 메커니즘은 같은 다음-토큰-맞히기지만 데이터 패턴이 "`### Instruction` … `### Response:` → 수행 결과" → **"지시 뒤 Response 다음엔 수행 내용이 온다"는 행동 양식** 흡수.
 - **1,100건으로 충분한 이유**: 언어력·지식은 사전훈련이 이미 주입 — 가르치는 건 "능력을 어떤 형식으로 꺼내나"뿐. 비유: 대졸자(파운데이션)에게 응대 매뉴얼 단기 연수(지식 교육 아닌 행동 교정). GPT-3(자동완성)↔ChatGPT(비서)를 가른 핵심 재료의 미니 재현.
 - ch6과 대비 누적: ch6 = head 교체로 판별 하나를 가르침 / ch7 = head 유지, **데이터 패턴만으로** 범용 지시 수행을 가르침.
+
+### mutex 크래시 재발과 어댑터 자급자족화 (7.4 진입, 2026-07-02)
+- 교재 7장 코드를 그대로 치다 `from gpt_download import ...` 부활 → **로컬 TF import 크래시 재발**(`mutex lock failed`). 전역 설정으로 못 막는 import-시점 크래시 — 상세·표준 절차는 [[../../30-References/pytorch-env-hybrid]] 참조.
+- 해결하며 `hf_weight_adapter.py`를 **자급자족화**(load_weights_into_gpt 내장, previous_N 의존 제거) → 이후 장에서도 어댑터 한 줄로 사용. 355M(gpt2-medium) 로컬 로드 검증.
+- 덤으로 발견: `previous_7.py`가 빈 파일(import 시 지연 폭탄) → 당분간 `previous_6`의 GPTModel 사용, 채우면 교체.
 
 ### 배치 처리가 빠른 이유 (GPU 병렬)
 - 여러 샘플을 한 텐서로 묶어 넣으면 GPU **코어 수천 개**가 동시 계산 → 1개 처리 시간 ≈ 배치 처리 시간(노는 코어를 채움). 버스 빈 좌석 채우기 비유.

@@ -45,6 +45,7 @@
 - ⚠️ **Python 3.9 캐비엇**: 시스템 파이썬 3.9.6은 비교적 구버전(상위 EOL 임박). 현재 torch 2.8.0과 호환되어 실습엔 문제없으나, 추후 더 새 파이썬이 필요하면 Homebrew(`brew install python@3.12`)로 재구성 가능. 그 전까지는 3.9.6 `~/ml-env` 재사용. (Homebrew는 이미 설치됨: brew 6.0.3)
 - 🔴 **TensorFlow 로컬 불가 (2026-06-25 확인)**: 시스템 파이썬 3.9.6 `~/ml-env`에서 `import tensorflow`가 **C++ 레벨 크래시**(`libc++abi: mutex lock failed: Invalid argument`). macOS CLT 파이썬 빌드 비호환 이슈. → 로컬 고집 시 대안: ① `transformers`로 TF 우회, ② Homebrew `python@3.12` 별도 venv 재구성(미검증). torch/tiktoken 등은 정상.
 - 🟢 **GPT-2 가중치 로컬 로드 해결 (2026-06-29)**: 위 대안 ①을 구현. `10-Projects/llm-from-scratch/hf_weight_adapter.py`가 HF `GPT2LMHeadModel.from_pretrained`(PyTorch)로 받아 교재 `GPTModel`에 로드(**TF 불필요**, `USE_TF=0`). 가능 이유: HF Conv1D 가중치 방향이 TF `gpt_download` 형식과 동일 → 기존 `load_weights_into_gpt` 재사용. → **GPT-2 분류 파인튜닝 전체를 M4 Max 로컬에서 완주(1.88분, val acc 97.5%)**. 이제 GPT-2 트랙도 BERT처럼 완전 로컬. (단 OpenAI 원본 TF 체크포인트를 직접 읽는 `gpt_download.py`는 여전히 TF→Colab.)
+  - **(2026-07-02 갱신)** 어댑터를 **자급자족화**: `assign`/`load_weights_into_gpt`를 내장해 `previous_N` 의존 제거 → 교재 GPTModel 구조면 **5~7장 어느 스크립트든** `from hf_weight_adapter import load_hf_weights_into_gpt` 한 줄로 사용. 355M(gpt2-medium)도 로컬 로드 검증 완료. **재발 주의**: 교재 코드를 그대로 치면 `from gpt_download import ...`가 부활해 mutex 크래시 재발(7장 `llm_finetuning.py`에서 실제 재발) — 이건 전역 설정으로 못 막는 import-시점 크래시라, 새 장 시작 때마다 gpt_download → 어댑터로 치환이 표준 절차.
 
 ---
 
