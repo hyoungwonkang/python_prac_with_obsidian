@@ -19,7 +19,7 @@
 
 | # | 기술 | 아키텍처 계층 | 1차 학습 데이터셋 (공개) | 파인튜닝/실습 방법 | 상태 |
 |---|---|---|---|---|---|
-| 1 | **BERT** (텍스트 분류) | 1차 탐지 Text Classifier (KoBERT) | SMS Spam(완료) → **KLUE-TC**(뉴스 7클래스) · Korean HateSpeech(도메인 유사) | `finetune_bert_spam.py` 재사용, `num_labels`만 변경 → 다중 클래스 확장 | ✅ 기초 완료(en/ko ~97%) / [ ] 다중 클래스 심화 |
+| 1 | **BERT** (텍스트 분류) | 1차 탐지 Text Classifier (KoBERT) | SMS Spam(완료) → **KLUE-TC**(뉴스 7클래스) · Korean HateSpeech(도메인 유사) | `finetune_bert_spam.py` 재사용, `num_labels`만 변경 → 다중 클래스 확장. **교재 저자 공식 BERT 비교 코드**: [rasbt ch06 bonus](https://github.com/rasbt/LLMs-from-scratch/tree/main/ch06/03_bonus_imdb-classification) — IMDb로 GPT-2 vs BERT·RoBERTa·DeBERTa·ModernBERT 비교 (부록 B에 BERT 교재 추천은 없음, 이게 저자의 실질 자료) | ✅ 기초 완료(en/ko ~97%) / [ ] 다중 클래스 심화 |
 | 2 | **NER** (개체명 인식) | 1차 탐지 NER Agent (인명·연령·연락처·계정 추출) | **KLUE-NER** (6개 태그, HF datasets) | `BertForTokenClassification` — 토큰 단위 라벨. **subword 정렬에 -100(ignore_index) 그대로 재등장** → 7장 개념 재사용 | [ ] |
 | 3 | **YOLO** (객체 탐지) | Image Analyzer (이미지 위험 분류) | **COCO128**(스모크 테스트) → Roboflow 공개셋(커스텀 라벨 형식 연습) | `ultralytics` 패키지, 사전훈련 가중치 전이학습. **MPS 지원** — 단 [[llm-from-scratch/llm-ch7-failure-log|MPS 함정]] 주의 | [ ] |
 | 4 | **OpenCV** (이미지 처리) | 추출·전처리 (프레임 추출, 비식별화) | 데이터셋 불필요 — 샘플 이미지/영상 | 파인튜닝 아님, 라이브러리 실습: 로드·리사이즈·블러(얼굴 비식별화)·영상 프레임 추출 → YOLO 전처리 파이프로 연결 | [ ] |
