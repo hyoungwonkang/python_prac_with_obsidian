@@ -79,12 +79,21 @@ eval_freq, eval_iter = 5, 5
 
 with mlflow.start_run(run_name="355M-no-masking"):   # 연습문제 7.2에서 masking run과 비교 예정
     mlflow.log_params({
-        **BASE_CONFIG, "model": CHOOSE_MODEL,
-        "lr": lr, "weight_decay": weight_decay, "num_epochs": num_epochs,
-        "batch_size": 8, "eval_freq": eval_freq, "eval_iter": eval_iter,
-        "train_size": 935, "val_size": 55,
-        "masking": "none",                            # 지시 마스킹 미적용 (baseline)
-        "device": str(device),
+        # 모델 구조 (BASE_CONFIG를 한글 명칭으로)
+        "어휘사전_크기": BASE_CONFIG["vocab_size"],
+        "문맥_길이": BASE_CONFIG["context_length"],
+        "임베딩_차원": BASE_CONFIG["emb_dim"],
+        "어텐션_헤드_수": BASE_CONFIG["n_heads"],
+        "층_수": BASE_CONFIG["n_layers"],
+        "드롭아웃_비율": BASE_CONFIG["drop_rate"],
+        "qkv_편향": BASE_CONFIG["qkv_bias"],
+        # 학습 설정
+        "모델": CHOOSE_MODEL,
+        "학습률": lr, "가중치_감쇠": weight_decay, "에폭_수": num_epochs,
+        "배치_크기": 8, "평가_주기": eval_freq, "평가_배치_수": eval_iter,
+        "훈련_데이터_수": 935, "검증_데이터_수": 55,
+        "지시_마스킹": "없음",                        # 연습문제 7.2 비교용 (baseline)
+        "장치": str(device),
     })
 
     train_losses, val_losses, tokens_seen = train_model_simple(
@@ -100,13 +109,13 @@ with mlflow.start_run(run_name="355M-no-masking"):   # 연습문제 7.2에서 ma
     # train_model_simple이 돌려준 loss 곡선을 step 붙여 기록 (previous_7은 수정하지 않음)
     for i, (tr, vl, ts) in enumerate(zip(train_losses, val_losses, tokens_seen)):
         step = i * eval_freq                          # 평가 시점의 global step
-        mlflow.log_metric("train_loss", tr, step=step)
-        mlflow.log_metric("val_loss", vl, step=step)
-        mlflow.log_metric("tokens_seen", ts, step=step)
+        mlflow.log_metric("훈련_손실", tr, step=step)
+        mlflow.log_metric("검증_손실", vl, step=step)
+        mlflow.log_metric("누적_토큰", ts, step=step)
 
-    mlflow.log_metric("final_train_loss", train_losses[-1])
-    mlflow.log_metric("final_val_loss", val_losses[-1])
-    mlflow.log_metric("train_minutes", execution_time_minutes)
+    mlflow.log_metric("최종_훈련_손실", train_losses[-1])
+    mlflow.log_metric("최종_검증_손실", val_losses[-1])
+    mlflow.log_metric("훈련_시간_분", execution_time_minutes)
     # log_model은 생략 — 355M은 run당 ~1.4GB (finetune_gpt2_mlflow.py의 LOG_MODEL=False와 같은 이유)
 
 epochs_tensor = torch.linspace(0, num_epochs, len(train_losses))
