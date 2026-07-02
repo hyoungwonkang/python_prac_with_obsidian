@@ -93,6 +93,13 @@ instruction 데이터셋과 프롬프트 템플릿으로 모델이 지시를 따
 - 해결하며 `hf_weight_adapter.py`를 **자급자족화**(load_weights_into_gpt 내장, previous_N 의존 제거) → 이후 장에서도 어댑터 한 줄로 사용. 355M(gpt2-medium) 로컬 로드 검증.
 - 덤으로 발견: `previous_7.py`가 빈 파일(import 시 지연 폭탄) → 임시로 `previous_6`의 GPTModel 연결. **같은 날 해소**: rasbt 공식 `previous_chapters`(2~6장 모음, TF 없음, generate·train_model_simple·calc_loss 계열 포함)로 채워 `previous_7` import로 복귀, 355M 로드 재검증.
 
+### "1.97분 학습"이 무효였던 이유 — MPS 비연속 가중치 버그 추적기 (2026-07-02)
+- **증상**: 2에폭이 1.97분 만에 끝났는데 생성이 "arcity Franch" 반복 횡설수설 — 파인튜닝 **전**(문장 복창)보다 나빠짐. MLflow 곡선 확인 → **시작 loss 20**(정상 ~3.8, 무작위 가중치 10.8보다도 높음) → 시작부터 모델 계산이 망가져 있었다는 증거. **교훈 ①: 학습 시간·loss 감소만 보면 속는다 — 시작 loss가 사전훈련 기대값(~3.8)인지부터 확인.**
+- **진단 과정** (용의자 소거법): 같은 배치로 CPU loss 3.81 vs MPS 19.77 → 장치 문제 확정 → cross_entropy(-100) 단독 테스트 무죄 → 새 Linear(768→50257) 무죄 → **forward 이분탐색**: 임베딩까지 일치, block0부터 붕괴 → 블록 내부: norm1 일치, **W_query부터 어긋남** → 최소 재현: 어댑터가 만든 weight가 **비연속(stride (1,768))** Parameter였고, CPU는 정상·**MPS 행렬곱은 조용히 오답**(torch 2.8.0). `contiguous()` 강제 시 오차 48.2 → 0.00002.
+- **원인**: `assign`의 `torch.tensor(numpy_전치뷰)`가 stride를 그대로 물려받음. **수정**: `np.ascontiguousarray` 한 줄 → CPU 3.8112 vs MPS 3.8113 일치. 상세·진단 요령은 [[../../30-References/pytorch-env-hybrid]].
+- 6장이 MPS에서 멀쩡했던 이유(추정): 손상 경로가 같아도 분류는 2칸 head 재학습이 흡수했거나 실행 장치가 달랐음 — 미확정. 무효 run은 MLflow에 `355M-no-masking-INVALID` 태그로 보존(비교 교보재).
+- **교훈 ②**: "조용히 틀리는" 버그(에러 없음, 속도 정상)가 최악 — 값의 **기대치**(시작 loss, before/after 품질)를 알아야 잡는다. 이번에 MLflow 기록 덕에 시작 loss를 소급 확인할 수 있었음 = 실험 추적의 실전 효용.
+
 ### 배치 처리가 빠른 이유 (GPU 병렬)
 - 여러 샘플을 한 텐서로 묶어 넣으면 GPU **코어 수천 개**가 동시 계산 → 1개 처리 시간 ≈ 배치 처리 시간(노는 코어를 채움). 버스 빈 좌석 채우기 비유.
 - **코어 ≠ 메모리**(독립 자원, 비례 안 함): 코어=계산 일꾼, 메모리=데이터 창고. 배치 키우면 노는 코어 채워 빨라지지만 **메모리 초과(OOM)** 면 멈춤 → 둘의 균형점에서 batch_size 결정.

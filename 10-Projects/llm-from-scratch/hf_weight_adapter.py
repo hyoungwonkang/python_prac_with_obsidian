@@ -24,7 +24,9 @@ import torch
 def assign(left, right):
     if left.shape != right.shape:
         raise ValueError(f"Shape mismatch. Left: {left.shape}, Right: {right.shape}")
-    return torch.nn.Parameter(torch.tensor(right))
+    # ascontiguousarray 필수: 전치된 numpy 뷰를 그대로 텐서화하면 비연속(stride 꼬임) Parameter가 되고,
+    # CPU는 정상 계산하지만 MPS 행렬곱이 조용히 틀린 값을 냄 (torch 2.8.0에서 실측 — loss 3.8 → 20 붕괴)
+    return torch.nn.Parameter(torch.tensor(np.ascontiguousarray(right)))
 
 
 def load_weights_into_gpt(gpt, params):
