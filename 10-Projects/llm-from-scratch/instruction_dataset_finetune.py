@@ -14,7 +14,8 @@ def download_and_load_file(file_path, url):
     return data
 
 # 데이터 선택: "book" = 교재 1,100건 / "alpaca" = Stanford Alpaca 52k (연습문제 7.3)
-DATASET = "alpaca"
+# alpaca는 MPS OOM으로 종결 — 실패 기록: llm-ch7-failure-log.md (버킷 패딩 미검증 가설로 남김)
+DATASET = "book"
 
 if DATASET == "alpaca":
     file_path = "alpaca_data.json"
