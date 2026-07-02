@@ -12,7 +12,7 @@ instruction 데이터셋과 프롬프트 템플릿으로 모델이 지시를 따
 - [x] 7.1 instruction 데이터셋 구성 — 다운로드+분할 (`instruction_dataset_finetune.py`, rasbt 1100건)
 - [x] 7.2 입력 포맷팅(프롬프트 템플릿) `format_input` 적용 (Alpaca식)
 - [x] 7.3 `InstructionDataset`(토큰화) + **사용자 정의 콜레이트 함수**(배치 시 패딩·타깃·-100) — draft 1·2 + `custom_collate_fn`, 토이 예제 loss 확인, DataLoader 3종 배치 shape 검증까지 완료
-- [~] 7.4 instruction fine-tuning 학습 — `llm_finetuning.py`: gpt2-medium(355M) 로컬 로드 + **파인튜닝 전 생성 확인 완료**. before 기준점: 수동태 변환 지시에 문장 복창 + `### Instruction:` 자가 출제(= "자동완성 엔진" 실물 증거). 파인튜닝 후 같은 프롬프트로 비교 예정
+- [~] 7.4 instruction fine-tuning 학습 — `llm_finetuning.py`: gpt2-medium(355M) 로컬 로드 + **파인튜닝 전 생성 확인 완료**. before 기준점: 수동태 변환 지시에 문장 복창 + `### Instruction:` 자가 출제(= "자동완성 엔진" 실물 증거). 파인튜닝 후 같은 프롬프트로 비교 예정. **MLflow 연동 완료**: experiment `gpt2-instruct-finetune`, run `355M-no-masking`, param `masking=none` — 연습문제 7.2 마스킹 run과 비교용. previous_7은 안 건드리고 반환된 loss 리스트를 학습 후 step 붙여 기록하는 방식. log_model 생략(run당 ~1.4GB). 학습 실행은 아직
 - [ ] 7.5 정성 평가 + 간단한 자동 평가 루프
 - [ ] 7.6 회고 — 사전훈련 vs 분류 FT vs 지시 FT의 차이 노트화
 
