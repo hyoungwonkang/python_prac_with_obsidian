@@ -110,6 +110,7 @@ instruction 데이터셋과 프롬프트 템플릿으로 모델이 지시를 따
 
 ## 관련 노트
 
+- [[llm-ch7-failure-log]] — **Alpaca 파인튜닝 실패 6건 로그 + 용어 정리** (mutex 재발·MPS 조용한 버그·OOM 4연전)
 - [[llm-from-scratch]] — 마스터 플랜 (인덱스)
 - [[llm-ch6-classify]] — 6장 분류 FT (출력·head·손실 대비)
 - [[../../30-References/bert-vs-gpt2-classification]] — 트랜스포머·어텐션 개념 정리
