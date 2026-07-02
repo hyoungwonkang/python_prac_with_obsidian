@@ -10,8 +10,8 @@ instruction 데이터셋과 프롬프트 템플릿으로 모델이 지시를 따
 ## 체크리스트
 
 - [x] 7.1 instruction 데이터셋 구성 — 다운로드+분할 (`instruction_dataset_finetune.py`, rasbt 1100건)
-- [~] 7.2 입력 포맷팅(프롬프트 템플릿) `format_input` 적용 (Alpaca식)
-- [~] 7.3 `InstructionDataset`(토큰화) + **사용자 정의 콜레이트 함수**(배치 시 패딩·타깃·-100) — draft 1·2 + `custom_collate_fn`까지 작성, 토이 예제로 loss 확인
+- [x] 7.2 입력 포맷팅(프롬프트 템플릿) `format_input` 적용 (Alpaca식)
+- [x] 7.3 `InstructionDataset`(토큰화) + **사용자 정의 콜레이트 함수**(배치 시 패딩·타깃·-100) — draft 1·2 + `custom_collate_fn`, 토이 예제 loss 확인, DataLoader 3종 배치 shape 검증까지 완료
 - [ ] 7.4 instruction fine-tuning 학습
 - [ ] 7.5 정성 평가 + 간단한 자동 평가 루프
 - [ ] 7.6 회고 — 사전훈련 vs 분류 FT vs 지시 FT의 차이 노트화

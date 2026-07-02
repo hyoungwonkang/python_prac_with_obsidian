@@ -33,7 +33,7 @@ def format_input(entry):
     )
 
     input_text = (
-        f"\n\n### Input: \n{entry['input']}" if entry["input"] else ""
+        f"\n\n### Input:\n{entry['input']}" if entry["input"] else ""
     )
     return instruction_text + input_text
 
@@ -56,3 +56,206 @@ val_data = data[train_portion+test_portion:]
 print("훈련 세트 크기:", len(train_data))
 print("검증 세트 크기:", len(val_data))
 print("테스트 세트 크기:", len(test_data))
+
+import torch
+from torch.utils.data import Dataset
+
+class InstructionDataset(Dataset):
+    def __init__(self, data, tokenizer):
+        self.data = data
+        self.encoded_texts = []
+        for entry in data:
+            instruction_plus_input = format_input(entry)
+            response_text = f"\n\n### Response:\n{entry['output']}"
+            full_text = instruction_plus_input + response_text
+            self.encoded_texts.append(
+                tokenizer.encode(full_text)
+            )
+
+    def __getitem__(self, index):
+        return self.encoded_texts[index]
+
+    def __len__(self):
+        return len(self.data)
+
+
+import tiktoken
+tokenizer = tiktoken.get_encoding("gpt2")
+print(tokenizer.encode("<|endoftext|>", allowed_special={"<|endoftext|>"}))
+
+def custom_collate_draft_1(
+        batch,
+        pad_token_id=50256,
+        device="cpu"
+):
+    batch_max_length = max(len(item)+1 for item in batch)
+    inputs_lst = []
+
+    for item in batch:
+        new_item = item.copy()
+        new_item += [pad_token_id]
+
+        padded = (
+            new_item + [pad_token_id] *
+            (batch_max_length - len(new_item))
+        )
+        inputs = torch.tensor(padded[:-1])
+        inputs_lst.append(inputs)
+
+    inputs_tensor = torch.stack(inputs_lst).to(device)
+    return inputs_tensor
+    
+inputs_1 = [0, 1, 2, 3, 4]
+inputs_2 = [5, 6]
+inputs_3 = [7, 8, 9]
+batch = (
+    inputs_1,
+    inputs_2,
+    inputs_3
+)
+# print(custom_collate_draft_1(batch))
+
+def custom_collate_draft_2(
+        batch,
+        pad_token_id=50256,
+        device="cpu"
+):
+    batch_max_length = max(len(item)+1 for item in batch)
+    inputs_lst, targets_lst = [], []
+
+    for item in batch:
+        new_item = item.copy()
+        new_item += [pad_token_id]
+
+        padded = (
+            new_item + [pad_token_id] *
+            (batch_max_length - len(new_item))
+        )
+        inputs = torch.tensor(padded[:-1])
+        targets = torch.tensor(padded[1:])
+        inputs_lst.append(inputs)
+        targets_lst.append(targets)
+
+    inputs_tensor = torch.stack(inputs_lst).to(device)
+    targets_tensor = torch.stack(targets_lst).to(device)
+    return inputs_tensor, targets_tensor
+
+inputs, targets = custom_collate_draft_2(batch)
+print(inputs)
+print(targets)
+
+def custom_collate_fn(
+        batch,
+        pad_token_id=50256,
+        ignore_index=-100,
+        allowed_max_length=None,
+        device="cpu"
+):
+    batch_max_length = max(len(item)+1 for item in batch)
+    inputs_lst, targets_lst = [], []
+
+    for item in batch:
+        new_item = item.copy()
+        new_item += [pad_token_id]
+
+        padded = (
+            new_item + [pad_token_id] *
+            (batch_max_length - len(new_item))
+        )
+        inputs = torch.tensor(padded[:-1])
+        targets = torch.tensor(padded[1:])
+        mask = targets == pad_token_id
+        indices = torch.nonzero(mask).squeeze()
+        if indices.numel() > 1:
+            targets[indices[1:]] = ignore_index
+
+        if allowed_max_length is not None:
+            inputs = inputs[:allowed_max_length]
+            targets = targets[:allowed_max_length]
+
+        inputs_lst.append(inputs)
+        targets_lst.append(targets)
+
+    inputs_tensor = torch.stack(inputs_lst).to(device)
+    targets_tensor = torch.stack(targets_lst).to(device)
+    return inputs_tensor, targets_tensor
+
+inputs, targets = custom_collate_fn(batch)
+print(inputs)
+print(targets)
+
+logits_1 = torch.tensor(
+    [[-1.0, 1.0],
+     [-0.5, 1.5]]
+)
+targets_1 = torch.tensor([0,1])
+loss_1 = torch.nn.functional.cross_entropy(logits_1, targets_1)
+print(loss_1)
+
+logits_2 = torch.tensor(
+    [[-1.0, 1.0],
+     [-0.5, 1.5],
+     [-0.5, 1.5]]
+)
+targets_2 = torch.tensor([0, 1, 1])
+loss_2 = torch.nn.functional.cross_entropy(logits_2, targets_2)
+print(loss_2)
+
+targets_3 = torch.tensor([0, 1, -100])
+loss_3 = torch.nn.functional.cross_entropy(logits_2, targets_3)
+print(loss_3)
+print("loss_1 == loss_3:", loss_1 == loss_3)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+print("장치:", device)
+
+from functools import partial
+
+customized_collate_fn = partial(
+    custom_collate_fn,
+    device=device,
+    allowed_max_length=1024
+)
+
+from torch.utils.data import DataLoader
+
+num_workers = 0
+batch_size = 8
+
+torch.manual_seed(123)
+
+train_dataset = InstructionDataset(train_data, tokenizer)
+train_loader = DataLoader(
+    train_dataset,
+    batch_size=batch_size,
+    collate_fn=customized_collate_fn,
+    shuffle=True,
+    drop_last=True,
+    num_workers=num_workers
+)
+
+val_dataset = InstructionDataset(val_data, tokenizer)
+val_loader = DataLoader(
+    val_dataset,
+    batch_size=batch_size,
+    collate_fn=customized_collate_fn,
+    shuffle=False,
+    drop_last=False,
+    num_workers=num_workers
+)
+
+test_dataset = InstructionDataset(test_data, tokenizer)
+test_loader = DataLoader(
+    test_dataset,
+    batch_size=batch_size,
+    collate_fn=customized_collate_fn,
+    shuffle=False,
+    drop_last=False,
+    num_workers=num_workers
+)
+
+print("훈련 데이터 로더:")
+for inputs, targets in train_loader:
+    print(inputs.shape, targets.shape)
