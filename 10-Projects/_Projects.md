@@ -7,6 +7,7 @@
 - [[llm-from-scratch]] — **ML 학습 트랙 마스터 플랜.** Raschka 『밑바닥부터 만들면서 배우는 LLM』 본문 1~7장 + 부록 A 진행 인덱스. 부록 A는 [[pytorch-study]]로 분리.
   - [[pytorch-study]] — 부록 A: PyTorch 입문. 인텔 맥 로컬(2.2.2/MPS) + Colab(2.6.0/T4) 하이브리드. **부록 A(A.1~A.10) ✅ 완료 (2026-06-17)**, 본문 1장으로 이동. 환경 정본: [[../30-References/pytorch-env-hybrid]].
 - [[rec-planner]] — 자연어 → 검증된 추천 플랜 LLM 앱(travel-rag 축소판). [[../30-References/HARNESS]] 6대 골격 적용. Phase 0~1 완료(HARNESS 게이트 통과, 의존성 0 테스트 21/21). Phase 2.1 실 LLM 런타임은 deps 설치 환경에서 보류.
+- [[detection-ai-study]] — **탐지 플랫폼 대응 학습 트랙.** 업무 아키텍처(Hybrid RAG + Graph RAG)의 1차 탐지 계층을 코드로 재현하는 것이 목표. 우선순위: ①BERT·NER·YOLO·OpenCV ②RULE·CLIP ③PaddleOCR. llm-from-scratch 7장 마무리 후 진입.
 
 ## 보류
 

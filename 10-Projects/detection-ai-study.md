@@ -1,0 +1,60 @@
+# detection-ai-study — 탐지 플랫폼 대응 학습 트랙
+
+## Context
+
+- 업무 프로젝트: **아동·청소년 온라인 성착취 의심정황 탐지 AI 플랫폼** (Hybrid RAG + Graph RAG 중심 고도화 아키텍처, 2026-07-02 공유).
+- 파이프라인: 수집 → 원본 보존 → 추출(OCR·임베딩) → **1차 탐지(Rule·KoBERT 분류·NER·이미지)** → 근거 검색(Hybrid RAG) → 관계 분석(Graph RAG) → LLM 판단·스코어링 → 검수 → 재학습(MLflow).
+- [[llm-from-scratch]] (교재 트랙)가 마무리 단계에 들어서며, **플랫폼의 1차 탐지 계층을 코드로 재현할 수 있는 것**을 다음 학습 목표로 설정.
+- 아키텍처 원본 이미지는 업무 자료라 **vault에 커밋하지 않음** (로컬 보관).
+
+## 목표
+
+각 기술마다 **① 공개 데이터셋으로 ② 로컬에서 코드 테스트 가능한 파인튜닝/실습**을 완성한다.
+검증 기준: 미니 데이터로 end-to-end 실행 + MLflow 기록 (llm-from-scratch 방식 그대로).
+
+## 우선순위 (2026-07-02 확정)
+
+### 1군 — 최우선
+
+| # | 기술 | 아키텍처 계층 | 1차 학습 데이터셋 (공개) | 파인튜닝/실습 방법 | 상태 |
+|---|---|---|---|---|---|
+| 1 | **BERT** (텍스트 분류) | 1차 탐지 Text Classifier (KoBERT) | SMS Spam(완료) → **KLUE-TC**(뉴스 7클래스) · Korean HateSpeech(도메인 유사) | `finetune_bert_spam.py` 재사용, `num_labels`만 변경 → 다중 클래스 확장 | ✅ 기초 완료(en/ko ~97%) / [ ] 다중 클래스 심화 |
+| 2 | **NER** (개체명 인식) | 1차 탐지 NER Agent (인명·연령·연락처·계정 추출) | **KLUE-NER** (6개 태그, HF datasets) | `BertForTokenClassification` — 토큰 단위 라벨. **subword 정렬에 -100(ignore_index) 그대로 재등장** → 7장 개념 재사용 | [ ] |
+| 3 | **YOLO** (객체 탐지) | Image Analyzer (이미지 위험 분류) | **COCO128**(스모크 테스트) → Roboflow 공개셋(커스텀 라벨 형식 연습) | `ultralytics` 패키지, 사전훈련 가중치 전이학습. **MPS 지원** — 단 [[llm-from-scratch/llm-ch7-failure-log|MPS 함정]] 주의 | [ ] |
+| 4 | **OpenCV** (이미지 처리) | 추출·전처리 (프레임 추출, 비식별화) | 데이터셋 불필요 — 샘플 이미지/영상 | 파인튜닝 아님, 라이브러리 실습: 로드·리사이즈·블러(얼굴 비식별화)·영상 프레임 추출 → YOLO 전처리 파이프로 연결 | [ ] |
+| 5 | **p2** | ⚠️ **항목 확인 필요** — GPT-2 분류기(완료된 것)인지 별개 기술인지 | | | [?] |
+
+### 2군
+
+| 기술 | 아키텍처 계층 | 데이터셋 | 실습 방법 | 상태 |
+|---|---|---|---|---|
+| **RULE** (룰 엔진) | 1차 탐지 Rule Engine | 기존 스팸 데이터 재사용 | 정규식·키워드·패턴 룰을 파이썬으로 직접 구현 → **같은 test셋에서 룰 vs BERT의 precision/recall 비교** (트레이드오프 체감 + 하이브리드 구성 근거) | [ ] |
+| **CLIP (VLM)** | Image Analyzer (이미지-텍스트 결합 판단) | 소규모 자체 이미지 + 텍스트 프롬프트 | HF CLIP으로 zero-shot 분류 체험 → linear probe 파인튜닝. 한국어는 KoCLIP 후보 | [ ] |
+
+### 3군
+
+| 기술 | 아키텍처 계층 | 실습 방법 | 상태 |
+|---|---|---|---|
+| **PaddleOCR** | 추출 계층 (이미지 → 텍스트) | 라이브러리 사용 실습(한국어 인식 정확도 확인) → 출력이 BERT/NER 입력으로 이어지는 미니 파이프라인. 커스텀 파인튜닝은 무거워서 후순위. 기존 [[../30-References/bert_ocr_practice_plan]]과 연결 | [ ] |
+
+### 후순위 (플랫폼 2단계 도입 시점에)
+
+- **Hybrid RAG** (SBERT 문장 임베딩 → 벡터 검색 → BM25 하이브리드 → Reranker) — MVP 1단계 핵심이지만 사용자 우선순위 기준으로는 위 목록 이후
+- Graph RAG (Neo4j·Entity Linking) · MLOps 심화(Model Registry·Canary) · 인프라(K8s·Kafka·OpenSearch)
+
+## 공통 원칙
+
+- 로컬(M4 Max) 우선, 무거우면 Colab 우회 — 환경 정본 [[../30-References/pytorch-env-hybrid]]
+- 모든 실습 MLflow 기록 (한글 키 관례 유지) — [[../30-References/mlflow-practice/mlflow-terms-glossary]]
+- "미니 데이터로 우선 완주" — Alpaca OOM 교훈([[llm-from-scratch/llm-ch7-failure-log]]): 작게 시작해 실패 비용 절감
+- 진행 순서: [[llm-from-scratch]] 7장 마무리(7.5~7.6) 후 이 트랙 진입
+
+## 검증 방법
+
+기술마다 ① 미니 데이터 end-to-end 실행 로그 ② MLflow run ③ 학습 노트(무엇이 플랫폼 어느 계층에 대응하는지) 3종이 남으면 완료 처리.
+
+## 관련 노트
+
+- [[llm-from-scratch]] — 선행 트랙 (교재)
+- [[../30-References/rnd-bert-labeling-test-plan]] — 이 트랙의 선행 업무 산출물 (BERT 스팸 R&D)
+- [[../30-References/bert_ocr_practice_plan]] — BERT/OCR 기존 로드맵 (이 노트로 흡수·발전)
