@@ -8,6 +8,12 @@
 .obsidian/workspace*
 .obsidian/cache/
 
+# 대용량 재다운로드 가능 데이터 (스크립트가 자동 다운로드)
+10-Projects/llm-from-scratch/alpaca_data.json
+
+# 에디터 로컬 설정 (PC별)
+.vscode/
+
 # Python
 __pycache__/
 *.py[cod]

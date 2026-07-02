@@ -13,14 +13,26 @@ def download_and_load_file(file_path, url):
         data = json.load(file)
     return data
 
-file_path = "instruction-data.json"
-url = (
-    "https://raw.githubusercontent.com/rasbt/LLMs-from-scratch"
-    "/main/ch07/01_main-chapter-code/instruction-data.json"
-)
+# 데이터 선택: "book" = 교재 1,100건 / "alpaca" = Stanford Alpaca 52k (연습문제 7.3)
+DATASET = "alpaca"
+
+if DATASET == "alpaca":
+    file_path = "alpaca_data.json"
+    url = "https://mng.bz/NBnE"   # → tatsu-lab/stanford_alpaca (301 리다이렉트, urllib이 따라감)
+    SUBSET = 5000                 # 전체 52,002건은 2에폭 ~1.5시간 → 우선 5천 건으로
+else:
+    file_path = "instruction-data.json"
+    url = (
+        "https://raw.githubusercontent.com/rasbt/LLMs-from-scratch"
+        "/main/ch07/01_main-chapter-code/instruction-data.json"
+    )
+    SUBSET = None
 
 data = download_and_load_file(file_path, url)
-print("샘플 개수:", len(data))
+if SUBSET is not None:
+    data = data[:SUBSET]
+dataset_name = f"{DATASET}-{len(data)}건"
+print("샘플 개수:", len(data), f"({dataset_name})")
 
 print("샘플 예시:\n", data[50])
 print("다른 샘플:\n", data[999])
@@ -149,9 +161,16 @@ def custom_collate_fn(
         pad_token_id=50256,
         ignore_index=-100,
         allowed_max_length=None,
+        bucket_multiple=None,
         device="cpu"
 ):
     batch_max_length = max(len(item)+1 for item in batch)
+    if bucket_multiple is not None and allowed_max_length is not None:
+        # 배치 폭을 bucket_multiple의 배수로 올림 → 배치 모양 종류를 소수(예: 512/64=8종)로 제한.
+        # MPS는 모양마다 연산 그래프를 영구 캐시해서, 동적 패딩의 다양한 모양이 OOM을 유발
+        # (empty_cache로도 못 비움 — 'other allocations' 폭증으로 실측 확인)
+        width = -(-(batch_max_length - 1) // bucket_multiple) * bucket_multiple
+        batch_max_length = min(width, allowed_max_length) + 1
     inputs_lst, targets_lst = [], []
 
     for item in batch:
@@ -213,16 +232,21 @@ print("장치:", device)
 
 from functools import partial
 
+# Alpaca는 긴 샘플이 있어 1024 상한이면 MPS OOM (355M, 2026-07-02 실측) → 512로 천장 낮춤
+allowed_max_length = 512 if DATASET == "alpaca" else 1024
+
 customized_collate_fn = partial(
     custom_collate_fn,
     device=device,
-    allowed_max_length=1024
+    allowed_max_length=allowed_max_length,
+    bucket_multiple=64 if DATASET == "alpaca" else None
 )
 
 from torch.utils.data import DataLoader
 
 num_workers = 0
-batch_size = 8
+# Alpaca: 512 천장으로도 355M MPS OOM (step 105) → 배치 절반으로 활성값 메모리 절감
+batch_size = 4 if DATASET == "alpaca" else 8
 
 torch.manual_seed(123)
 
@@ -256,6 +280,30 @@ test_loader = DataLoader(
     num_workers=num_workers
 )
 
+
+class MPSCacheClearingLoader:
+    """MPS 캐시 할당자는 배치 모양(shape)마다 버퍼를 따로 쌓는다 — 가변 길이 배치(동적 패딩)가
+    다양할수록 캐시가 무한 증식해 OOM (Alpaca에서 step ~110 사망, batch 반감해도 동일 → 누적 문제 확증).
+    N배치마다 캐시를 비워 메모리를 평탄하게 유지. previous_7(교재 모듈)은 수정하지 않기 위한 래퍼."""
+    def __init__(self, loader, every=20):
+        self.loader = loader
+        self.every = every
+
+    def __iter__(self):
+        for i, batch in enumerate(self.loader):
+            yield batch
+            if (i + 1) % self.every == 0:
+                torch.mps.empty_cache()
+
+    def __len__(self):
+        return len(self.loader)
+
+
+if DATASET == "alpaca" and device.type == "mps":
+    train_loader = MPSCacheClearingLoader(train_loader)
+    val_loader = MPSCacheClearingLoader(val_loader)
+    test_loader = MPSCacheClearingLoader(test_loader)
+
 print("훈련 데이터 로더:")
-for inputs, targets in train_loader:
-    print(inputs.shape, targets.shape)
+# for inputs, targets in train_loader:
+#     print(inputs.shape, targets.shape)
