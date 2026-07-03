@@ -7,14 +7,18 @@
 
 instruction 데이터셋과 프롬프트 템플릿으로 모델이 지시를 따르도록 미세 튜닝하고, 정성·자동 평가로 마무리하는 마지막 장.
 
-## 체크리스트
+## 체크리스트 (교재 실제 절 번호 기준 — 2026-07-03 재정렬)
 
-- [x] 7.1 instruction 데이터셋 구성 — 다운로드+분할 (`instruction_dataset_finetune.py`, rasbt 1100건)
-- [x] 7.2 입력 포맷팅(프롬프트 템플릿) `format_input` 적용 (Alpaca식)
-- [x] 7.3 `InstructionDataset`(토큰화) + **사용자 정의 콜레이트 함수**(배치 시 패딩·타깃·-100) — draft 1·2 + `custom_collate_fn`, 토이 예제 loss 확인, DataLoader 3종 배치 shape 검증까지 완료
-- [x] 7.4 instruction fine-tuning 학습 — `llm_finetuning.py` **로컬 MPS 완주 (1.83분, M4 Max)**. MPS 버그 수정 후 재학습: 훈련 loss 2.64→**0.298**, 검증 0.658 (교재 기대치와 일치). **before/after 실증**: 같은 수동태 변환 지시에 before=문장 복창+자가 출제 → after(1에폭)="The meal is prepared every day by the chef." → after(2에폭)="The meal is cooked everyday by the chef." — 행동 양식 교육 성공. 2에폭 차 train↓·val 정체(~0.66) = 경미한 과적합 시작(교재도 동일 관찰). MLflow: experiment `gpt2-instruct-finetune`, 유효 run `355M-no-masking`(한글 키), 무효 run은 INVALID 태그 보존. log_model 생략(run당 ~1.4GB)
-- [ ] 7.5 정성 평가 + 간단한 자동 평가 루프
-- [ ] 7.6 회고 — 사전훈련 vs 분류 FT vs 지시 FT의 차이 노트화
+> 이전 버전은 압축 번호(7.1~7.6)를 썼는데 교재 실번호(7.1~7.9)와 어긋나 혼선 발생 → 교재 기준으로 통일.
+
+- [x] 7.1~7.2 instruction 데이터셋 준비 — 다운로드+분할+`format_input`(Alpaca식) (`instruction_dataset_finetune.py`, rasbt 1100건)
+- [x] 7.3 훈련 배치 구성 — `InstructionDataset`(토큰화) + **사용자 정의 콜레이트**(패딩·타깃 한 칸 이동·-100). draft 1·2 + `custom_collate_fn`, 토이 예제 loss 확인
+- [x] 7.4 데이터 로더 3종 — 배치 shape 검증 완료
+- [x] 7.5 사전훈련 LLM 로드 — gpt2-medium(355M), `hf_weight_adapter` 경유(TF 우회), 파인튜닝 전 생성 확인(before 기준점: 문장 복창+자가 출제)
+- [x] 7.6 instruction 파인튜닝 — `llm_finetuning.py` **로컬 MPS 완주 (1.83분, M4 Max)**. MPS 버그 수정 후: 훈련 loss 2.64→**0.298**, 검증 0.658 (교재 기대치 일치). after(2에폭)="The meal is cooked everyday by the chef." — 행동 양식 교육 성공. 2에폭 차 train↓·val 정체 = 경미한 과적합 시작(교재 동일 관찰). MLflow: `gpt2-instruct-finetune`, 유효 run `355M-no-masking`(한글 키). ※모델 저장(교재상 7.7 말미 코드)은 파일 분리 구조라 이 스크립트 끝에서 수행 → `gpt2-medium355M-sft.pth`
+- [~] 7.7 응답 추출·저장 — `save_response.py`: .pth 로드→3건 비교→**전체 test 110건 생성→`instruction-data-with-response.json`**. 코드 완성, 전체 실행 대기
+- [ ] 7.8 평가 — Ollama(Llama 3) 채점 자동화
+- [ ] 7.9 회고 — 사전훈련 vs 분류 FT vs 지시 FT의 차이 노트화
 
 ## 학습 메모 (실습으로 익힌 것)
 

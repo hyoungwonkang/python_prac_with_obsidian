@@ -123,3 +123,11 @@ with mlflow.start_run(run_name=f"355M-no-masking-{dataset_name}"):   # 데이터
 
 epochs_tensor = torch.linspace(0, num_epochs, len(train_losses))
 plot_losses(epochs_tensor, tokens_seen, train_losses, val_losses)
+
+# 파인튜닝 결과 저장 (교재 7.7 말미 셀 — 노트북은 모델이 메모리에 살아 있어 거기서 저장하지만,
+# 파일 분리 구조에서는 모델이 살아 있는 여기(7.6)서 수행). save_response.py(7.7)가 로드해서 시작.
+import re
+
+file_name = f"{re.sub(r'[ ()]', '', CHOOSE_MODEL)}-sft.pth"   # → gpt2-medium355M-sft.pth
+torch.save(model.state_dict(), file_name)
+print(f"모델이 {file_name}에 저장되었습니다.")
