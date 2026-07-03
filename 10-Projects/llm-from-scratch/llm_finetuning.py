@@ -2,7 +2,6 @@ import torch
 
 from hf_weight_adapter import load_hf_weights_into_gpt   # TF 없이 HF에서 가중치 로드 (로컬 mutex 크래시 우회)
 from previous_7 import GPTModel, calc_loss_loader, train_model_simple, plot_losses
-# 주의: 아래 import는 instruction_dataset_finetune.py 본문 전체를 실행함 (print·로더 확인 루프 포함)
 from instruction_dataset_finetune import (
     format_input, train_data, val_data, tokenizer, device, train_loader, val_loader,
     dataset_name, batch_size, allowed_max_length
@@ -109,7 +108,6 @@ with mlflow.start_run(run_name=f"355M-no-masking-{dataset_name}"):   # 데이터
     execution_time_minutes = (end_time - start_time) / 60
     print(f"훈련 소요 시간: {execution_time_minutes:.2f}분")
 
-    # train_model_simple이 돌려준 loss 곡선을 step 붙여 기록 (previous_7은 수정하지 않음)
     for i, (tr, vl, ts) in enumerate(zip(train_losses, val_losses, tokens_seen)):
         step = i * eval_freq                          # 평가 시점의 global step
         mlflow.log_metric("훈련_손실", tr, step=step)
@@ -119,7 +117,6 @@ with mlflow.start_run(run_name=f"355M-no-masking-{dataset_name}"):   # 데이터
     mlflow.log_metric("최종_훈련_손실", train_losses[-1])
     mlflow.log_metric("최종_검증_손실", val_losses[-1])
     mlflow.log_metric("훈련_시간_분", execution_time_minutes)
-    # log_model은 생략 — 355M은 run당 ~1.4GB (finetune_gpt2_mlflow.py의 LOG_MODEL=False와 같은 이유)
 
 epochs_tensor = torch.linspace(0, num_epochs, len(train_losses))
 plot_losses(epochs_tensor, tokens_seen, train_losses, val_losses)

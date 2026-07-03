@@ -11,6 +11,9 @@
 # 대용량 재다운로드 가능 데이터 (스크립트가 자동 다운로드)
 10-Projects/llm-from-scratch/alpaca_data.json
 
+# 대용량 학습 산출물 (재학습으로 재생성 가능, GitHub 100MB 제한 초과)
+10-Projects/llm-from-scratch/gpt2-medium355M-sft.pth
+
 # 에디터 로컬 설정 (PC별)
 .vscode/
 
@@ -68,6 +71,8 @@ htmlcov/
 
 # 7장 instruction 데이터 (스크립트로 재다운로드 — 코드만 git 추적)
 10-Projects/llm-from-scratch/instruction-data.json
+# 7.7 응답 추출 산출물 (save_response.py로 재생성 — 코드만 git 추적)
+10-Projects/llm-from-scratch/instruction-data-with-response.json
 
 # MLflow 실험 추적 데이터 (로컬 실험 기록 — 코드만 git 추적)
 mlruns/
