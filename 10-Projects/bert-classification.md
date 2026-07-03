@@ -62,6 +62,7 @@ detection-ai-study (탐지 플랫폼 대응 학습 로드맵, 여러 기술)
 
 - [[detection-ai-study]] — 상위 로드맵 (이 프로젝트의 부모)
 - [[llm-from-scratch]] — 선행 트랙 (교재, GPT-2 분류 FT 비교 기준)
+- [[../30-References/BERT_학습정리]] — **BERT 개념 정본(7섹션, 코드 없는 눈높이 노트).** 구조·어텐션·마스킹·[CLS]/토큰 출력·NER. 이 프로젝트의 개념 선행 자료.
 - [[llm-from-scratch/llm-ch6-classify]] — 6장 분류 FT (head 교체·손실·BERT↔GPT-2 대비)
 - [[../30-References/rnd-bert-labeling-test-plan]] — 선수 업무 산출물 (SMS 스팸 2-class)
 - [[../30-References/bert-vs-gpt2-classification]] — 트랜스포머·어텐션·인코더/디코더 개념
