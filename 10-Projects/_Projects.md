@@ -4,7 +4,8 @@
 
 ## 진행 중
 
-- [[detection-ai-study]] — **탐지 플랫폼 대응 학습 트랙 (현재 활성).** 업무 아키텍처(Hybrid RAG + Graph RAG)의 1차 탐지 계층을 코드로 재현하는 것이 목표. 우선순위: ①BERT·NER·YOLO·OpenCV ②RULE·CLIP ③PaddleOCR. **[[llm-from-scratch]] 교재 완주(2026-07-03)로 선행 완료 → BERT 다중 클래스부터 진입.**
+- [[detection-ai-study]] — **탐지 플랫폼 대응 학습 트랙 (현재 활성, 로드맵).** 업무 아키텍처(Hybrid RAG + Graph RAG)의 1차 탐지 계층을 코드로 재현하는 것이 목표. 우선순위: ①BERT·NER·YOLO·OpenCV ②RULE·CLIP ③PaddleOCR. **[[llm-from-scratch]] 교재 완주(2026-07-03)로 선행 완료 → BERT 다중 클래스부터 진입.**
+  - [[bert-classification]] — **로드맵 1군 #1을 분리한 구체 실습 프로젝트.** HF BERT 텍스트 분류 파인튜닝. Phase 0(교재→BERT 전환 정리) ✅ 완료, Phase 1(KLUE-TC 다중 클래스) 진입 예정. 선수: SMS 스팸 2-class ~97%.
 - [[rec-planner]] — 자연어 → 검증된 추천 플랜 LLM 앱(travel-rag 축소판). [[../30-References/HARNESS]] 6대 골격 적용. Phase 0~1 완료(HARNESS 게이트 통과, 의존성 0 테스트 21/21). Phase 2.1 실 LLM 런타임은 deps 설치 환경에서 보류.
 
 ## 보류
