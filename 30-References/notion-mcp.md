@@ -169,7 +169,7 @@ vault 노트가 있는 페이지만 동기 대상.
 | `10-Projects/llm-from-scratch/llm-ch6-classify.md` | `38147515-0358-8167-a267-ce0d17b844f1` | 6장 |
 | `10-Projects/llm-from-scratch/llm-ch7-instruct.md` | `38147515-0358-817c-8e13-eae2e416690a` | 7장 |
 | `10-Projects/bert-classification.md` | `39247515-0358-80f6-839d-c52a09436dc5` | BERT 분류 마스터 (detection-ai-study 하위, 2026-07-03) |
-| `10-Projects/bert-classification/bert-00-kickoff.md` | _(대기)_ | Phase 0 전환정리 — 마스터 자식 페이지 생성 후 매핑 |
+| `10-Projects/bert-classification/bert-00-kickoff.md` | `39247515-0358-80e6-9c91-e17291a72e40` | Phase 0 전환정리 (마스터 자식) |
 
 ### Python 의존성
 

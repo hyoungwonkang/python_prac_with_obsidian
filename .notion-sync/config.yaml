@@ -40,6 +40,5 @@ pages:
   "10-Projects/llm-from-scratch/llm-ch7-instruct.md":  "38147515-0358-817c-8e13-eae2e416690a"  # 7장
 
   # bert-classification 프로젝트 (detection-ai-study 하위 1군 #1). 2026-07-03 매핑.
-  "10-Projects/bert-classification.md":                "39247515-0358-80f6-839d-c52a09436dc5"  # BERT 분류 마스터
-  # kickoff은 위 마스터의 자식 페이지 생성 후 page_id 채워 주석 해제:
-  # "10-Projects/bert-classification/bert-00-kickoff.md": "<자식 page_id>"  # Phase 0 전환정리
+  "10-Projects/bert-classification.md":                     "39247515-0358-80f6-839d-c52a09436dc5"  # BERT 분류 마스터
+  "10-Projects/bert-classification/bert-00-kickoff.md":     "39247515-0358-80e6-9c91-e17291a72e40"  # Phase 0 전환정리 (마스터 자식)
