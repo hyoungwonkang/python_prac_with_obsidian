@@ -4,10 +4,8 @@
 
 ## 진행 중
 
-- [[llm-from-scratch]] — **ML 학습 트랙 마스터 플랜.** Raschka 『밑바닥부터 만들면서 배우는 LLM』 본문 1~7장 + 부록 A 진행 인덱스. 부록 A는 [[pytorch-study]]로 분리.
-  - [[pytorch-study]] — 부록 A: PyTorch 입문. 인텔 맥 로컬(2.2.2/MPS) + Colab(2.6.0/T4) 하이브리드. **부록 A(A.1~A.10) ✅ 완료 (2026-06-17)**, 본문 1장으로 이동. 환경 정본: [[../30-References/pytorch-env-hybrid]].
+- [[detection-ai-study]] — **탐지 플랫폼 대응 학습 트랙 (현재 활성).** 업무 아키텍처(Hybrid RAG + Graph RAG)의 1차 탐지 계층을 코드로 재현하는 것이 목표. 우선순위: ①BERT·NER·YOLO·OpenCV ②RULE·CLIP ③PaddleOCR. **[[llm-from-scratch]] 교재 완주(2026-07-03)로 선행 완료 → BERT 다중 클래스부터 진입.**
 - [[rec-planner]] — 자연어 → 검증된 추천 플랜 LLM 앱(travel-rag 축소판). [[../30-References/HARNESS]] 6대 골격 적용. Phase 0~1 완료(HARNESS 게이트 통과, 의존성 0 테스트 21/21). Phase 2.1 실 LLM 런타임은 deps 설치 환경에서 보류.
-- [[detection-ai-study]] — **탐지 플랫폼 대응 학습 트랙.** 업무 아키텍처(Hybrid RAG + Graph RAG)의 1차 탐지 계층을 코드로 재현하는 것이 목표. 우선순위: ①BERT·NER·YOLO·OpenCV ②RULE·CLIP ③PaddleOCR. llm-from-scratch 7장 마무리 후 진입.
 
 ## 보류
 
@@ -15,6 +13,7 @@
 
 ## 완료
 
+- [[llm-from-scratch]] — **ML 학습 트랙 마스터 플랜.** Raschka 『밑바닥부터 만들면서 배우는 LLM』 부록 A + 본문 1~7장 **전 과정 완주 (2026-07-03)**. 부록 A는 [[pytorch-study]]로 분리 완료(2026-06-17). 트랜스포머·어텐션·사전훈련·분류 FT·지시 FT를 바닥부터 구현. 후속 트랙 → [[detection-ai-study]].
 - [[todo-app]] — 할일관리 웹앱. Phase 1~5 전부 완료. v1(Jinja)과 v2(FastAPI+Next.js 분리) 두 구현 모두 Vercel 배포. 비교 회고: [[../30-References/jinja-vs-nextjs]]
 
 ## 프로젝트 규칙 (Conventions)

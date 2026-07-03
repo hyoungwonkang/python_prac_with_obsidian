@@ -19,9 +19,11 @@
 | 2장 | 텍스트 데이터 다루기 | [[llm-ch2-text]] | ✅ 완료 (2026-06-18) |
 | 3장 | 어텐션 메커니즘 구현하기 | [[llm-ch3-attention]] | ✅ 완료 (2026-06-23, MHA `mha.py`) |
 | 4장 | 밑바닥부터 GPT 모델 구현하기 | [[llm-ch4-gpt]] | ✅ 완료 (2026-06-23, `transformer.py`·`Gpt.py`) |
-| 5장 | 레이블이 없는 데이터를 활용한 사전 훈련 | [[llm-ch5-pretrain]] | 미시작 |
-| 6장 | 분류를 위해 미세 튜닝하기 | [[llm-ch6-classify]] | 미시작 |
-| 7장 | 지시를 따르도록 미세 튜닝하기 | [[llm-ch7-instruct]] | 미시작 |
+| 5장 | 레이블이 없는 데이터를 활용한 사전 훈련 | [[llm-ch5-pretrain]] | ✅ 완료 (2026-06-25) |
+| 6장 | 분류를 위해 미세 튜닝하기 | [[llm-ch6-classify]] | ✅ 완료 (2026-06-30, MLflow 연동·BERT 비교) |
+| 7장 | 지시를 따르도록 미세 튜닝하기 | [[llm-ch7-instruct]] | ✅ 완료 (2026-07-03, 7.1~7.9 완주) |
+
+> **📕 교재 완주 (2026-07-03):** 부록 A + 본문 1~7장 전 과정 완료. 다음 트랙 → [[detection-ai-study]] (BERT 진입).
 
 ## 작업 분담 원칙 (전체 공통)
 
@@ -47,13 +49,15 @@
   self-attention → Q/K/V → causal → multi-head 단계적 구현. MHA `mha.py`(GPT-2 사양).
 - **Phase 4 — 4장. 밑바닥부터 GPT 모델 구현하기** ✅ 완료 (2026-06-23) → [[llm-ch4-gpt]]
   LayerNorm·GELU·residual 블록 조립 → GPT 아키텍처 완성. `transformer.py`(블록)·`Gpt.py`(전체 모델·greedy 생성·파라미터 계산). 환경: M4 Max 로컬(torch 2.8.0).
-- **Phase 5 — 5장. 레이블이 없는 데이터를 활용한 사전 훈련** → [[llm-ch5-pretrain]]
-  학습 루프·사전훈련, GPT-2 공개 가중치 로드. 실학습은 Colab T4 메인.
-- **Phase 6 — 6장. 분류를 위해 미세 튜닝하기** → [[llm-ch6-classify]]
-  분류 head 추가 + 레이어 freeze로 분류 FT.
-  📌 **별도 트랙 접점:** 이 장 완료 직후가 [[../30-References/bert_ocr_practice_plan]] BERT 실습 진입 시점(정본 결정). GPT 분류 FT를 직접 짠 뒤 → 같은 걸 BERT+HF로 비교 학습. OCR은 7장 완주 후 최하 우선순위.
-- **Phase 7 — 7장. 지시를 따르도록 미세 튜닝하기** → [[llm-ch7-instruct]]
-  instruction 데이터셋·프롬프트 템플릿으로 지시 따르기 FT.
+- **Phase 5 — 5장. 레이블이 없는 데이터를 활용한 사전 훈련** ✅ 완료 (2026-06-25) → [[llm-ch5-pretrain]]
+  학습 루프·사전훈련, GPT-2 공개 가중치 로드. 디코딩 전략·체크포인트 저장/복원까지.
+- **Phase 6 — 6장. 분류를 위해 미세 튜닝하기** ✅ 완료 (2026-06-30) → [[llm-ch6-classify]]
+  분류 head 추가 + 레이어 freeze로 분류 FT. MLflow 실험 추적 연동. SMS 스팸 test acc ~97%.
+  📌 **별도 트랙 접점:** 업무 요청으로 BERT 분류 R&D를 이 장과 병행 선수행(HF `BertForSequenceClassification`) → [[../30-References/rnd-bert-labeling-test-plan]]. GPT-2 head 교체 학습과 비교 대상 확보.
+- **Phase 7 — 7장. 지시를 따르도록 미세 튜닝하기** ✅ 완료 (2026-07-03) → [[llm-ch7-instruct]]
+  instruction 데이터셋·프롬프트 템플릿으로 지시 따르기 FT. 7.1~7.9 완주(응답 추출·Ollama LLM-as-a-judge 채점·세 학습 방식 회고).
+
+> **📕 교재 완주 (2026-07-03).** 여기서 [[llm-from-scratch]] 트랙 종료 → 후속은 [[detection-ai-study]] (탐지 플랫폼 1차 탐지 계층 재현, BERT부터).
 
 ## 검증 방법
 

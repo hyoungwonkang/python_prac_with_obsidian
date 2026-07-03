@@ -48,7 +48,7 @@
 - 로컬(M4 Max) 우선, 무거우면 Colab 우회 — 환경 정본 [[../30-References/pytorch-env-hybrid]]
 - 모든 실습 MLflow 기록 (한글 키 관례 유지) — [[../30-References/mlflow-practice/mlflow-terms-glossary]]
 - "미니 데이터로 우선 완주" — Alpaca OOM 교훈([[llm-from-scratch/llm-ch7-failure-log]]): 작게 시작해 실패 비용 절감
-- 진행 순서: [[llm-from-scratch]] 7장 마무리(7.5~7.6) 후 이 트랙 진입
+- 진행 순서: [[llm-from-scratch]] **교재 완주(2026-07-03, 부록A+1~7장) → 이 트랙 진입(현재 활성).** 첫 과제 = 1군 #1 BERT **다중 클래스 심화**(KLUE-TC). 선수 기초는 완료(SMS 스팸 en/ko ~97%, [[../30-References/rnd-bert-labeling-test-plan]]).
 
 ## 검증 방법
 
