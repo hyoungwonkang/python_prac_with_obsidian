@@ -93,3 +93,9 @@ mlartifacts/
 30-References/rnd-bert-labeling-test/export/sms_spam_collection.zip
 30-References/rnd-bert-labeling-test/export/sms_spam_collection/
 30-References/rnd-bert-labeling-test/export/ko/
+
+# 탐지 R&D (NER·YOLO·PII) — 가중치·학습산출물은 재학습으로 재생성, 문서·코드만 git 추적
+30-References/rnd-detection-models/export/*.pt
+30-References/rnd-detection-models/export/yolo_runs/
+# ultralytics가 repo 루트에 만드는 데이터 캐시 (COCO128 등 자동 다운로드)
+datasets/
