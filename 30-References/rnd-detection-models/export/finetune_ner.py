@@ -3,7 +3,7 @@ NER 학습·평가 — klue/bert-base + BertForTokenClassification (KLUE-NER).
 
 R&D 3주제(모델·라벨링·테스트)의 NER 판, 위에서 아래로:
   ① 데이터/라벨 로드    → ner_dataset.build_tokenized (subword -100 정렬)
-  ② 모델                → AutoModelForTokenClassification (BERT 본체 + 토큰 분류층)
+  ② 모델                → BertForTokenClassification (BERT 본체 + 토큰 분류층)
   ③ 학습 루프           → AdamW
   ④ 테스트(평가)        → seqeval 엔티티 단위 정밀도/재현율/F1
 
@@ -69,6 +69,7 @@ def evaluate(model, loader, id2label):
 
 
 def build_model(num_labels, id2label, label2id):
+    # Auto는 자동 선택기 — klue/bert-base(model_type=bert)이므로 실물은 BertForTokenClassification이 생성됨
     return AutoModelForTokenClassification.from_pretrained(
         MODEL_NAME, num_labels=num_labels, id2label=id2label, label2id=label2id)
 
