@@ -170,6 +170,9 @@ vault 노트가 있는 페이지만 동기 대상.
 | `10-Projects/llm-from-scratch/llm-ch7-instruct.md` | `38147515-0358-817c-8e13-eae2e416690a` | 7장 |
 | `10-Projects/bert-classification.md` | `39247515-0358-80f6-839d-c52a09436dc5` | BERT 분류 마스터 (detection-ai-study 하위, 2026-07-03) |
 | `10-Projects/bert-classification/bert-00-kickoff.md` | `39247515-0358-80e6-9c91-e17291a72e40` | Phase 0 전환정리 (마스터 자식) |
+| `10-Projects/bert-classification/bert-01-klue-tc-multiclass.md` | `39647515-0358-81e3-a16c-fbdde7c531df` | Phase 1 KLUE-TC (2026-07-07 완료) |
+| `10-Projects/bert-classification/bert-02-hatespeech.md` | `39647515-0358-81a7-934c-d8b920dc4914` | Phase 2 — 페이지 선생성, vault 노트 대기 (config 주석) |
+| `10-Projects/bert-classification/bert-03-imdb-comparison.md` | `39647515-0358-81d7-bb3a-c3d0f5795ecb` | Phase 3 — 페이지 선생성, vault 노트 대기 (config 주석) |
 
 ### Python 의존성
 

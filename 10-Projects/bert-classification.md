@@ -56,7 +56,8 @@ detection-ai-study (탐지 플랫폼 대응 학습 로드맵, 여러 기술)
 
 ## Notion 미러
 
-아직 미매핑(vault git 정본으로만 운영). llm-from-scratch처럼 자식 페이지 구조로 미러하려면 `.notion-sync/config.yaml`에 매핑 추가 필요 → 운영 규칙 [[../30-References/notion-mcp]]. (필요 시 후속 작업.)
+llm-from-scratch와 동일 구조 — **이 마스터 = 인덱스, Phase별 노트 = 자식 페이지 1:1 미러.**
+매핑 완료: 마스터·bert-00·bert-01 (커밋 시 자동 동기). Phase 2·3 페이지는 선생성됨 — vault 노트를 만들면 config 주석만 해제. page_id 정본: [[../30-References/notion-mcp]].
 
 ## 관련 노트
 
