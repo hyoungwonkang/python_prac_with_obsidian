@@ -1,0 +1,57 @@
+# bert-01 — KLUE-TC 다중 클래스 분류
+
+[[../bert-classification]] **Phase 1** 정본. 시작 2026-07-07.
+스팸 2-class([[../../30-References/rnd-bert-labeling-test-plan|업무 R&D]])를 **7클래스로 확장** — 코드 골격 재사용, `num_labels`만 변경한다는 계획의 실행.
+
+## 목표
+
+KLUE-TC(ynat, 뉴스 제목 주제 분류 7클래스)로 klue/bert-base를 파인튜닝해
+**다중 클래스 분류의 차이점**(num_labels·다중 클래스 지표)을 체득한다.
+검증 3종: ① 미니 데이터 end-to-end 로그 ② MLflow run(한글 키) ③ 이 노트.
+
+## 체크리스트
+
+- [x] 코드 작성 — `finetune_klue_tc.py` (spam 골격 재사용: TcDataset·evaluate·학습루프 동일, 변경점은 num_labels 7·KLUE-TC 로드·macro F1)
+- [x] 스모크 (TC_SUBSET=500, 1ep) — 1차에서 **mlflow 3.14 파일스토어 거부 발견** → sqlite 전환 후 end-to-end 통과
+- [x] 본 실행 (TC_SUBSET=10000, 2ep) — **accuracy 0.8425 · macro F1 0.8313** (1.9분, MPS) + MLflow run `7class-10000건`
+- [x] 학습 메모 정리 (아래)
+
+> **✅ Phase 1 완료 (2026-07-07).** 검증 3종 충족: 실행 로그 · MLflow run(한글 키, sqlite) · 이 노트.
+
+## 스팸 대비 변경점 (계획 그대로 확인)
+
+| | 스팸 (2-class) | KLUE-TC (7-class) |
+|---|---|---|
+| 분류층 | 768→2 | **768→7** (`num_labels=len(label_names)`) |
+| 데이터 | UCI CSV 직접 다운로드·분할 | HF `klue/klue` config `ynat` — **분할 제공** (test 라벨 비공개→validation 평가, NER과 동일) |
+| 입력 | SMS 본문 (MAX_LENGTH 128) | 뉴스 **제목** (짧음 → MAX_LENGTH 64로 절약) |
+| 지표 | accuracy + spam P/R/F1 | accuracy + **클래스별 P/R/F1 + macro F1** |
+| MLflow | bert-spam-classification (file store) | `bert-klue-tc` (**sqlite** — 아래 함정 참조) |
+
+7클래스: IT과학·경제·사회·생활문화·세계·스포츠·정치 (label 0~6).
+
+## 실행 기록
+
+- 2026-07-07 스모크 1차: `mlflow.set_experiment`에서 예외 — **mlflow 3.14가 파일 스토어(file:./mlruns)를 유지보수 모드로 전환, 기본 거부**. ml-env(3.1.4)에선 되던 방식 — 상사가 강조한 "의존성 버전 문제"의 실사례. 조치: `sqlite:///mlflow.db`로 전환 (권장 방식).
+- 스모크 2차 (500건·1ep): end-to-end 통과. acc 0.45 — 극소량 학습이라 당연히 낮음. 일부 클래스 미예측 → `UndefinedMetricWarning` (아래 메모).
+- **본 실행 (10,000건·2ep, MPS 1.9분): accuracy 0.8425 · macro F1 0.8313.** 클래스별 F1 0.71(IT과학)~0.91(스포츠). epoch1→2에서 val_acc 0.809→0.843 (진행 정상). KLUE-TC 공식 베이스라인(전체 45k 학습 시 ~0.86)에 근접 — 1/4 데이터로 이 수준이면 파이프라인 유효. MLflow run `7class-10000건` (sqlite, 한글 키).
+
+## 학습 메모 (다중 클래스에서 새로 배운 것만)
+
+- **num_labels 한 줄 확장이 실제로 성립**: 스팸 코드에서 실질 변경은 `num_labels=7`·데이터 로드부·지표뿐 — "head의 칸 수만 문제에 맞춘다"(kickoff의 분류 FT 본질)가 실증됨.
+- **macro vs weighted 평균** (다중 클래스 신개념): macro = 클래스를 **동등하게** 평균(소수 클래스 IT과학의 0.71이 1/7 그대로 반영) / weighted = **건수 가중**(다수 클래스 사회 854건이 지배). accuracy(0.8425)와 macro F1(0.8313)의 간극 = 소수 클래스가 평균을 끌어내린 크기. **불균형에서 성능을 정직하게 보려면 macro** — 스팸 때 "정확도가 불균형에 속는다" 교훈의 다중 클래스판.
+- **클래스 불균형의 다른 대처**: 스팸 땐 언더샘플링으로 균형화했지만, 여기선 원 분포 그대로 학습(사회 854 vs IT과학 95)하고 **지표(macro)로 감시** — 균형화가 유일한 답이 아님.
+- **UndefinedMetricWarning의 뜻**: 모델이 한 번도 예측하지 않은 클래스는 정밀도 분모(뽑은 수)가 0 → 0/0 정의 불가 → sklearn이 0으로 처리하며 경고. 극소량 학습(스모크)에서 자연 발생 — NER 스모크의 seqeval 경고와 동일 현상.
+- **mlflow 3.14 함정**: 파일 스토어가 유지보수 모드(예외 발생) → `sqlite:///mlflow.db` 권장. 같은 코드가 라이브러리 버전에 따라 죽고 사는 실사례 — requirements 버전 고정 정책의 근거.
+
+## 다음 (Phase 2 후보)
+
+- Korean HateSpeech (도메인 유사) — 마스터 노트 Phase 2
+- 전체 데이터(45k)·에폭 확대해 베이스라인(~0.86) 도달 시도 (선택)
+
+## 관련 노트
+
+- [[../bert-classification]] — 마스터 (Phase 1 정의)
+- [[bert-00-kickoff]] — 전환 정리 (head 교체=num_labels 논리)
+- [[../../30-References/mlflow-practice/mlflow-terms-glossary]] — macro 평균 등 지표
+- [[../../30-References/rnd-detection-models/00-학습메모]] — klue/klue 로드·KLUE test 라벨 비공개 등 선행 확인 사항

@@ -25,7 +25,7 @@ detection-ai-study (탐지 플랫폼 대응 학습 로드맵, 여러 기술)
 | Phase | 내용 | 노트 | 상태 |
 |---|---|---|---|
 | 0 | 교재→BERT 전환 정리 (선수 점검·이어지는 개념) | [[bert-classification/bert-00-kickoff]] | ✅ 완료 (2026-07-03) |
-| 1 | KLUE-TC 다중 클래스 (뉴스 7클래스) — `num_labels` 확장 | [[bert-classification/bert-01-klue-tc-multiclass]] | 🔜 진입 예정 |
+| 1 | KLUE-TC 다중 클래스 (뉴스 7클래스) — `num_labels` 확장 | [[bert-classification/bert-01-klue-tc-multiclass]] | ✅ 완료 (2026-07-07 — acc 0.8425 · macro F1 0.8313, 10k·2ep) |
 | 2 | Korean HateSpeech (도메인 유사 — 탐지 플랫폼에 근접) | (예정) | [ ] |
 | 3 | 저자 공식 비교 재현 (IMDb: GPT-2 vs BERT/RoBERTa/DeBERTa/ModernBERT) | (예정) | [ ] |
 
@@ -35,8 +35,8 @@ detection-ai-study (탐지 플랫폼 대응 학습 로드맵, 여러 기술)
 
 - **Phase 0 — 교재→BERT 전환 정리** ✅ 완료 (2026-07-03) → [[bert-classification/bert-00-kickoff]]
   교재에서 넘어온 개념(head 교체·-100·CE 손실 위치)이 BERT에서 어떻게 대응되는지 + 선수 기초 점검 + 첫 과제 정의.
-- **Phase 1 — KLUE-TC 다중 클래스** 🔜 → [[bert-classification/bert-01-klue-tc-multiclass]]
-  기존 `finetune_bert_spam.py`(2-class)를 재사용, **`num_labels`만 바꿔 7클래스로 확장**. 데이터: KLUE-TC(뉴스 주제 분류, HF `datasets`). "미니 데이터로 우선 end-to-end 완주" 원칙.
+- **Phase 1 — KLUE-TC 다중 클래스** ✅ 완료 (2026-07-07) → [[bert-classification/bert-01-klue-tc-multiclass]]
+  spam 골격 재사용 + `num_labels=7` 확장 실증. 10,000건·2에폭 → **accuracy 0.8425 · macro F1 0.8313** (공식 베이스라인 ~0.86 근접). 신개념: macro vs weighted 평균, mlflow 3.14 파일스토어 함정(→sqlite). 코드 `bert-classification/finetune_klue_tc.py`.
 - **Phase 2 — Korean HateSpeech** [ ]
   도메인이 탐지 플랫폼과 가까운 데이터로 확장. 이진·다중 라벨 체험.
 - **Phase 3 — 저자 공식 비교 재현** [ ]

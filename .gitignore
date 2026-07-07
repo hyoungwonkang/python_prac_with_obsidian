@@ -94,6 +94,11 @@ mlartifacts/
 30-References/rnd-bert-labeling-test/export/sms_spam_collection/
 30-References/rnd-bert-labeling-test/export/ko/
 
+# bert-classification 학습 가중치·실험 DB (재학습으로 재생성)
+10-Projects/bert-classification/*.pt
+10-Projects/bert-classification/mlflow.db
+10-Projects/bert-classification/mlartifacts/
+
 # 탐지 R&D (NER·YOLO·PII) — 가중치·학습산출물은 재학습으로 재생성, 문서·코드만 git 추적
 30-References/rnd-detection-models/export/*.pt
 30-References/rnd-detection-models/export/yolo_runs/
