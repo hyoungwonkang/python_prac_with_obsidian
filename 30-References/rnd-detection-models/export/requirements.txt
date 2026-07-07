@@ -1,0 +1,22 @@
+# rnd-detection-models 의존성 (안정화 버전 고정 — 2026-07-05 macOS/Apple Silicon 실측 검증)
+# 설치: pip install -r requirements.txt
+# 정책: 자동(최신) 설치 금지. 아래 고정 버전 조합으로만 설치 (버전 어긋나면 KLUE 로드 실패 등 발생)
+
+# ---- 공통 (NER·YOLO 딥러닝 엔진) ----
+torch==2.12.1              # 딥러닝 엔진. Windows+NVIDIA GPU는 README의 CUDA 설치 명령 사용
+numpy==2.5.1               # 수치 연산 (torch 의존)
+
+# ---- NER (finetune_ner.py / ner_dataset.py) ----
+transformers==5.13.0       # klue/bert-base 모델·토크나이저 로드
+datasets==5.0.0            # KLUE-NER 자동 다운로드. ※5.x 필수 — 4.x 이하는 "klue/klue" 경로 미지원
+seqeval==1.2.2             # NER 엔티티 단위 F1 채점
+accelerate==1.14.0         # transformers 학습 보조
+
+# ---- YOLO (yolo_train.py) ----
+ultralytics==8.4.87        # YOLOv8n 전이학습·추론 (torchvision·opencv 자동 동반 설치)
+
+# ---- PII (pii_detect.py / pii_eval.py) ----
+ko-pii==1.15.2             # 한국어 PII 탐지·마스킹 (룰+사전+체크섬). ※Python 3.10 이상 필수
+
+# ---- 선택 (실험 기록 — eval_mlflow_ner.py 사용 시에만) ----
+# mlflow==3.14.0
