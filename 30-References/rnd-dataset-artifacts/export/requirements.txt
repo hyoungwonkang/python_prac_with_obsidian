@@ -1,0 +1,9 @@
+# 학습 데이터 산출물 환경 (rnd-dataset-artifacts) — 검증 당시 버전 (Python 3.12)
+torch==2.12.1
+transformers==5.13.0
+ultralytics==8.4.87
+mlflow==3.14.0
+pandas==2.3.3
+scikit-learn==1.9.0
+ko-pii==1.15.2
+# opencv-python·pyyaml은 ultralytics 의존성으로 함께 설치됨 (YOLO 데모 데이터 생성에 사용)

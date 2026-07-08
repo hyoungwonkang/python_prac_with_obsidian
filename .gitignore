@@ -108,3 +108,11 @@ datasets/
 # 탐지 R&D 배치2 (OpenCV·RULE·CLIP·PaddleOCR) — 산출 이미지/영상·모델 캐시는 재생성, 문서·코드만 추적
 30-References/rnd-detection-models-2/export/opencv_out/
 30-References/rnd-detection-models-2/export/*.pt
+
+# 학습 데이터 산출물 환경 — 가중치·공개/합성 데이터·실험DB는 재생성. 단 datasets-own/(직접 라벨링 자산)은 git 추적
+30-References/rnd-dataset-artifacts/export/artifacts/
+30-References/rnd-dataset-artifacts/export/datasets/
+30-References/rnd-dataset-artifacts/export/yolo_runs/
+30-References/rnd-dataset-artifacts/export/*.pt
+30-References/rnd-dataset-artifacts/export/mlflow.db
+30-References/rnd-dataset-artifacts/export/mlartifacts/

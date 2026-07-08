@@ -1,0 +1,216 @@
+{
+  "source": "ko-pii 1.15.2 (ko_pii.labels)",
+  "total_labels": 33,
+  "groups": [
+    "결정적 검증",
+    "키워드 anchor",
+    "형식 검증",
+    "사전·컨텍스트",
+    "인적 속성"
+  ],
+  "labels": {
+    "ACCOUNT": {
+      "korean": "계좌번호",
+      "group": "키워드 anchor",
+      "method": "계좌/은행명 60+ 키워드",
+      "covered_by_samples": true
+    },
+    "ADDRESS": {
+      "korean": "주소",
+      "group": "사전·컨텍스트",
+      "method": "행정구역 + 법정동 사전",
+      "covered_by_samples": false
+    },
+    "AGE": {
+      "korean": "나이",
+      "group": "인적 속성",
+      "method": "N세/N살/N대/개월",
+      "covered_by_samples": false
+    },
+    "BUSINESS_REG": {
+      "korean": "사업자등록번호",
+      "group": "결정적 검증",
+      "method": "국세청 가중합 체크섬",
+      "covered_by_samples": true
+    },
+    "CARD": {
+      "korean": "카드번호",
+      "group": "결정적 검증",
+      "method": "BIN 화이트리스트 + Luhn",
+      "covered_by_samples": true
+    },
+    "CORP_REG": {
+      "korean": "법인등록번호",
+      "group": "결정적 검증",
+      "method": "법인 체크섬 (RRN 우선)",
+      "covered_by_samples": false
+    },
+    "COURT_CASE": {
+      "korean": "사건번호",
+      "group": "키워드 anchor",
+      "method": "사건유형(가합/고합/헌가 등)",
+      "covered_by_samples": false
+    },
+    "DOC_ID": {
+      "korean": "문서번호",
+      "group": "형식 검증",
+      "method": "부처명 + 형식",
+      "covered_by_samples": false
+    },
+    "DRIVER_LICENSE": {
+      "korean": "운전면허번호",
+      "group": "결정적 검증",
+      "method": "지방청 코드 화이트리스트",
+      "covered_by_samples": false
+    },
+    "DT_BIRTH": {
+      "korean": "생년월일",
+      "group": "인적 속성",
+      "method": "날짜 + 키워드/마커",
+      "covered_by_samples": false
+    },
+    "EDI_DRUG": {
+      "korean": "약품코드",
+      "group": "키워드 anchor",
+      "method": "약품코드 키워드 + GS1",
+      "covered_by_samples": false
+    },
+    "EDUCATION": {
+      "korean": "학력",
+      "group": "사전·컨텍스트",
+      "method": "대학 ~330 + 약칭",
+      "covered_by_samples": false
+    },
+    "EMAIL": {
+      "korean": "이메일",
+      "group": "형식 검증",
+      "method": "RFC 5322",
+      "covered_by_samples": true
+    },
+    "EMPLOYEE_ID": {
+      "korean": "사번",
+      "group": "키워드 anchor",
+      "method": "사번/직원번호/임용번호 키워드",
+      "covered_by_samples": false
+    },
+    "FAX": {
+      "korean": "팩스번호",
+      "group": "키워드 anchor",
+      "method": "팩스/FAX 키워드",
+      "covered_by_samples": false
+    },
+    "FRN": {
+      "korean": "외국인등록번호",
+      "group": "결정적 검증",
+      "method": "성별자리 5-8 + 체크섬",
+      "covered_by_samples": false
+    },
+    "HEIGHT": {
+      "korean": "신장",
+      "group": "인적 속성",
+      "method": "Ncm/N.Nm (50–250)",
+      "covered_by_samples": false
+    },
+    "IP": {
+      "korean": "IP",
+      "group": "형식 검증",
+      "method": "IPv4 옥텟 + IPv6",
+      "covered_by_samples": true
+    },
+    "MAJOR": {
+      "korean": "전공",
+      "group": "사전·컨텍스트",
+      "method": "학과 ~400",
+      "covered_by_samples": false
+    },
+    "MEDICAL_INSURANCE": {
+      "korean": "건강보험증번호",
+      "group": "키워드 anchor",
+      "method": "건강보험/보험증 키워드",
+      "covered_by_samples": false
+    },
+    "NATIONALITY": {
+      "korean": "국적",
+      "group": "사전·컨텍스트",
+      "method": "국가명 70+",
+      "covered_by_samples": false
+    },
+    "PASSPORT": {
+      "korean": "여권번호",
+      "group": "결정적 검증",
+      "method": "prefix(M/S/PP 등) + 8자리",
+      "covered_by_samples": true
+    },
+    "PERSON": {
+      "korean": "성명",
+      "group": "사전·컨텍스트",
+      "method": "성씨 사전 + 문맥 점수기",
+      "covered_by_samples": true
+    },
+    "PETITION_ID": {
+      "korean": "민원번호",
+      "group": "키워드 anchor",
+      "method": "민원/청구/정보공개 키워드",
+      "covered_by_samples": false
+    },
+    "PHONE": {
+      "korean": "전화번호",
+      "group": "형식 검증",
+      "method": "010~019/02/0NN/070/15xx/+82",
+      "covered_by_samples": true
+    },
+    "PNU": {
+      "korean": "토지번호",
+      "group": "결정적 검증",
+      "method": "19자리 + 시·도 코드",
+      "covered_by_samples": false
+    },
+    "POSITION": {
+      "korean": "직책",
+      "group": "사전·컨텍스트",
+      "method": "직함 250+",
+      "covered_by_samples": false
+    },
+    "POSTAL_CODE": {
+      "korean": "우편번호",
+      "group": "형식 검증",
+      "method": "시·도 첫자리 매핑",
+      "covered_by_samples": false
+    },
+    "PRESCRIPTION_ID": {
+      "korean": "처방번호",
+      "group": "키워드 anchor",
+      "method": "처방/Rx/교부 키워드",
+      "covered_by_samples": false
+    },
+    "RRN": {
+      "korean": "주민등록번호",
+      "group": "결정적 검증",
+      "method": "13자리+날짜+체크섬(2020+ 는 신뢰도 신호)",
+      "covered_by_samples": true
+    },
+    "URL": {
+      "korean": "URL",
+      "group": "형식 검증",
+      "method": "http(s)/ftp",
+      "covered_by_samples": false
+    },
+    "VEHICLE": {
+      "korean": "차량번호",
+      "group": "형식 검증",
+      "method": "NN가NNNN + 용도 한글",
+      "covered_by_samples": true
+    },
+    "WEIGHT": {
+      "korean": "체중",
+      "group": "인적 속성",
+      "method": "Nkg (1–300)",
+      "covered_by_samples": false
+    }
+  },
+  "samples_file": "/Users/macrent/dev/python_prac_with_obsidian/30-References/rnd-detection-models/export/pii_samples.txt",
+  "coverage": {
+    "covered": 10,
+    "total": 33
+  }
+}
