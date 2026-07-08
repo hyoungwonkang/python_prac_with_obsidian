@@ -1,0 +1,17 @@
+# rnd-detection-models-2 (OpenCV → RULE → CLIP → PaddleOCR) 실행 의존성
+# rnd-detection-models(배치1)과 같은 ~/rnd-env(Python 3.12) 공유.
+# 자동 최신 설치 금지 — 아래 고정 버전으로 재현.
+#
+# 설치: pip install -r requirements.txt
+# 검증 환경: macOS Apple Silicon(M4 Max, MPS), Python 3.12.13
+
+# --- OpenCV (② 추출·전처리) ---
+opencv-python==5.0.0        # 이미지 로드·리사이즈·블러·엣지·영상 프레임 추출
+numpy==2.5.1                # 배열 연산 (cv2 동반)
+
+# --- 비식별화가 재사용하는 검출기 (배치1과 동일) ---
+torch==2.12.1               # YOLO 백엔드 (MPS). Windows+NVIDIA는 README의 CUDA 명령
+ultralytics==8.4.87         # YOLO 사전학습(yolov8n.pt)로 사람 검출 → OpenCV가 블러
+
+# 주) cv2 5.0 빌드에는 objdetect(Haar CascadeClassifier) 모듈이 없음 →
+#     얼굴 검출은 불가. 비식별화는 YOLO(검출) + OpenCV(블러)로 구현.

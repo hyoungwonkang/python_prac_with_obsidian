@@ -104,3 +104,7 @@ mlartifacts/
 30-References/rnd-detection-models/export/yolo_runs/
 # ultralytics가 repo 루트에 만드는 데이터 캐시 (COCO128 등 자동 다운로드)
 datasets/
+
+# 탐지 R&D 배치2 (OpenCV·RULE·CLIP·PaddleOCR) — 산출 이미지/영상·모델 캐시는 재생성, 문서·코드만 추적
+30-References/rnd-detection-models-2/export/opencv_out/
+30-References/rnd-detection-models-2/export/*.pt
