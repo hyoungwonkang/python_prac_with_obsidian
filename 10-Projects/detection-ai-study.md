@@ -47,7 +47,7 @@
 |---|---|---|---|
 | **1** | **학습 데이터 산출물 (확장성)** | 신규 — 범용 학습기·데이터 규약·산출물 3종 세트 규칙 | ✅ **환경 구성 완료** (2026-07-08 — 스팸 스모크 0.9367, YOLO 데모 mAP50 0.8718, PII 33라벨 스키마+검증) → [[../30-References/rnd-dataset-artifacts/01-연구문서]] |
 | 2 | 분류 잘하는 법 | **RULE과 겹침** — 고정 test셋에서 Rule vs BERT 등 비교(MLflow) | ✅ **완료** (2026-07-09 — RULE F1 0.8951 / BERT-full F1 0.9517 / HYBRID-AND P 1.0·오탐 0 / HYBRID-OR R 0.9338. 결론: 단일 승자 없음, 업무 요구별 선택지 메뉴) → [[../30-References/rnd-rule-vs-bert/01-연구문서]] |
-| 3 | 통합 UXUI | 신규 — YOLO·CLIP·텍스트(분류/PII/NER) 모듈을 데모 UI로 통합. R&D 아닌 제작 | 🔄 **진행 중** (2026-07-10 — **v1 데모 완성**: Gradio 탭 2개, 모듈 5개 재사용·신규 학습 0, 핸들러·서버 기동 검증. 남은 일: 사용자 확인·실전 프롬프트 재확정) → [[../30-References/rnd-uxui-demo/02-사용법]] |
+| 3 | 통합 UXUI | 신규 — YOLO·CLIP·텍스트(분류/PII/NER) 모듈을 데모 UI로 통합. R&D 아닌 제작 | ✅ **완료** (2026-07-10 — Gradio 탭 2개·모듈 5개 재사용·신규 학습 0. **사용자 검증 완료**: 텍스트 탭(4종 판정·PII·NER), 이미지 탭(YOLO 박스·KoCLIP), 분류 체계 교체 체험까지. 후속: 실전 프롬프트 재확정은 자체/도박 도메인 이미지 확보 시) → [[../30-References/rnd-uxui-demo/01-구성도]] |
 | 3.1 | OCR — Paddle·EasyOCR 활용 | PaddleOCR 항목과 동일 (+EasyOCR 비교 추가) — **후순위(2026-07-09)**: UXUI까지 완료 후 | [ ] |
 | 4 | CLIP 이미지 상황 판단 | CLIP(VLM) 항목과 동일 — **순서 2번째** (UXUI의 선행 요건: UI가 CLIP을 표현하려면 모듈이 먼저) | ✅ **완료** (2026-07-10 — zero-shot·linear probe·KoCLIP 3단계. UXUI 이미지 탭 = KoCLIP+한국어 프롬프트로 확정) → [[../30-References/rnd-clip/01-연구문서]] |
 | 4′ | YOLO 라벨링 직접 → 등록 학습 | 신규 — [[../30-References/rnd-dataset-artifacts/03-사용법|YOLO 데이터 규약]] 위에서 진행 (뼈대 생성기 완비) | [ ] |
@@ -62,7 +62,7 @@
 - 로컬(M4 Max) 우선, 무거우면 Colab 우회 — 환경 정본 [[../30-References/pytorch-env-hybrid]]
 - 모든 실습 MLflow 기록 (한글 키 관례 유지) — [[../30-References/mlflow-practice/mlflow-terms-glossary]]
 - "미니 데이터로 우선 완주" — Alpaca OOM 교훈([[llm-from-scratch/llm-ch7-failure-log]]): 작게 시작해 실패 비용 절감
-- 진행 순서: [[llm-from-scratch]] **교재 완주(2026-07-03) → 이 트랙 진입.** **BERT·NER·YOLO·PII R&D 완료·보고**(2026-07-05~07) → **OpenCV 완료**(2026-07-08, [[../30-References/rnd-detection-models-2/00-학습메모]]) → **학습 데이터 산출물 환경 완료**(2026-07-08, [[../30-References/rnd-dataset-artifacts/00-학습메모]]) → **RULE/지시 2 완료**(2026-07-09, [[../30-References/rnd-rule-vs-bert/01-연구문서|rnd-rule-vs-bert]]) → **CLIP/지시 4 완료**(2026-07-10, [[../30-References/rnd-clip/01-연구문서|rnd-clip]]) → **통합 UXUI(지시 3) 진행 중**(2026-07-10 v1 데모 완성, [[../30-References/rnd-uxui-demo/01-구성도|rnd-uxui-demo]]) → PaddleOCR(+EasyOCR, 지시 3.1 — 후순위). *(순서 확정 2026-07-09: 지시 2→4→3. UXUI가 CLIP·YOLO 사용까지 표현하므로 CLIP이 UXUI에 선행, OCR은 UXUI 이후.)*
+- 진행 순서: [[llm-from-scratch]] **교재 완주(2026-07-03) → 이 트랙 진입.** **BERT·NER·YOLO·PII R&D 완료·보고**(2026-07-05~07) → **OpenCV 완료**(2026-07-08, [[../30-References/rnd-detection-models-2/00-학습메모]]) → **학습 데이터 산출물 환경 완료**(2026-07-08, [[../30-References/rnd-dataset-artifacts/00-학습메모]]) → **RULE/지시 2 완료**(2026-07-09, [[../30-References/rnd-rule-vs-bert/01-연구문서|rnd-rule-vs-bert]]) → **CLIP/지시 4 완료**(2026-07-10, [[../30-References/rnd-clip/01-연구문서|rnd-clip]]) → **통합 UXUI(지시 3) 완료**(2026-07-10 사용자 검증까지, [[../30-References/rnd-uxui-demo/01-구성도|rnd-uxui-demo]]) → **남은 항목 = 지시 4′(YOLO 직접 라벨링) · PaddleOCR(+EasyOCR, 지시 3.1 — 후순위)**. *(순서 확정 2026-07-09: 지시 2→4→3. UXUI가 CLIP·YOLO 사용까지 표현하므로 CLIP이 UXUI에 선행, OCR은 UXUI 이후.)*
 
 ## 검증 방법
 
