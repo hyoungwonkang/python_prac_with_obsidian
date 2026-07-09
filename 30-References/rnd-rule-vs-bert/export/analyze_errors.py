@@ -62,7 +62,8 @@ def main():
     and_preds = [1 if r == 1 and b == 1 else 0 for r, b in zip(rule_preds, bert_preds)]
 
     print("\n── 하이브리드 채점 (MLflow '분류방법-비교'에 기록) " + "─" * 20)
-    mlflow.set_tracking_uri(f"sqlite:///{HERE / 'mlflow.db'}")
+    # 기본은 로컬 sqlite(과정 기록). 통합 서버 기록: MLFLOW_URI=http://127.0.0.1:5000
+    mlflow.set_tracking_uri(os.environ.get("MLFLOW_URI", f"sqlite:///{HERE / 'mlflow.db'}"))
     mlflow.set_experiment("분류방법-비교")
     report("HYBRID-OR", golds, or_preds,
            {"방법": "룰 OR BERT (룰 정상판정분만 BERT 2차와 동치)", "구성": "RULE+BERT-full"})
