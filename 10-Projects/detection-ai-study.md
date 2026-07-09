@@ -36,7 +36,7 @@
 |---|---|---|---|---|---|
 | **1** | **OpenCV** (이미지 처리) | 추출·전처리 (②, 프레임 추출·비식별화) | 데이터셋 불필요 — 샘플 이미지/영상 | 파인튜닝 아님. 로드·리사이즈·블러·영상 프레임 추출 + **YOLO 검출→OpenCV 블러 비식별화** | ✅ **R&D 완료** (2026-07-08 — 비식별 선명도 100.7→13.8, 파이프라인 사람 6명 비식별. cv2 5.0 objdetect 부재→YOLO 결합) → [[../30-References/rnd-detection-models-2/01-연구문서]] |
 | 2 | **RULE** (룰 엔진) | 1차 탐지 Rule Engine (③, 1차 탐지 첫 관문) | 기존 스팸 데이터 재사용 | 학습 없음 — 정규식·키워드·패턴 직접 구현. **같은 test셋에서 Rule vs BERT의 precision/recall 비교**(트레이드오프 체감 + 하이브리드 근거) | ✅ **완료** (2026-07-09, 지시 2와 통합 수행 — RULE F1 0.8951·문턱 트레이드오프 실측·하이브리드 AND/OR 검증) → [[../30-References/rnd-rule-vs-bert/01-연구문서]] |
-| 3 | **CLIP** (VLM) | Image Analyzer (③, 이미지-텍스트 결합 판단) | 소규모 자체 이미지 + 텍스트 프롬프트 | **유일한 파인튜닝**: HF CLIP zero-shot 체험 → linear probe. 한국어는 KoCLIP 후보 | 🔄 **진행 중** (1단계 zero-shot 검증 2026-07-09 → 2단계 linear probe 2026-07-10: 사람판별 27장 test — 부정형 프롬프트 0.4444 vs 긍정형 0.7778 vs probe(89장 학습) 0.7778·P 0.889. 남은 일: KoCLIP 검토·문서) → [[../30-References/rnd-clip/export/clip_linear_probe.py\|rnd-clip]] |
+| 3 | **CLIP** (VLM) | Image Analyzer (③, 이미지-텍스트 결합 판단) | 소규모 자체 이미지 + 텍스트 프롬프트 | **유일한 파인튜닝**: HF CLIP zero-shot 체험 → linear probe. 한국어는 KoCLIP 후보 | 🔄 **진행 중** (1단계 zero-shot 2026-07-09 → 2단계 linear probe: 부정형 0.4444 vs 긍정형 0.7778 vs probe 0.7778·P 0.889 → 3단계 KoCLIP 검토 2026-07-10: **KoCLIP+한국어 0.8519 전체 최고**, 영어모델+한국어는 0.5185로 무너짐, BASE 교체만으로 호환. 남은 일: 문서 세트) → [[../30-References/rnd-clip/export/clip_linear_probe.py\|rnd-clip]] |
 | 4 | **PaddleOCR** | 추출 계층 (②, 이미지→텍스트) | — (라이브러리) | 라이브러리 추론(한국어 인식 정확도 확인) → 출력이 BERT/NER 입력으로 이어지는 미니 파이프라인. 커스텀 학습은 무거워 최후순위. [[../30-References/bert_ocr_practice_plan]] 연결 | [ ] |
 
 ### 새 지시 목록 (2026-07-08) — 기존 로드맵과의 매핑
@@ -49,7 +49,7 @@
 | 2 | 분류 잘하는 법 | **RULE과 겹침** — 고정 test셋에서 Rule vs BERT 등 비교(MLflow) | ✅ **완료** (2026-07-09 — RULE F1 0.8951 / BERT-full F1 0.9517 / HYBRID-AND P 1.0·오탐 0 / HYBRID-OR R 0.9338. 결론: 단일 승자 없음, 업무 요구별 선택지 메뉴) → [[../30-References/rnd-rule-vs-bert/01-연구문서]] |
 | 3 | 통합 UXUI | 신규 — **순서 3번째(2→4→3 확정, 2026-07-09)**: CLIP 완료 직후 착수. YOLO·CLIP·텍스트(분류/PII/NER) 모듈을 데모 UI로 통합. R&D 아닌 제작이므로 문서는 사용법·구성도 중심(연구문서 생략 가능) | [ ] |
 | 3.1 | OCR — Paddle·EasyOCR 활용 | PaddleOCR 항목과 동일 (+EasyOCR 비교 추가) — **후순위(2026-07-09)**: UXUI까지 완료 후 | [ ] |
-| 4 | CLIP 이미지 상황 판단 | CLIP(VLM) 항목과 동일 — **순서 2번째** (UXUI의 선행 요건: UI가 CLIP을 표현하려면 모듈이 먼저) | 🔄 **진행 중** (1단계 zero-shot·2단계 linear probe 완료 2026-07-10, 다음: KoCLIP 검토·문서 세트) |
+| 4 | CLIP 이미지 상황 판단 | CLIP(VLM) 항목과 동일 — **순서 2번째** (UXUI의 선행 요건: UI가 CLIP을 표현하려면 모듈이 먼저) | 🔄 **진행 중** (1~3단계 완료 2026-07-10: zero-shot·linear probe·KoCLIP 검토 — 한국어 프롬프트 지원 확인, 남은 일: 문서 세트) |
 | 4′ | YOLO 라벨링 직접 → 등록 학습 | 신규 — [[../30-References/rnd-dataset-artifacts/03-사용법|YOLO 데이터 규약]] 위에서 진행 (뼈대 생성기 완비) | [ ] |
 
 ### 후순위 (플랫폼 2단계 도입 시점에)
