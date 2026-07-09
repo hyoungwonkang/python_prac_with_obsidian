@@ -101,11 +101,13 @@ def analyze_text(text):
         f"| HYBRID-OR (미탐 최소 지향) | {name(rule or bert)} | 한 표제 |")
 
     # 2) PII 마스킹 (ko-pii — 룰+사전+체크섬, 학습 없음)
+    # <PERSON_1> 류 토큰이 Markdown에서 HTML 태그로 해석돼 사라지므로 이스케이프 필수
+    esc = lambda s: str(s).replace("<", "&lt;").replace(">", "&gt;")
     r = get_pii().process(text)
-    pii_md = f"**마스킹**: {r.text}\n\n"
+    pii_md = f"**마스킹**: {esc(r.text)}\n\n"
     if r.detections:
         pii_md += "| 토큰 | 유형 | 원문 | 위험도 |\n|---|---|---|---|\n" + "\n".join(
-            f"| {i.token or '-'} | {i.detection.label} | {i.detection.text} "
+            f"| {esc(i.token) if i.token else '-'} | {i.detection.label} | {esc(i.detection.text)} "
             f"| {i.detection.risk_level.name} |" for i in r.detections)
         pii_md += f"\n\n종합 위험도: **{r.summary.get('combined_risk')}**"
     else:
