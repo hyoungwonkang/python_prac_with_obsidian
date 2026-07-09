@@ -120,3 +120,8 @@ datasets/
 # rnd-rule-vs-bert — 실험DB는 재생성 가능
 30-References/rnd-rule-vs-bert/export/mlflow.db
 30-References/rnd-rule-vs-bert/export/mlartifacts/
+
+# rnd-clip — 공개 데이터·실험DB는 재생성 가능
+30-References/rnd-clip/export/datasets/
+30-References/rnd-clip/export/mlflow.db
+30-References/rnd-clip/export/mlartifacts/
