@@ -5,6 +5,7 @@
 >
 > MLflow 사용법 자체(왜 log_params vs log_metric인지, step의 의미, mlruns 경로 함정)는
 > [[mlflow-llm-tracking]] 참조. 이 문서는 **단어의 뜻**에 집중.
+> 심화 후속편: [[ml-eval-training-terms]] (2026-07-09 — 판정의 두 세계·분모의 정체·학습 루프 단위·코드 대응)
 
 ## 0. 어느 실험에 뭐가 기록되나
 
