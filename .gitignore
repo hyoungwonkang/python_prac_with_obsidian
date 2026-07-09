@@ -116,3 +116,7 @@ datasets/
 30-References/rnd-dataset-artifacts/export/*.pt
 30-References/rnd-dataset-artifacts/export/mlflow.db
 30-References/rnd-dataset-artifacts/export/mlartifacts/
+
+# rnd-rule-vs-bert — 실험DB는 재생성 가능
+30-References/rnd-rule-vs-bert/export/mlflow.db
+30-References/rnd-rule-vs-bert/export/mlartifacts/
