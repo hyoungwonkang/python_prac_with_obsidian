@@ -46,7 +46,7 @@
 | 지시 | 내용 | 기존 로드맵 대응 | 상태 |
 |---|---|---|---|
 | **1** | **학습 데이터 산출물 (확장성)** | 신규 — 범용 학습기·데이터 규약·산출물 3종 세트 규칙 | ✅ **환경 구성 완료** (2026-07-08 — 스팸 스모크 0.9367, YOLO 데모 mAP50 0.8718, PII 33라벨 스키마+검증) → [[../30-References/rnd-dataset-artifacts/01-연구문서]] |
-| 2 | 분류 잘하는 법 | **RULE과 겹침** — 고정 test셋에서 Rule vs BERT 등 비교(MLflow) — [[../30-References/rnd-rule-vs-bert/export/eval_compare.py\|rnd-rule-vs-bert]] | 🔄 **진행 중** (2026-07-09 착수 — 1차: RULE F1 0.8951 / BERT-full F1 0.9517, 오탐 1) |
+| 2 | 분류 잘하는 법 | **RULE과 겹침** — 고정 test셋에서 Rule vs BERT 등 비교(MLflow) — [[../30-References/rnd-rule-vs-bert/export/eval_compare.py\|rnd-rule-vs-bert]] | 🔄 **진행 중** (2026-07-09 착수 — 1차: RULE F1 0.8951 / BERT-full F1 0.9517·오탐 1. 2차: HYBRID-AND P 1.0000·오탐 0 / HYBRID-OR R 0.9338·미탐 10 / F1 최고는 BERT-full 단독. 남은 일: 문서 세트) |
 | 3 | 통합 UXUI | 신규 — **순서 3번째(2→4→3 확정, 2026-07-09)**: CLIP 완료 직후 착수. YOLO·CLIP·텍스트(분류/PII/NER) 모듈을 데모 UI로 통합. R&D 아닌 제작이므로 문서는 사용법·구성도 중심(연구문서 생략 가능) | [ ] |
 | 3.1 | OCR — Paddle·EasyOCR 활용 | PaddleOCR 항목과 동일 (+EasyOCR 비교 추가) — **후순위(2026-07-09)**: UXUI까지 완료 후 | [ ] |
 | 4 | CLIP 이미지 상황 판단 | CLIP(VLM) 항목과 동일 — **순서 2번째** (UXUI의 선행 요건: UI가 CLIP을 표현하려면 모듈이 먼저) | [ ] |
