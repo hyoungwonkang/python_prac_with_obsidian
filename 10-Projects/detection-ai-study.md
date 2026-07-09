@@ -47,9 +47,9 @@
 |---|---|---|---|
 | **1** | **학습 데이터 산출물 (확장성)** | 신규 — 범용 학습기·데이터 규약·산출물 3종 세트 규칙 | ✅ **환경 구성 완료** (2026-07-08 — 스팸 스모크 0.9367, YOLO 데모 mAP50 0.8718, PII 33라벨 스키마+검증) → [[../30-References/rnd-dataset-artifacts/01-연구문서]] |
 | 2 | 분류 잘하는 법 | **RULE과 겹침** — 고정 test셋에서 Rule vs BERT 등 비교(MLflow) | [ ] |
-| 3 | 통합 UXUI | 신규 (모듈 완성 후 후순위) | [ ] |
+| 3 | 통합 UXUI | 신규 — **우선순위 상향(2026-07-09)**: CLIP 완료 직후 착수. YOLO·CLIP·텍스트(분류/PII/NER) 모듈을 데모 UI로 통합. R&D 아닌 제작이므로 문서는 사용법·구성도 중심(연구문서 생략 가능) | [ ] |
 | 3.1 | OCR — Paddle·EasyOCR 활용 | PaddleOCR 항목과 동일 (+EasyOCR 비교 추가) | [ ] |
-| 4 | CLIP 이미지 상황 판단 | CLIP(VLM) 항목과 동일 | [ ] |
+| 4 | CLIP 이미지 상황 판단 | CLIP(VLM) 항목과 동일 — **다음 착수** (UXUI의 선행 요건: UI가 CLIP을 표현하려면 모듈이 먼저) | [ ] |
 | 4′ | YOLO 라벨링 직접 → 등록 학습 | 신규 — [[../30-References/rnd-dataset-artifacts/03-사용법|YOLO 데이터 규약]] 위에서 진행 (뼈대 생성기 완비) | [ ] |
 
 ### 후순위 (플랫폼 2단계 도입 시점에)
@@ -62,7 +62,7 @@
 - 로컬(M4 Max) 우선, 무거우면 Colab 우회 — 환경 정본 [[../30-References/pytorch-env-hybrid]]
 - 모든 실습 MLflow 기록 (한글 키 관례 유지) — [[../30-References/mlflow-practice/mlflow-terms-glossary]]
 - "미니 데이터로 우선 완주" — Alpaca OOM 교훈([[llm-from-scratch/llm-ch7-failure-log]]): 작게 시작해 실패 비용 절감
-- 진행 순서: [[llm-from-scratch]] **교재 완주(2026-07-03) → 이 트랙 진입.** **BERT·NER·YOLO·PII R&D 완료·보고**(2026-07-05~07) → **OpenCV 완료**(2026-07-08, [[../30-References/rnd-detection-models-2/00-학습메모]]) → **학습 데이터 산출물 환경 완료**(2026-07-08, [[../30-References/rnd-dataset-artifacts/00-학습메모]]) → **다음 착수 = RULE(=지시 2 '분류 잘하는 법'과 결합)** → CLIP(VLM) → PaddleOCR(+EasyOCR).
+- 진행 순서: [[llm-from-scratch]] **교재 완주(2026-07-03) → 이 트랙 진입.** **BERT·NER·YOLO·PII R&D 완료·보고**(2026-07-05~07) → **OpenCV 완료**(2026-07-08, [[../30-References/rnd-detection-models-2/00-학습메모]]) → **학습 데이터 산출물 환경 완료**(2026-07-08, [[../30-References/rnd-dataset-artifacts/00-학습메모]]) → **다음 착수 = CLIP(VLM, 지시 4)** → **통합 UXUI(지시 3 — YOLO·CLIP·텍스트 모듈 데모 통합)** → RULE(=지시 2 '분류 잘하는 법'과 결합) → PaddleOCR(+EasyOCR). *(순서 변경 2026-07-09: UXUI가 CLIP·YOLO를 표현해야 하므로 CLIP 선행, RULE 후순위.)*
 
 ## 검증 방법
 
