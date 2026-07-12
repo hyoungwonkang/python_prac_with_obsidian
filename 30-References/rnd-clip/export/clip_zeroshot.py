@@ -27,7 +27,8 @@ from transformers import CLIPModel, CLIPProcessor
 HERE = Path(__file__).resolve().parent
 BASE = os.environ.get("BASE", "openai/clip-vit-base-patch32")  # 영어 학습 모델 — 한국어는 KoCLIP 단계
 N = int(os.environ.get("N", 8))
-DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+DEVICE = torch.device("mps" if torch.backends.mps.is_available()
+                      else ("cuda" if torch.cuda.is_available() else "cpu"))  # 맥=MPS / 윈도우 GPU=CUDA / 그 외=CPU
 
 # 상황 후보 (업무 시나리오: 탐지 대상 1개 + 일상 상황들). '|' 구분, 표시명=프롬프트 앞부분
 PROMPTS = [p.strip() for p in os.environ.get(

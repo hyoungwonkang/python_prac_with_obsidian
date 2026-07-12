@@ -19,7 +19,8 @@ ARTIFACT = Path(os.environ.get("ARTIFACT", HERE / "artifacts/ko-spam-smoke"))
 if not ARTIFACT.is_absolute():
     ARTIFACT = HERE / ARTIFACT
 
-DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+DEVICE = torch.device("mps" if torch.backends.mps.is_available()
+                      else ("cuda" if torch.cuda.is_available() else "cpu"))  # 맥=MPS / 윈도우 GPU=CUDA / 그 외=CPU
 
 DEMO_TEXTS = [
     "무료 쿠폰이 당첨되셨습니다! 지금 바로 클릭하세요",

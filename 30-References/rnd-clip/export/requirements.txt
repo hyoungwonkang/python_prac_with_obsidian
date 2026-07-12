@@ -1,0 +1,4 @@
+# CLIP 이미지 상황 판단 (rnd-clip) — 신규 의존성 없음 (2026-07-09~10 macOS 실측 검증)
+# 선행: ../../rnd-dataset-artifacts/export/requirements.txt 설치 (공용 환경 — 설치 절차는 그 폴더의 README_windows.md)
+# 사용 패키지: torch·transformers·pillow·scikit-learn·mlflow — 전부 선행 파일에 기재 (pillow는 ultralytics 동반 설치)
+# 데이터 재생성(coco128)은 3_사용법 §5 참조

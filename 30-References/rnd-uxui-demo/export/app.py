@@ -30,7 +30,8 @@ sys.path.insert(0, str(REFS / "rnd-detection-models/export"))  # predict_ner, ne
 SPAM_ART = REFS / "rnd-dataset-artifacts/export/artifacts/ko-spam-full"
 YOLO_PT = REFS / "rnd-detection-models/export/yolov8n.pt"
 KOCLIP = "Bingsu/clip-vit-base-patch32-ko"
-DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+DEVICE = torch.device("mps" if torch.backends.mps.is_available()
+                      else ("cuda" if torch.cuda.is_available() else "cpu"))  # 맥=MPS / 윈도우 GPU=CUDA / 그 외=CPU
 
 NER_KO = {"PS": "인명", "LC": "지명", "OG": "기관", "DT": "날짜", "TI": "시간", "QT": "수량"}
 # coco128 전수 실측(2026-07-12)으로 보강: 스포츠·실내 후보가 없으면 해당 장면이

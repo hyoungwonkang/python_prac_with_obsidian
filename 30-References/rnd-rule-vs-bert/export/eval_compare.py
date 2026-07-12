@@ -27,7 +27,8 @@ HERE = Path(__file__).resolve().parent
 TEST = Path(os.environ.get("TEST", HERE / "../../rnd-bert-labeling-test/export/ko/test.csv")).resolve()
 ARTIFACTS = os.environ.get(
     "ARTIFACTS", str(HERE / "../../rnd-dataset-artifacts/export/artifacts/ko-spam-smoke"))
-DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+DEVICE = torch.device("mps" if torch.backends.mps.is_available()
+                      else ("cuda" if torch.cuda.is_available() else "cpu"))  # 맥=MPS / 윈도우 GPU=CUDA / 그 외=CPU
 
 
 def four_cells(golds, preds):

@@ -1,10 +1,24 @@
-# 학습 데이터 산출물 환경 (rnd-dataset-artifacts) — 검증 당시 버전 (Python 3.12)
-torch==2.12.1
-transformers==5.13.0
-ultralytics==8.4.87
-mlflow==3.14.0
-pandas==2.3.3
-scikit-learn==1.9.0
-ko-pii==1.15.2
-labelme==7.0.4          # 지시 4′ 직접 라벨링 — 로컬 도구 (민감 도메인 데이터 웹 업로드 불가 요건)
-# opencv-python·pyyaml은 ultralytics 의존성으로 함께 설치됨 (YOLO 데모 데이터 생성에 사용)
+# 학습 데이터 산출물 환경 (rnd-dataset-artifacts) 의존성 (안정화 버전 고정 — 2026-07-08 macOS/Apple Silicon 실측 검증)
+# 설치: pip install -r requirements.txt
+# 정책: 자동(최신) 설치 금지 — 아래 고정 버전 조합으로만. Windows 설치 절차는 README_windows.md 참조
+
+# ---- 공통 (딥러닝 엔진) ----
+torch==2.12.1              # 맥=MPS 자동 / Windows 기본=CPU 빌드 — NVIDIA GPU는 README_windows.md의 CUDA 명령
+numpy==2.5.1               # 수치 연산 (torch 의존)
+
+# ---- 텍스트 분류 범용 학습기 (train_text.py / classify_text.py) ----
+transformers==5.13.0       # klue/bert-base 로드 (첫 실행 시 약 425MB 자동 다운로드)
+pandas==2.3.3              # CSV 계약(text,label) 입출력
+scikit-learn==1.9.0        # 정확도·F1 채점
+
+# ---- YOLO 커스텀 데이터 규약 (make_yolo_dataset.py / yolo_train_custom.py) ----
+ultralytics==8.4.87        # YOLOv8n 전이학습·추론 (torchvision·opencv·pyyaml·pillow 자동 동반 설치)
+
+# ---- PII 분류 체계 (make_pii_schema.py / validate_pii_samples.py) ----
+ko-pii==1.15.2             # 룰+사전+체크섬 기반. ※Python 3.10 이상 필수
+
+# ---- 직접 라벨링 — 지시 4′ (labelme_to_yolo.py와 세트) ----
+labelme==7.0.4             # 로컬 라벨링 GUI — 민감 도메인 데이터를 외부 서버에 올리지 않는 요건
+
+# ---- 실험 기록 ----
+mlflow==3.14.0             # sqlite 저장소 사용 (3.x 파일 저장소는 유지보수 모드)

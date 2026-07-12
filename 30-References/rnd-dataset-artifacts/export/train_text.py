@@ -41,7 +41,8 @@ NAME = os.environ.get("NAME", DATA.stem)          # 산출물 이름
 EXPERIMENT = os.environ.get("EXPERIMENT", "텍스트분류-범용")
 OUT_DIR = HERE / "artifacts" / NAME
 
-DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+DEVICE = torch.device("mps" if torch.backends.mps.is_available()
+                      else ("cuda" if torch.cuda.is_available() else "cpu"))  # 맥=MPS / 윈도우 GPU=CUDA / 그 외=CPU
 
 
 def find_columns(df):

@@ -29,7 +29,8 @@ BASE = os.environ.get("BASE", "openai/clip-vit-base-patch32")
 EPOCHS = int(os.environ.get("EPOCHS", 200))
 LR = float(os.environ.get("LR", 1e-2))
 SEED = 123                                   # 기존 R&D와 동일 (분할 재현)
-DEVICE = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+DEVICE = torch.device("mps" if torch.backends.mps.is_available()
+                      else ("cuda" if torch.cuda.is_available() else "cpu"))  # 맥=MPS / 윈도우 GPU=CUDA / 그 외=CPU
 CLASSES = ["no-person", "person"]            # 0/1 — label_map에 기록
 # 클래스 순서와 일치. 부정형("no people")은 CLIP의 약점 — ZS_PROMPTS로 교체 실험 가능
 # (실측: 부정형 0.4444 → 긍정형 대비쌍 0.7778, 같은 test셋)
