@@ -107,10 +107,19 @@ def analyze_text(text):
     r = get_pii().process(text)
     pii_md = f"**마스킹**: {esc(r.text)}\n\n"
     if r.detections:
-        pii_md += "| 토큰 | 유형 | 원문 | 위험도 |\n|---|---|---|---|\n" + "\n".join(
-            f"| {esc(i.token) if i.token else '-'} | {i.detection.label} | {esc(i.detection.text)} "
-            f"| {i.detection.risk_level.name} |" for i in r.detections)
-        pii_md += f"\n\n종합 위험도: **{r.summary.get('combined_risk')}**"
+        # 민감도 = 유형에 붙는 등급(항목 속성). 토큰 없음 = 확신이 애매해 자동 마스킹을 보류한 항목(REVIEW)
+        pii_md += "| 토큰(조치) | 유형 | 원문 | 민감도 | 확신 |\n|---|---|---|---|---|\n" + "\n".join(
+            f"| {esc(i.token) if i.token else '확신 애매 → 사람 검토'} | {i.detection.label} "
+            f"| {esc(i.detection.text)} | {i.detection.risk_level.name} "
+            f"| {i.detection.confidence:.0%} |" for i in r.detections)
+        s = r.summary
+        rationale = " · ".join(s.get("combined_rationale", []))
+        ids = ", ".join(s.get("distinct_identifiers", [])) or "없음"
+        quasi = ", ".join(s.get("distinct_quasi_identifiers", [])) or "없음"
+        pii_md += (f"\n\n**종합 위험도: {s.get('combined_risk')}** — {rationale}\n\n"
+                   f"식별자(단독으로 개인 특정): **{ids}** · 준식별자(결합될수록 재식별 우려↑): **{quasi}**\n\n"
+                   f"*민감도 = 그 유형이 얼마나 민감한 부류인가(항목 속성) · "
+                   f"종합 위험도 = 이 문장만으로 개인이 특정되는가(문장 전체 판정)*")
     else:
         pii_md += "탐지된 개인정보 없음."
 
