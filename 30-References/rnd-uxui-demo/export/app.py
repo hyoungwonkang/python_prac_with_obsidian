@@ -28,7 +28,11 @@ sys.path.insert(0, str(REFS / "rnd-rule-vs-bert/export"))   # rule_spam
 sys.path.insert(0, str(REFS / "rnd-detection-models/export"))  # predict_ner, ner_dataset
 
 SPAM_ART = REFS / "rnd-dataset-artifacts/export/artifacts/ko-spam-full"
-YOLO_PT = REFS / "rnd-detection-models/export/yolov8n.pt"
+# 기본은 COCO 80종 기본 모델. YOLO_PT로 커스텀 산출물 교체 가능 (예: 직접 학습한 잠옷 모델)
+#   YOLO_PT=../rnd-dataset-artifacts/export/artifacts/pajama/best.pt ~/rnd-env/bin/python app.py
+# ⚠️ 커스텀 모델은 자기가 학습한 클래스만 앎 — 잠옷 모델로 바꾸면 COCO 객체(키보드·사람)는 못 잡음
+YOLO_PT = Path(os.environ.get(
+    "YOLO_PT", REFS / "rnd-detection-models/export/yolov8n.pt")).expanduser()
 KOCLIP = "Bingsu/clip-vit-base-patch32-ko"
 DEVICE = torch.device("mps" if torch.backends.mps.is_available()
                       else ("cuda" if torch.cuda.is_available() else "cpu"))  # 맥=MPS / 윈도우 GPU=CUDA / 그 외=CPU

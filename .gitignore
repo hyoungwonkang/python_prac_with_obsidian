@@ -126,3 +126,6 @@ datasets/
 30-References/rnd-clip/export/mlflow.db
 30-References/rnd-clip/export/mlartifacts/
 30-References/rnd-clip/export/artifacts/
+
+# 개인 웹캠 연습 데이터 (프라이버시 — 원격 저장소에 올리지 않음, datasets-own 규약의 예외)
+30-References/rnd-dataset-artifacts/export/datasets-own/my-practice/
