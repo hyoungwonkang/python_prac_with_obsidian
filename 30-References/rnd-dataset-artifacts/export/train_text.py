@@ -117,6 +117,13 @@ def main():
     print(f"데이터: {DATA}")
     print(f"열 감지: text={text_col!r}, label={label_col!r} / 클래스 {len(classes)}개: {classes}")
     print(f"분할: train {len(train_df)} / val {len(val_df)} / test {len(test_df)}")
+    # 계약 위반을 조기에 친절히 — 빈 분할이 토크나이저까지 흘러가면 IndexError로만 죽는다
+    if min(len(train_df), len(val_df), len(test_df)) == 0:
+        raise SystemExit("❌ 데이터가 너무 적습니다 — 70:10:20 분할 후 빈 몫이 생겼습니다. "
+                         "단독 학습에는 최소 수십 건이 필요합니다. 소량 검수분은 기존 train에 편입해 학습하세요.")
+    if len(classes) < 2:
+        raise SystemExit(f"❌ 클래스가 {len(classes)}개뿐입니다 {classes} — 분류 학습에는 두 클래스 이상 필요 "
+                         "(검수 데이터라면 정상·스팸 양쪽을 모두 모아야 합니다).")
 
     tokenizer = AutoTokenizer.from_pretrained(BASE)
     model = AutoModelForSequenceClassification.from_pretrained(
