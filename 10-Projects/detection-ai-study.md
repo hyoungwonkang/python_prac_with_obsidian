@@ -47,7 +47,7 @@
 |---|---|---|---|
 | **1** | **학습 데이터 산출물 (확장성)** | 신규 — 범용 학습기·데이터 규약·산출물 3종 세트 규칙 | ✅ **환경 구성 완료** (2026-07-08 — 스팸 스모크 0.9367, YOLO 데모 mAP50 0.8718, PII 33라벨 스키마+검증) → [[../30-References/rnd-dataset-artifacts/01-연구문서]] |
 | 2 | 분류 잘하는 법 | **RULE과 겹침** — 고정 test셋에서 Rule vs BERT 등 비교(MLflow) | ✅ **완료** (2026-07-09 — RULE F1 0.8951 / BERT-full F1 0.9517 / HYBRID-AND P 1.0·오탐 0 / HYBRID-OR R 0.9338. 결론: 단일 승자 없음, 업무 요구별 선택지 메뉴) → [[../30-References/rnd-rule-vs-bert/01-연구문서]] |
-| 3 | 통합 UXUI | 신규 — YOLO·CLIP·텍스트(분류/PII/NER) 모듈을 데모 UI로 통합. R&D 아닌 제작 | ✅ **완료** (2026-07-10 — Gradio 탭 2개·모듈 5개 재사용·신규 학습 0. **사용자 검증 완료**: 텍스트 탭(4종 판정·PII·NER), 이미지 탭(YOLO 박스·KoCLIP), 분류 체계 교체 체험까지. 후속: 실전 프롬프트 재확정은 자체/도박 도메인 이미지 확보 시) → [[../30-References/rnd-uxui-demo/01-구성도]] |
+| 3 | 통합 UXUI | 신규 — YOLO·CLIP·텍스트(분류/PII/NER) 모듈을 데모 UI로 통합. R&D 아닌 제작 | ✅ **완료** (2026-07-10 — Gradio 탭 3개·모듈 5개 재사용·신규 학습 0. **사용자 검증 완료**: 텍스트 탭(4종 판정·PII 상세·NER), 이미지 탭(YOLO 박스·KoCLIP), 분류 체계 교체 체험. 2026-07-12 검수·라벨링 탭 추가 — 순환도 [검수→편입] 실체화, 첫 자산 6건. 후속: 실전 프롬프트 재확정은 자체/도박 도메인 이미지 확보 시) → [[../30-References/rnd-uxui-demo/01-구성도]] |
 | 3.1 | OCR — Paddle·EasyOCR 활용 | PaddleOCR 항목과 동일 (+EasyOCR 비교 추가) — **후순위(2026-07-09)**: UXUI까지 완료 후 | [ ] |
 | 4 | CLIP 이미지 상황 판단 | CLIP(VLM) 항목과 동일 — **순서 2번째** (UXUI의 선행 요건: UI가 CLIP을 표현하려면 모듈이 먼저) | ✅ **완료** (2026-07-10 — zero-shot·linear probe·KoCLIP 3단계. UXUI 이미지 탭 = KoCLIP+한국어 프롬프트로 확정) → [[../30-References/rnd-clip/01-연구문서]] |
 | 4′ | YOLO 라벨링 직접 → 등록 학습 | 신규 — [[../30-References/rnd-dataset-artifacts/03-사용법|YOLO 데이터 규약]] 위에서 진행 (뼈대 생성기 완비) | [ ] |
