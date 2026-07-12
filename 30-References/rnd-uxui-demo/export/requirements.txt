@@ -1,0 +1,5 @@
+# 통합 데모 (rnd-uxui-demo) — 검증 당시 버전 (Python 3.12, 공용 환경 ~/rnd-env)
+# 선행: 모듈 의존성은 지시 1 환경과 공유 — ../../rnd-dataset-artifacts/export/requirements.txt 먼저 설치
+gradio==6.20.0
+# 그 외(torch·transformers·ultralytics·ko-pii·pandas 등)는 위 선행 파일에 기재
+# NER 가중치(ner_klue.pt)는 rnd-detection-models/export에 존재해야 함 (없으면 finetune_ner.py로 재생성)

@@ -6,4 +6,5 @@ mlflow==3.14.0
 pandas==2.3.3
 scikit-learn==1.9.0
 ko-pii==1.15.2
+labelme==7.0.4          # 지시 4′ 직접 라벨링 — 로컬 도구 (민감 도메인 데이터 웹 업로드 불가 요건)
 # opencv-python·pyyaml은 ultralytics 의존성으로 함께 설치됨 (YOLO 데모 데이터 생성에 사용)
