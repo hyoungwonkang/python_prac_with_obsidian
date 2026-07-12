@@ -85,7 +85,7 @@ def analyze_text(text):
 
     # 1) 스팸 분류 — BERT(3종 세트) + RULE + 하이브리드 (지시 2의 선택지 메뉴)
     from rule_spam import classify as rule_classify, score as rule_score
-    tok, model, _ = get_spam()
+    tok, model, meta = get_spam()
     enc = tok([text], truncation=True, max_length=128, padding=True,
               return_tensors="pt").to(DEVICE)
     with torch.no_grad():
@@ -95,7 +95,8 @@ def analyze_text(text):
     name = lambda v: "🚨 스팸" if v else "✅ 정상"
     cls_md = (
         f"| 방법 | 판정 | 근거 |\n|---|---|---|\n"
-        f"| BERT (F1 0.952) | {name(bert)} | 확신 {probs[bert]:.1%} |\n"
+        # 성능 표기는 meta.json 연동 — 모델(가중치)을 교체하면 UI도 자동 갱신 (현재 가중치의 test셋 실측치)
+        f"| BERT (test셋 정확도 {meta['metrics']['테스트정확도']}) | {name(bert)} | 확신 {probs[bert]:.1%} |\n"
         f"| RULE (0.12초·설명가능) | {name(rule)} | 걸린 신호 {rule_score(text)}개 |\n"
         f"| HYBRID-AND (오탐 0 지향) | {name(rule and bert)} | 만장일치제 |\n"
         f"| HYBRID-OR (미탐 최소 지향) | {name(rule or bert)} | 한 표제 |")
