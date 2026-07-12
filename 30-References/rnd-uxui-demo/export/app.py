@@ -96,6 +96,7 @@ def analyze_text(text):
     rule = rule_classify(text)
     name = lambda v: "🚨 스팸" if v else "✅ 정상"
     cls_md = (
+        "### 📊 스팸 분류 — 4종 판정\n\n"
         f"| 방법 | 판정 | 근거 |\n|---|---|---|\n"
         # 성능 표기는 meta.json 연동 — 모델(가중치)을 교체하면 UI도 자동 갱신 (현재 가중치의 test셋 실측치)
         f"| BERT (test셋 정확도 {meta['metrics']['테스트정확도']}) | {name(bert)} | 확신 {probs[bert]:.1%} |\n"
@@ -107,7 +108,7 @@ def analyze_text(text):
     # <PERSON_1> 류 토큰이 Markdown에서 HTML 태그로 해석돼 사라지므로 이스케이프 필수
     esc = lambda s: str(s).replace("<", "&lt;").replace(">", "&gt;")
     r = get_pii().process(text)
-    pii_md = f"**마스킹**: {esc(r.text)}\n\n"
+    pii_md = f"### 🛡️ PII 탐지·마스킹 (개인정보 관점)\n\n**마스킹**: {esc(r.text)}\n\n"
     if r.detections:
         # 민감도 = 유형에 붙는 등급(항목 속성). 토큰 없음 = 확신이 애매해 자동 마스킹을 보류한 항목(REVIEW)
         pii_md += "| 토큰(조치) | 유형 | 원문 | 민감도 | 확신 |\n|---|---|---|---|---|\n" + "\n".join(
@@ -118,19 +119,29 @@ def analyze_text(text):
         rationale = " · ".join(s.get("combined_rationale", []))
         ids = ", ".join(s.get("distinct_identifiers", [])) or "없음"
         quasi = ", ".join(s.get("distinct_quasi_identifiers", [])) or "없음"
-        pii_md += (f"\n\n**종합 위험도: {s.get('combined_risk')}** — {rationale}\n\n"
+        pii_md += (f"\n\n**PII 종합 위험도: {s.get('combined_risk')}** — {rationale}\n\n"
                    f"식별자(단독으로 개인 특정): **{ids}** · 준식별자(결합될수록 재식별 우려↑): **{quasi}**\n\n"
                    f"*민감도 = 그 유형이 얼마나 민감한 부류인가(항목 속성) · "
-                   f"종합 위험도 = 이 문장만으로 개인이 특정되는가(문장 전체 판정)*")
+                   f"PII 종합 위험도 = 이 문장의 **개인정보만으로** 개인이 특정되는가 "
+                   f"(스팸 등 다른 위험과 무관한 PII 한정 판정)*")
     else:
         pii_md += "탐지된 개인정보 없음."
 
     # 3) NER 개체 추출 (ner_klue.pt — 토큰 분류 + 구간 병합)
+    # NER은 개체 추출기이지 PII 탐지기가 아님 — 개체마다 PII 관련성을 함께 표시
     import predict_ner
+    NER_PII = {"PS": "⚠️ PII 후보 (인명 = 준식별자)",
+               "LC": "일반 (상세 주소로 결합 시 준식별 소지)",
+               "OG": "일반 개체", "DT": "일반 개체", "TI": "일반 개체", "QT": "일반 개체"}
     ents = predict_ner.tag_sentence(text, *get_ner())
-    ner_md = ("| 개체 | 유형 |\n|---|---|\n" + "\n".join(
-        f"| {t} | {NER_KO.get(ty, ty)}({ty}) |" for t, ty in ents)) if ents \
-        else "추출된 개체 없음."
+    ner_md = "### 🏷️ NER 개체 추출 (일반 개체 인식)\n\n"
+    if ents:
+        ner_md += ("| 개체 | 유형 | PII 관련성 |\n|---|---|---|\n" + "\n".join(
+            f"| {t} | {NER_KO.get(ty, ty)}({ty}) | {NER_PII.get(ty, '일반 개체')} |" for t, ty in ents)
+            + "\n\n*NER의 PII 판정은 참고용 — 정식 PII 판정은 왼쪽 PII 칸(ko-pii) 담당. "
+            "인명은 두 모듈의 접점 (룰의 인명 미탐을 NER이 보완하는 하이브리드 지점)*")
+    else:
+        ner_md += "추출된 개체 없음."
     return cls_md, pii_md, ner_md
 
 
