@@ -20,6 +20,7 @@ os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
 
 import gradio as gr
 import torch
+from PIL import Image
 
 HERE = Path(__file__).resolve().parent
 REFS = HERE.parent.parent                                  # 30-References/
@@ -238,6 +239,52 @@ def analyze_image(image, prompts_text):
     return annotated, yolo_md, clip_md
 
 
+# ---------- 이미지 검색·일괄 판정 탭 — 유사도 행렬 [이미지 N × 문장 M]의 두 방향 읽기 ----------
+# 행 방향 = 이미지별 판정(일괄 분류), 열 방향 = 문장 기준 검색("도박 의심 장면 추리기").
+# 같은 자, 같은 지도 — 한 번의 계산으로 두 사용법이 나온다 (기준의 대칭성).
+
+def _features(out):
+    """transformers 5.x는 get_*_features가 출력 객체를 반환 — 텐서를 꺼내 L2 정규화."""
+    f = out.pooler_output if hasattr(out, "pooler_output") else out
+    return f / f.norm(dim=-1, keepdim=True)
+
+
+def analyze_batch(files, prompts_text, query):
+    if not files:
+        return "이미지를 업로드하세요.", None
+    prompts = [p.strip() for p in (prompts_text or DEFAULT_PROMPTS).splitlines() if p.strip()]
+    query = (query or prompts[0]).strip()
+    texts = prompts + ([query] if query not in prompts else [])
+    q_idx = texts.index(query)
+
+    model, proc = get_koclip()
+    with torch.no_grad():
+        txt = _features(model.get_text_features(
+            **proc(text=texts, return_tensors="pt", padding=True).to(DEVICE)))
+        rows = []                                   # (파일명, 이미지, 1위 상황, 확신, 검색 유사도)
+        for i in range(0, len(files), 16):          # 16장씩 끊어 임베딩 (메모리)
+            chunk = files[i:i + 16]
+            images = [Image.open(f.name if hasattr(f, "name") else f).convert("RGB") for f in chunk]
+            img = _features(model.get_image_features(
+                **proc(images=images, return_tensors="pt").to(DEVICE)))
+            cos = img @ txt.T                       # [이미지 × 문장] 코사인 유사도 행렬
+            scale = model.logit_scale.exp()
+            probs = (cos[:, :len(prompts)] * scale).softmax(-1)   # 행 방향: 이미지별 판정
+            for f, image, p, c in zip(chunk, images, probs, cos):
+                name = Path(f.name if hasattr(f, "name") else f).name
+                top = int(p.argmax())
+                rows.append((name, image, prompts[top], float(p[top]), float(c[q_idx])))
+
+    rows.sort(key=lambda r: -r[4])                  # 열 방향: 검색 문장과 가까운 순
+    md = (f"**검색 문장**: “{query}” — 유사도(코사인) 높은 순. 순위만 신뢰하고, "
+          f"상위부터 사람이 검토 (검색 방향에는 억지 배정 문제가 없음 — 순위일 뿐)\n\n"
+          f"| 순위 | 파일 | 검색 유사도 | 이미지별 1위 상황 (판정 방향) |\n|---|---|---|---|\n"
+          + "\n".join(f"| {i+1} | {n} | {sim:.3f} | {top} ({conf:.0%}) |"
+                      for i, (n, _, top, conf, sim) in enumerate(rows)))
+    gallery = [(img, f"{i+1}위 · {sim:.3f} · {n}") for i, (n, img, _, _, sim) in enumerate(rows)]
+    return md, gallery
+
+
 # ---------- UI ----------
 
 with gr.Blocks(title="탐지 AI 통합 데모") as demo:
@@ -277,6 +324,19 @@ with gr.Blocks(title="탐지 AI 통합 데모") as demo:
                 i_yolo = gr.Markdown()
                 i_clip = gr.Markdown()
         i_btn.click(analyze_image, [i_in, i_prompts], [i_out, i_yolo, i_clip])
+
+    with gr.Tab("이미지 검색·일괄"):
+        gr.Markdown("여러 이미지 × 여러 문장을 한 번에 — 표의 **유사도 열**은 검색(문장 기준 정렬), "
+                    "**1위 상황 열**은 일괄 판정(이미지 기준). 같은 유사도 행렬의 두 방향 읽기입니다.")
+        b_files = gr.File(label="이미지 여러 장 (수십 장까지)", file_count="multiple",
+                          file_types=["image"])
+        b_prompts = gr.Textbox(label="상황 후보 (한 줄 = 후보 1개)", value=DEFAULT_PROMPTS, lines=6)
+        b_query = gr.Textbox(label="검색 문장 (이 문장과 가까운 순으로 정렬)",
+                             value="온라인 도박 사이트 화면")
+        b_btn = gr.Button("일괄 분석", variant="primary")
+        b_md = gr.Markdown()
+        b_gal = gr.Gallery(label="검색 결과 (유사도 순)", columns=5, height=300)
+        b_btn.click(analyze_batch, [b_files, b_prompts, b_query], [b_md, b_gal])
 
 if __name__ == "__main__":
     demo.launch(server_name="127.0.0.1", server_port=7860)
