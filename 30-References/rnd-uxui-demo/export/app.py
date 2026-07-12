@@ -231,7 +231,7 @@ def analyze_image(image, prompts_text):
         f"| {'**' if i == 0 else ''}{prompts[k]}{'**' if i == 0 else ''} | {probs[k]:.1%} |"
         for i, k in enumerate(order.tolist()))
     if probs[order[0]] < 0.5:
-        clip_md += "\n\n⚠️ 1위 확신이 50% 미만 — 후보에 없는 상황일 수 있음 (받이 클래스 확인)"
+        clip_md += "\n\n⚠️ 1위 확신이 50% 미만 — 후보에 없는 상황일 수 있음 (캐치올 클래스 확인)"
     return annotated, yolo_md, clip_md
 
 
