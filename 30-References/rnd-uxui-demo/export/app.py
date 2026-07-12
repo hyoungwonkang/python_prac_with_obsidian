@@ -9,9 +9,11 @@
   ~/rnd-env/bin/python app.py    # → http://127.0.0.1:7860
 모델은 첫 사용 시 로딩(지연 로딩) — 탭별 첫 응답만 수 초 걸림.
 """
+import csv
 import json
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 
 os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
@@ -132,6 +134,60 @@ def analyze_text(text):
     return cls_md, pii_md, ner_md
 
 
+# ---------- 검수·라벨링 탭 — 순환도의 "분류 결과 →[검수]→ 데이터셋 편입" 화살표의 실체 ----------
+# 모델 판정은 초안(의사 라벨)일 뿐, 사람이 확정하는 순간에만 정답 가족으로 승격된다.
+# 저장 계약 = text,label CSV → train_text.py에 코드 수정 없이 그대로 입력 가능 (순환 폐쇄).
+
+REVIEW_CSV = REFS / "rnd-dataset-artifacts/export/datasets-own/ko-spam-reviewed.csv"
+
+
+def draft_label(text):
+    text = (text or "").strip()
+    if not text:
+        return "문장을 입력하세요.", None
+    from rule_spam import classify as rule_classify, score as rule_score
+    tok, model, _ = get_spam()
+    enc = tok([text], truncation=True, max_length=128, padding=True,
+              return_tensors="pt").to(DEVICE)
+    with torch.no_grad():
+        probs = model(**enc).logits.softmax(-1)[0]
+    bert, rule = int(probs.argmax()), rule_classify(text)
+    name = lambda v: "🚨 스팸" if v else "✅ 정상"
+    md = (f"**모델 초안 (의사 라벨 — 아직 정답 아님)**\n\n"
+          f"- BERT: {name(bert)} (확신 {probs[bert]:.1%})\n"
+          f"- RULE: {name(rule)} (걸린 신호 {rule_score(text)}개)\n\n"
+          + ("두 방법 **일치** — 쉬운 사례일 가능성 (표본 확인 수준으로 충분)"
+             if bert == rule else
+             "⚠️ 두 방법 **불일치 — 검수 가치가 가장 높은 경계 사례** (전수 검수 권장)")
+          + "\n\n아래 버튼으로 사람이 확정하는 순간에만 정답이 됩니다.")
+    return md, {"text": text, "bert": bert, "rule": rule, "conf": float(probs[bert])}
+
+
+def save_label(state, human_label):
+    if not state:
+        return "먼저 '초안 생성'으로 문장을 분석하세요."
+    import pandas as pd
+    text = state["text"]
+    if REVIEW_CSV.exists() and text in pd.read_csv(REVIEW_CSV)["text"].astype(str).tolist():
+        return "이미 검수된 문장입니다 — 중복 저장 건너뜀."
+    REVIEW_CSV.parent.mkdir(parents=True, exist_ok=True)
+    is_new = not REVIEW_CSV.exists()
+    with REVIEW_CSV.open("a", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        if is_new:
+            w.writerow(["text", "label", "bert_초안", "rule_초안", "bert_확신", "검수일"])
+        w.writerow([text, human_label, state["bert"], state["rule"],
+                    round(state["conf"], 4), datetime.now().strftime("%Y-%m-%d %H:%M")])
+    df = pd.read_csv(REVIEW_CSV)
+    n_spam = int((df["label"] == 1).sum())
+    flipped = int((df["label"] != df["bert_초안"]).sum())
+    return (f"✅ 저장: [{'스팸' if human_label else '정상'}] {text[:40]}\n\n"
+            f"**누적 {len(df)}건** (정상 {len(df) - n_spam} / 스팸 {n_spam}) · "
+            f"사람이 초안을 뒤집은 건: {flipped}건\n\n"
+            f"저장 위치: `datasets-own/ko-spam-reviewed.csv` (git 추적 — 재생성 불가 자산) · "
+            f"`text,label` 계약이라 `DATA=이 파일`로 train_text.py에 바로 학습 가능")
+
+
 # ---------- 이미지 탭 ----------
 
 def analyze_image(image, prompts_text):
@@ -176,6 +232,20 @@ with gr.Blocks(title="탐지 AI 통합 데모") as demo:
             t_pii = gr.Markdown(label="PII 마스킹")
             t_ner = gr.Markdown(label="NER 개체")
         t_btn.click(analyze_text, t_in, [t_cls, t_pii, t_ner])
+    with gr.Tab("검수·라벨링"):
+        gr.Markdown("모델 판정은 **초안(의사 라벨)**, 정답은 사람의 확정으로만 — "
+                    "순환도의 \"분류 결과 →[검수]→ 데이터셋 편입\" 화살표. 확정분은 학습 데이터 산출물이 됩니다.")
+        r_in = gr.Textbox(label="검수할 문장", lines=2, placeholder="분류가 애매하거나 새로 수집된 문장을 입력")
+        r_btn = gr.Button("초안 생성 (모델 제안 보기)", variant="secondary")
+        r_draft = gr.Markdown()
+        r_state = gr.State()
+        with gr.Row():
+            r_ham = gr.Button("✅ 정상으로 확정", variant="primary")
+            r_spam = gr.Button("🚨 스팸으로 확정", variant="stop")
+        r_result = gr.Markdown()
+        r_btn.click(draft_label, r_in, [r_draft, r_state])
+        r_ham.click(lambda s: save_label(s, 0), r_state, r_result)
+        r_spam.click(lambda s: save_label(s, 1), r_state, r_result)
     with gr.Tab("이미지 분석"):
         with gr.Row():
             with gr.Column():
