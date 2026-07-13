@@ -129,3 +129,7 @@ datasets/
 
 # 개인 웹캠 연습 데이터 (프라이버시 — 원격 저장소에 올리지 않음, datasets-own 규약의 예외)
 30-References/rnd-dataset-artifacts/export/datasets-own/my-practice/
+
+# 상사 보고용 조립 패키지 (빌드 아티팩트 — 코드·가중치 복사본, git 미포함)
+탐지계층-R&D-보고/
+30-References/탐지계층-R&D-보고/

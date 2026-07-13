@@ -38,21 +38,12 @@ pip install torch==2.12.1 --index-url https://download.pytorch.org/whl/cu124
 - 최소 Python 3.10 (ko-pii 요건). 첫 실행 시 모델 자동 다운로드(klue/bert-base·KoCLIP 등 약 1.5GB).
 - 장치는 코드가 자동 감지: 맥=MPS / 윈도우 NVIDIA=CUDA / 그 외=CPU.
 
-### 1단계 — 재생성이 필요한 가중치 2개 (첨부 아님, 학습으로 생성)
+### 1단계 — 가중치 (기본 포함 — 별도 작업 불필요)
 
-데모의 스팸 분류·NER은 학습된 가중치가 필요합니다. 각 몇 분이면 생성됩니다:
-```bash
-# 스팸 분류 가중치 → rnd-dataset-artifacts/export/artifacts/ko-spam-full/
-cd rnd-dataset-artifacts/export
-DATA=../../rnd-detection-models/export/ko NAME=ko-spam-full EPOCHS=2 python train_text.py   # 없으면 아래 주 참고
-cd ../..
-# NER 가중치 → rnd-detection-models/export/ner_klue.pt
-cd rnd-detection-models/export
-NER_SUBSET=200 EPOCHS=1 python finetune_ner.py     # 스모크(빠름). 보고 수치는 NER_SUBSET=6000 EPOCHS=3
-cd ../..
-```
-> 주: 스팸 학습 데이터(ko 3분할)는 공개 데이터라 저장소에 없을 수 있습니다 — 3_사용법 참조.
-> 가중치를 함께 받은 경우 이 단계는 건너뜁니다.
+데모에 필요한 가중치(스팸 분류 3종 세트·NER·YOLO 기본)는 **패키지에 포함**되어 있어 바로 실행됩니다.
+- 만약 가벼운 배포본(가중치 미포함)을 받았다면, 스팸·NER 탭은 "가중치 없음" 안내가 뜨고
+  **PII·이미지 탭은 그대로 동작**합니다. 두 가중치를 직접 만들려면 각 폴더의 `train_text.py`·`finetune_ner.py` 사용(3_사용법 참조).
+- KoCLIP·YOLO 기본 모델은 첫 실행 시 자동 다운로드됩니다.
 
 ### 2단계 — 통합 데모 실행
 ```bash
