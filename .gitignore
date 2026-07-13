@@ -133,3 +133,7 @@ datasets/
 # 상사 보고용 조립 패키지 (빌드 아티팩트 — 코드·가중치 복사본, git 미포함)
 탐지계층-R&D-보고/
 30-References/탐지계층-R&D-보고/
+
+# 보고 패키지 생성물 (make_pdf.py로 재생성 — git 제외, 소스 .md·스크립트만 추적)
+30-References/rnd-report-package/*.pdf
+30-References/rnd-report-package/assets/

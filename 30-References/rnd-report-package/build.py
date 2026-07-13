@@ -19,7 +19,8 @@ OUT = Path(os.environ.get("OUT", "~/Desktop/탐지계층-R&D-보고")).expanduse
 FOLDERS = ["rnd-dataset-artifacts", "rnd-rule-vs-bert", "rnd-clip",
            "rnd-uxui-demo", "rnd-detection-models"]
 FRONT_FILES = ["README.md", "1_연구문서.md", "2_소스코드.md", "3_사용법.md",
-               "4_가이드.md", "requirements.txt"]
+               "4_가이드.md", "5_도식도.md", "6_보고서.md", "requirements.txt"]
+FRONT_PDFS = ["5_도식도.pdf", "6_보고서.pdf"]   # make_pdf.py로 생성 (있으면 포함)
 KEEP = {".py", ".json", ".yaml", ".txt"}         # 코드·소형 데이터만
 SKIP = {"requirements.txt"}                       # 개별 req는 통합본으로 대체 (문서 .md는 KEEP 밖이라 자동 제외)
 
@@ -41,7 +42,13 @@ def main():
 
     for f in FRONT_FILES:
         shutil.copy2(FRONT / f, OUT / f)
-    print(f"통합 문서 {len(FRONT_FILES)}종 → {OUT.name}/ 최상위")
+    n_pdf = 0
+    for f in FRONT_PDFS:
+        if (FRONT / f).exists():
+            shutil.copy2(FRONT / f, OUT / f)
+            n_pdf += 1
+    print(f"통합 문서 {len(FRONT_FILES)}종 + PDF {n_pdf}개 → {OUT.name}/ 최상위"
+          + ("" if n_pdf == len(FRONT_PDFS) else "  ⚠️ PDF 누락 — make_pdf.py 먼저 실행"))
 
     total = 0
     for folder in FOLDERS:
