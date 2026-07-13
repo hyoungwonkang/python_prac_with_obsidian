@@ -38,7 +38,9 @@ h3 { font-size: 12.5pt; margin-top: 1em; }
 table { border-collapse: collapse; width: 100%; margin: .8em 0; font-size: 10pt; }
 th,td { border: 1px solid #bbb; padding: 5px 8px; text-align: left; }
 th { background: #f0f2f5; }
-img { max-width: 100%; height: auto; }
+/* 세로로 긴 도식이 페이지를 넘겨 잘리지 않도록: 폭·높이를 페이지 안으로 제한 */
+img { max-width: 100%; max-height: 235mm; height: auto; display: block; margin: 0 auto; }
+figure { break-inside: avoid; page-break-inside: avoid; margin: .6em 0; text-align: center; }
 pre { background: #f6f8fa; border: 1px solid #e1e4e8; border-radius: 5px; padding: 10px;
       font-size: 9pt; white-space: pre-wrap; }
 code { font-family: 'SF Mono',Menlo,monospace; }
@@ -60,7 +62,7 @@ def render(name):
     def embed(m):
         p = (out_md.parent / m.group(1)).resolve()
         b64 = base64.b64encode(p.read_bytes()).decode()
-        return f'<p style="text-align:center"><img src="data:image/png;base64,{b64}"></p>'
+        return f'<figure><img src="data:image/png;base64,{b64}"></figure>'   # figure=페이지 분할 금지 단위
     md_text = re.sub(r"!\[[^\]]*\]\(([^)]+)\)", embed, md_text)
 
     body = MarkdownIt("commonmark", {"html": True}).enable("table").render(md_text)
