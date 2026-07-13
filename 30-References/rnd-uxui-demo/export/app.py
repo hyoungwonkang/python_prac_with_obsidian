@@ -257,6 +257,7 @@ def _features(out):
 def analyze_batch(files, prompts_text, query):
     if not files:
         return "이미지를 업로드하세요.", None
+    used_default = not (prompts_text and prompts_text.strip())   # 후보 칸이 비면 기본 목록으로 되돌림
     prompts = [p.strip() for p in (prompts_text or DEFAULT_PROMPTS).splitlines() if p.strip()]
     query = (query or prompts[0]).strip()
     texts = prompts + ([query] if query not in prompts else [])
@@ -281,9 +282,14 @@ def analyze_batch(files, prompts_text, query):
                 rows.append((name, image, prompts[top], float(p[top]), float(c[q_idx])))
 
     rows.sort(key=lambda r: -r[4])                  # 열 방향: 검색 문장과 가까운 순
-    md = (f"**검색 문장**: “{query}” — 유사도(코사인) 높은 순. 순위만 신뢰하고, "
-          f"상위부터 사람이 검토 (검색 방향에는 억지 배정 문제가 없음 — 순위일 뿐)\n\n"
-          f"| 순위 | 파일 | 검색 유사도 | 이미지별 1위 상황 (판정 방향) |\n|---|---|---|---|\n"
+    notice = ("ℹ️ 상황 후보 칸이 비어 있어 **기본 목록**으로 판정했습니다 "
+              "(오른쪽 '이 사진은?' 열 기준).\n\n" if used_default else "")
+    md = (notice +
+          f"**검색 문장**: “{query}”\n\n"
+          f"이 문장과 **닮은 사진부터** 위에 놓았습니다. 점수는 '닮은 정도'일 뿐이니 "
+          f"숫자 자체보다 **순서**를 보고 위에서부터 확인하세요. "
+          f"(딱 맞는 사진이 없으면 다 같이 점수가 낮게 나올 뿐, 엉뚱한 사진을 억지로 1등으로 만들지 않습니다.)\n\n"
+          f"| 순위 | 파일 | 닮은 정도 | 이 사진은? (기본 목록 기준) |\n|---|---|---|---|\n"
           + "\n".join(f"| {i+1} | {n} | {sim:.3f} | {top} ({conf:.0%}) |"
                       for i, (n, _, top, conf, sim) in enumerate(rows)))
     gallery = [(img, f"{i+1}위 · {sim:.3f} · {n}") for i, (n, img, _, _, sim) in enumerate(rows)]
