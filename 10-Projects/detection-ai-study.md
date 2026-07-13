@@ -25,7 +25,7 @@
 |---|---|---|---|---|
 | **BERT** (텍스트 분류) | 1차 탐지 Text Classifier / KoBERT (③) | SMS Spam → **KLUE-TC**(뉴스 7클래스) | `finetune_bert_spam.py` 재사용, `num_labels` 확장 → 다중 클래스. **교재 저자 BERT 비교 코드**: [rasbt ch06 bonus](https://github.com/rasbt/LLMs-from-scratch/tree/main/ch06/03_bonus_imdb-classification) | ✅ 기초(en/ko ~97%) + **다중 클래스 KLUE-TC**(정확도 0.8425·매크로F1 0.8313) → [[bert-classification/bert-01-klue-tc-multiclass]] |
 | **NER** (개체명 인식) | 1차 탐지 NER Agent (③, 인명·연령·연락처·계정) | **KLUE-NER**(13태그) · WikiAnn ko(7태그) | `BertForTokenClassification` — subword 정렬 -100 재사용 (7장 개념) | ✅ 기초(엔티티 F1 0.7057) + 도메인 확장(WikiAnn F1 0.8447, 전이 사슬 A/B) → [[../30-References/rnd-detection-models/00-학습메모|학습메모]] |
-| **YOLO** (객체 탐지) | 1차 탐지 Image Analyzer (③) | **COCO128**(스모크) → Roboflow 공개셋 | `ultralytics` 전이학습, MPS(단 [[llm-from-scratch/llm-ch7-failure-log|MPS 함정]]) | ✅ 스모크(mAP50 0.606) / [ ] 커스텀 데이터 전이 |
+| **YOLO** (객체 탐지) | 1차 탐지 Image Analyzer (③) | **COCO128**(스모크) → Roboflow 공개셋 | `ultralytics` 전이학습, MPS(단 [[llm-from-scratch/llm-ch7-failure-log|MPS 함정]]) | ✅ 스모크(mAP50 0.606) + **커스텀 전이 완료**(2026-07-13, 직접 라벨링 잠옷 16장 mAP50 0.995 — 지시 4′) |
 | **PII** (개인정보 탐지·비식별화) | NER∩Rule (③, 인명·연락처) | 손수 라벨 샘플 | **ko-pii**(룰+사전+체크섬, MIT) — 학습 없음. 룰의 인명 미탐 한계 → NER과 하이브리드 | ✅ 완료(커버리지 90.9%, 마스킹·Vault 복원) → [[../30-References/rnd-detection-models/01-연구문서]] |
 
 ### 남은 순서 (2026-07-08 확정) — OpenCV → RULE → CLIP(VLM) → PaddleOCR
@@ -67,7 +67,7 @@
 - 로컬(M4 Max) 우선, 무거우면 Colab 우회 — 환경 정본 [[../30-References/pytorch-env-hybrid]]
 - 모든 실습 MLflow 기록 (한글 키 관례 유지) — [[../30-References/mlflow-practice/mlflow-terms-glossary]]
 - "미니 데이터로 우선 완주" — Alpaca OOM 교훈([[llm-from-scratch/llm-ch7-failure-log]]): 작게 시작해 실패 비용 절감
-- 진행 순서: [[llm-from-scratch]] **교재 완주(2026-07-03) → 이 트랙 진입.** **BERT·NER·YOLO·PII R&D 완료·보고**(2026-07-05~07) → **OpenCV 완료**(2026-07-08, [[../30-References/rnd-detection-models-2/00-학습메모]]) → **학습 데이터 산출물 환경 완료**(2026-07-08, [[../30-References/rnd-dataset-artifacts/00-학습메모]]) → **RULE/지시 2 완료**(2026-07-09, [[../30-References/rnd-rule-vs-bert/01-연구문서|rnd-rule-vs-bert]]) → **CLIP/지시 4 완료**(2026-07-10, [[../30-References/rnd-clip/01-연구문서|rnd-clip]]) → **통합 UXUI(지시 3) 완료**(2026-07-10 사용자 검증까지, [[../30-References/rnd-uxui-demo/01-구성도|rnd-uxui-demo]]) → **남은 항목 = 지시 4′(YOLO 직접 라벨링) · PaddleOCR(+EasyOCR, 지시 3.1 — 후순위)**. *(순서 확정 2026-07-09: 지시 2→4→3. UXUI가 CLIP·YOLO 사용까지 표현하므로 CLIP이 UXUI에 선행, OCR은 UXUI 이후.)*
+- 진행 순서: [[llm-from-scratch]] **교재 완주(2026-07-03) → 이 트랙 진입.** **BERT·NER·YOLO·PII R&D 완료·보고**(2026-07-05~07) → **OpenCV 완료**(2026-07-08, [[../30-References/rnd-detection-models-2/00-학습메모]]) → **학습 데이터 산출물 환경 완료**(2026-07-08, [[../30-References/rnd-dataset-artifacts/00-학습메모]]) → **RULE/지시 2 완료**(2026-07-09, [[../30-References/rnd-rule-vs-bert/01-연구문서|rnd-rule-vs-bert]]) → **CLIP/지시 4 완료**(2026-07-10, [[../30-References/rnd-clip/01-연구문서|rnd-clip]]) → **통합 UXUI(지시 3) 완료**(2026-07-10 사용자 검증까지, [[../30-References/rnd-uxui-demo/01-구성도|rnd-uxui-demo]]) → **지시 4′ 완료**(2026-07-13, 직접 라벨링→학습→탐지 실증 + 병합 확장 실험) → **남은 항목 = PaddleOCR(+EasyOCR, 지시 3.1)뿐**. *(순서 확정 2026-07-09: 지시 2→4→3. UXUI가 CLIP·YOLO 사용까지 표현하므로 CLIP이 UXUI에 선행, OCR은 UXUI 이후.)*
 
 ## 검증 방법
 
