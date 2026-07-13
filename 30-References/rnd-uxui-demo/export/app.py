@@ -1,9 +1,9 @@
 """
-통합 UXUI 데모 — 지시 3. 완료된 R&D 모듈 5개를 탭 2개짜리 데모 UI로 통합 (제작, 신규 학습 없음).
+통합 UXUI 데모 — 완료된 R&D 모듈 5개를 탭 4개짜리 데모 UI로 통합 (제작, 신규 학습 없음).
 
-  텍스트 탭: BERT 스팸 분류(지시 1 산출물 3종 세트) + RULE·하이브리드(지시 2)
+  텍스트 탭: BERT 스팸 분류(산출물 3종 세트) + RULE·하이브리드(분류 방법 비교)
              + PII 마스킹(ko-pii) + NER 개체 추출(ner_klue.pt)
-  이미지 탭: YOLO 박스(yolov8n) + KoCLIP 한국어 상황 태그(지시 4 — 프롬프트 실시간 편집)
+  이미지 탭: YOLO 박스(yolov8n) + KoCLIP 한국어 상황 태그(프롬프트 실시간 편집)
 
 실행:
   ~/rnd-env/bin/python app.py    # → http://127.0.0.1:7860
@@ -103,7 +103,7 @@ def get_koclip():
 # ---------- 텍스트 탭 ----------
 
 def _cls_block(text):
-    # 스팸 분류 — BERT(3종 세트) + RULE + 하이브리드 (지시 2의 선택지 메뉴)
+    # 스팸 분류 — BERT(3종 세트) + RULE + 하이브리드 (분류 방법 비교의 선택지 메뉴)
     from rule_spam import classify as rule_classify, score as rule_score
     tok, model, meta = get_spam()
     enc = tok([text], truncation=True, max_length=128, padding=True,

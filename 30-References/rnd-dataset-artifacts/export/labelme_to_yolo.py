@@ -1,5 +1,5 @@
 """
-labelme JSON → YOLO txt 변환 — 지시 4′(직접 라벨링) 파이프라인의 다리.
+labelme JSON → YOLO txt 변환 — 직접 라벨링 파이프라인의 다리.
 
 labelme는 로컬 라벨링 도구 (민감 도메인 데이터를 외부 서버에 올리지 않음 — 웹 도구 불가 요건).
 출력이 JSON이므로 YOLO 규약(클래스번호 cx cy w h, 이미지 대비 비율)으로 변환해

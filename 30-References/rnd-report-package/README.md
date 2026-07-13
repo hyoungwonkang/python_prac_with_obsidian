@@ -6,13 +6,13 @@ end-to-end 재현한 R&D 묶음입니다. 특정 도메인이 아니라 **도메
 
 ## 산출물 한눈에
 
-| 지시 | 내용 | 핵심 결과 | 폴더 |
+| # | 내용 | 핵심 결과 | 폴더 |
 |---|---|---|---|
 | 1 | 학습 데이터 산출물(확장성) | 규약만 맞추면 학습→산출물→재사용이 반복되는 환경 | `rnd-dataset-artifacts` |
 | 2 | 분류 잘하는 법 | Rule vs BERT vs 하이브리드 — 단일 승자 없음, 업무별 선택지 | `rnd-rule-vs-bert` |
 | 3 | 통합 UXUI | 모듈 5개를 탭 4개 데모로 통합 (신규 학습 0) | `rnd-uxui-demo` |
 | 4 | CLIP 상황 판단 | KoCLIP+한국어 프롬프트 — 재학습 없이 분류 체계 교체 | `rnd-clip` |
-| 4′ | YOLO 직접 라벨링 | 라벨링→학습→탐지 실증 (mAP50 0.995) | `rnd-dataset-artifacts` |
+| 5 | YOLO 직접 라벨링 | 라벨링→학습→탐지 실증 (mAP50 0.995) | `rnd-dataset-artifacts` |
 
 이 패키지의 **진입점은 통합 데모**(`rnd-uxui-demo`)입니다 — 위 모듈들을 한 화면에서 시연합니다.
 `rnd-detection-models`(기존 NER·YOLO·PII R&D)는 데모가 재사용하므로 함께 포함됩니다.
@@ -63,10 +63,10 @@ python app.py            # → 브라우저 http://127.0.0.1:7860
 ├─ 3_사용법.md              ← 모듈별·통합 실행법 (맥·윈도우)
 ├─ 4_가이드.md              ← 실무 판단 기준 (분류·프롬프트·PII·YOLO)
 ├─ requirements.txt         ← 전체 의존성 (한 파일)
-├─ rnd-dataset-artifacts/   ├ 지시 1·4′
-├─ rnd-rule-vs-bert/        ├ 지시 2
-├─ rnd-clip/                ├ 지시 4
-├─ rnd-uxui-demo/           ├ 지시 3 (진입점)
+├─ rnd-dataset-artifacts/   ├ 학습 데이터 산출물·직접 라벨링
+├─ rnd-rule-vs-bert/        ├ 분류 방법 비교
+├─ rnd-clip/                ├ CLIP 상황 판단
+├─ rnd-uxui-demo/           ├ 통합 데모 (진입점)
 └─ rnd-detection-models/    └ 기존 NER·YOLO·PII (데모가 재사용)
 ```
 

@@ -1,12 +1,12 @@
 """
-CLIP linear probe — 지시 4 'CLIP 이미지 상황 판단' R&D 2단계 (로드맵상 유일한 파인튜닝).
+CLIP linear probe — 'CLIP 이미지 상황 판단' R&D 2단계 (로드맵상 유일한 파인튜닝).
 
 과제: 사진에 사람이 있는가 (person / no-person) — coco128의 YOLO 라벨에서 이미지 단위 라벨 유도.
 설계: BERT에서 배운 "몸통 재사용 + 머리만 학습"의 이미지판 —
   CLIP 이미지 인코더(151M)는 **얼리고**, 임베딩(512차원) 위의 선형 머리(512→2, 약 1천 눈금)만 학습.
 비교: zero-shot(프롬프트 2문장) vs linear probe(라벨 89장 학습)를 **같은 고정 test셋**으로 채점
-  (지시 2에서 확립한 동일 잣대 원칙).
-산출물: artifacts/clip-person-probe/ 에 3종 세트 (head.pt + label_map.json + meta.json — 지시 1 규약).
+  (분류 방법 비교에서 확립한 동일 잣대 원칙).
+산출물: artifacts/clip-person-probe/ 에 3종 세트 (head.pt + label_map.json + meta.json — 산출물 규약).
 
 사용:
   ~/rnd-env/bin/python clip_linear_probe.py
@@ -143,7 +143,7 @@ def main():
     print(f"  (임베딩+학습 {time.time()-t0:.1f}초 / 머리 파라미터 "
           f"{sum(p.numel() for p in head.parameters()):,}개 vs 몸통 {sum(p.numel() for p in model.parameters())/1e6:.0f}M)")
 
-    # ---- 산출물 3종 세트 (지시 1 규약) ----
+    # ---- 산출물 3종 세트 (산출물 규약) ----
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     torch.save(head.state_dict(), OUT_DIR / "head.pt")
     (OUT_DIR / "label_map.json").write_text(json.dumps(
