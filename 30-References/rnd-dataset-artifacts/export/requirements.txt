@@ -17,7 +17,7 @@ ultralytics==8.4.87        # YOLOv8n 전이학습·추론 (torchvision·opencv·
 # ---- PII 분류 체계 (make_pii_schema.py / validate_pii_samples.py) ----
 ko-pii==1.15.2             # 룰+사전+체크섬 기반. ※Python 3.10 이상 필수
 
-# ---- 직접 라벨링 — 지시 4′ (labelme_to_yolo.py와 세트) ----
+# ---- 직접 라벨링 (labelme_to_yolo.py와 세트) ----
 labelme==7.0.4             # 로컬 라벨링 GUI — 민감 도메인 데이터를 외부 서버에 올리지 않는 요건
 
 # ---- 실험 기록 ----
