@@ -38,12 +38,27 @@ python -c "import torch, transformers, datasets, ultralytics, ko_pii, gradio; pr
 - 최소 Python 3.10 (ko-pii 요건). 첫 실행 시 모델 자동 다운로드(klue/bert-base·KoCLIP 등 약 1.5GB).
 - 장치는 코드가 자동 감지 — 맥은 MPS(Apple GPU) 사용.
 
-## 2. 가중치 (기본 포함 — 별도 작업 불필요)
+## 2. 가중치 — 배포본에 따라 다름
 
-데모에 필요한 가중치(스팸 분류 3종 세트·NER·YOLO 기본)는 **패키지에 포함**되어 바로 실행됩니다.
-- 가벼운 배포본(가중치 미포함)을 받았다면 스팸·NER 탭은 "가중치 없음" 안내가 뜨고 **PII·이미지 탭은 그대로 동작**.
-  직접 만들려면 각 폴더의 `train_text.py`·`finetune_ner.py`(3_사용법 참조).
-- KoCLIP·YOLO 기본 모델은 첫 실행 시 자동 다운로드.
+이 패키지는 두 형태로 배포됩니다. `rnd-dataset-artifacts/export/artifacts/ko-spam-full/model.pt`가 **있으면 전체본**(바로 실행), 없으면 **경량본**입니다.
+
+- **전체본**: 스팸·NER·YOLO 가중치 포함 → 아무 것도 안 해도 §3으로.
+- **경량본(가중치 미포함)**: 데모 실행 **전 1회** 아래로 가중치 2개를 생성하세요. 학습 데이터·자동 다운로드가 준비돼 있어 명령만 실행하면 됩니다.
+  ```bash
+  # (1) 스팸 분류 가중치 — 동봉 데이터로 학습 (~수 분)
+  cd rnd-dataset-artifacts/export
+  DATA=datasets/ko-spam NAME=ko-spam-full EPOCHS=2 python train_text.py
+  # → artifacts/ko-spam-full/ 에 3종 세트 생성
+
+  # (2) NER 가중치 — KLUE 데이터 자동 다운로드 후 학습 (~십수 분, 인터넷 필요)
+  cd ../../rnd-detection-models/export
+  NER_SUBSET=6000 EPOCHS=3 python finetune_ner.py     # → ner_klue.pt 생성
+  cd ../..
+  ```
+  - 두 명령은 각각 `가중치 저장`류 메시지가 나오고 파일이 생기면 성공.
+  - 급하면 스모크로 더 빠르게(정확도는 낮음): 스팸 `EPOCHS=1`, NER `NER_SUBSET=200 EPOCHS=1`.
+  - **가중치 없이도 PII·이미지 분석·이미지 검색 탭은 즉시 동작** — 먼저 둘러본 뒤 위 학습을 돌려도 됩니다.
+- KoCLIP·YOLO 기본 모델은 두 배포본 모두 첫 실행 시 자동 다운로드.
 
 ## 3. 통합 데모 실행
 

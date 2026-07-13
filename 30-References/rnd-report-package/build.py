@@ -33,6 +33,12 @@ WEIGHT_ITEMS = [
     "rnd-detection-models/export/ner_klue.pt",                            # NER
     "rnd-detection-models/export/yolov8n.pt",                             # YOLO 기본
 ]
+# 스팸 가중치 재생성용 학습 데이터(228KB, 공개 SMS 스팸) — 경량본에서도 재생성 가능하게 항상 포함
+DATA_ITEMS = [
+    ("rnd-bert-labeling-test/export/ko/train.csv", "rnd-dataset-artifacts/export/datasets/ko-spam/train.csv"),
+    ("rnd-bert-labeling-test/export/ko/validation.csv", "rnd-dataset-artifacts/export/datasets/ko-spam/validation.csv"),
+    ("rnd-bert-labeling-test/export/ko/test.csv", "rnd-dataset-artifacts/export/datasets/ko-spam/test.csv"),
+]
 
 
 def main():
@@ -65,6 +71,13 @@ def main():
                 n += 1
         print(f"  {folder}/export → 코드 {n}개")
         total += n
+
+    for src_rel, dst_rel in DATA_ITEMS:        # 스팸 재생성용 데이터 (항상 포함, 소용량)
+        src = REFS / src_rel
+        if src.exists():
+            dst = OUT / dst_rel
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, dst)
 
     w = 0
     if INCLUDE_WEIGHTS:
