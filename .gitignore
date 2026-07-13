@@ -137,3 +137,7 @@ datasets/
 # 보고 패키지 생성물 (make_pdf.py로 재생성 — git 제외, 소스 .md·스크립트만 추적)
 30-References/rnd-report-package/*.pdf
 30-References/rnd-report-package/assets/
+30-References/탐지계층-R&D-보고.zip
+
+# 업무 자료 (상사 공유 원본 — 커밋 금지 결정은 detection-ai-study.md Context 참조. 로컬 열람 전용)
+30-References/_업무자료-로컬/
