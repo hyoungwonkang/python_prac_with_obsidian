@@ -81,6 +81,18 @@ def main():
     else:
         print("가중치 미포함 (WEIGHTS=0) — 받는 쪽에서 재생성 필요")
 
+    # 로컬 절대경로 세정 — 생성 파일(meta.json 등)에 박힌 내 작업 경로를 상대형으로 (경로 노출 방지)
+    VAULT = str(REFS.parent) + "/"                    # …/python_prac_with_obsidian/
+    scrubbed = 0
+    for p in OUT.rglob("*"):
+        if p.is_file() and p.suffix in (".json", ".txt", ".md", ".yaml"):
+            t = p.read_text(encoding="utf-8")
+            if VAULT in t:
+                p.write_text(t.replace(VAULT, ""), encoding="utf-8")
+                scrubbed += 1
+    if scrubbed:
+        print(f"경로 세정 {scrubbed}개 파일 (로컬 절대경로 제거)")
+
     print(f"\n조립 완료: {OUT}  (코드 {total}개" + (f" + 가중치 {w}개)" if INCLUDE_WEIGHTS else ")"))
     print("자동 제외: 개인 사진·실험DB·캐시·개별 문서. "
           "PII·이미지 검색 탭은 가중치 없이도 동작.")
