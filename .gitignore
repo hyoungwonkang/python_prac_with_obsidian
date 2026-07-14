@@ -141,3 +141,6 @@ datasets/
 
 # 업무 자료 (상사 공유 원본 — 커밋 금지 결정은 detection-ai-study.md Context 참조. 로컬 열람 전용)
 30-References/_업무자료-로컬/
+
+# rnd-ocr — 테스트 이미지·정답은 make_test_images.py로 재생성 (코드만 추적)
+30-References/rnd-ocr/export/images/
