@@ -1,12 +1,12 @@
 """
-EasyOCR 추론 — 이미지 → (텍스트, 위치 박스, 신뢰도) 목록.
+EasyOCR 인스펙터(inspector) — 이미지 → (텍스트, 위치 박스, 신뢰도) 목록.
 
 OCR = 검출(글자가 어디에) + 인식(그 글자가 무엇인지) 2단 파이프라인.
 EasyOCR 내부: 검출=CRAFT, 인식=CRNN (둘 다 PyTorch 사전학습 모델 — 우리 쪽 학습 0줄, 추론만).
 첫 실행 시 ~/.EasyOCR/ 에 모델 자동 다운로드(검출+한국어 인식, 약 150MB).
 
 파라미터(환경변수): IMAGE(기본 images/clean.png) · GPU(기본 0 — CPU. MPS 조용한 오답 전례로 기본 보수적)
-실행:  python ocr_easy.py            또는   IMAGE=images/noisy.png python ocr_easy.py
+실행:  python ocr_inspect.py            또는   IMAGE=images/noisy.png python ocr_inspect.py
 """
 import os
 import time
