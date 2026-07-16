@@ -24,11 +24,16 @@ PY = {"easy": Path.home() / "rnd-env/bin/python",
       "paddle": Path.home() / "ocr-env/bin/python"}
 
 
+def images() -> list[Path]:
+    return sorted(list(IMAGES.glob("*.png")) + list(IMAGES.glob("*.jpg")))
+
+
 def ocr_all(engine: str) -> dict[str, list[str]]:
     """엔진별 전용 환경 서브프로세스 1회로 폴더 전체 읽기 → {이미지: 단어 목록}."""
     code = (f"import pathlib, ocr_eval\n"
             f"read = ocr_eval.make_reader()\n"
-            f"for p in sorted(pathlib.Path(r'{IMAGES}').glob('*.png')):\n"
+            f"ps = sorted(list(pathlib.Path(r'{IMAGES}').glob('*.png')) + list(pathlib.Path(r'{IMAGES}').glob('*.jpg')))\n"
+            f"for p in ps:\n"
             f"    t = ' '.join(read(p).split())\n"
             f"    (pathlib.Path(r'{OUT}') / (p.stem + '.{engine}.txt')).write_text(t, encoding='utf-8')\n")
     r = subprocess.run([str(PY[engine]), "-c", code], cwd=HERE,
@@ -37,7 +42,7 @@ def ocr_all(engine: str) -> dict[str, list[str]]:
     if r.returncode != 0:
         raise SystemExit(f"{engine} OCR 실패:\n{r.stderr[-800:]}")
     return {p.stem: (OUT / f"{p.stem}.{engine}.txt").read_text(encoding="utf-8").split()
-            for p in sorted(IMAGES.glob("*.png"))}
+            for p in images()}
 
 
 def gold_align(words: list[str], gold: list[str]) -> set[int]:
@@ -51,35 +56,62 @@ def gold_align(words: list[str], gold: list[str]) -> set[int]:
 
 def main():
     OUT.mkdir(exist_ok=True)
-    gold = (IMAGES / "ground_truth.txt").read_text(encoding="utf-8").split()
+    gold_file = IMAGES / "ground_truth.txt"
+    gold = gold_file.read_text(encoding="utf-8").split() if gold_file.exists() else None
 
-    print(f"세트: {IMAGES.name} | 정답 {len(gold)}단어 | 정책: 합의=자동 채택, 불일치=검수(교정)")
+    mode = f"평가(정답 {len(gold)}단어 채점)" if gold else "운영(정답 없음 — 합의/불일치만)"
+    print(f"세트: {IMAGES.name} {len(images())}장 | 모드: {mode} | 정책: 합의=자동 채택, 불일치=검수")
     easy_all, paddle_all = ocr_all("easy"), ocr_all("paddle")
 
-    print(f"\n{'이미지':<13} {'합의':>4} {'검수부담':>8} {'맹점':>4}  {'정책 결과'}")
-    print("-" * 64)
     tot_agree = tot_review = tot_blind = tot_words = 0
+    n_empty = n_full_agree = n_flag = 0
+    if gold:
+        print(f"\n{'이미지':<13} {'합의':>4} {'검수부담':>8} {'맹점':>4}  {'정책 결과'}")
+        print("-" * 64)
     for stem in easy_all:
         e, p = easy_all[stem], paddle_all[stem]
-        e_ok = gold_align(e, gold)                    # easy 단어 중 정답인 인덱스
-
-        agree_idx, agree_correct = [], 0
+        agree_idx, diffs = [], []
         for op, a1, a2, b1, b2 in difflib.SequenceMatcher(a=e, b=p).get_opcodes():
             if op == "equal":
                 agree_idx.extend(range(a1, a2))
-        blind = [e[i] for i in agree_idx if i not in e_ok]   # 합의했는데 정답 아님
-        n_agree, n_blind = len(agree_idx), len(blind)
+            else:
+                diffs.append(f"{' '.join(e[a1:a2]) or '∅'}→{' '.join(p[b1:b2]) or '∅'}")
+        n_agree = len(agree_idx)
         n_review = max(len(e), len(p)) - n_agree             # 불일치(검수 대상) 근사
-        # 정책 결과: 합의 채택(맹점만 오답) + 불일치는 사람이 정답으로 교정
-        acc = (len(gold) - n_blind) / len(gold)
-        print(f"{stem:<13} {n_agree:>4} {n_review:>6}개 {n_blind:>4}  "
-              f"단어 정확도 {acc:.0%}" + (f"  ⚠️ 맹점: {blind}" if blind else ""))
         tot_agree += n_agree; tot_review += n_review
-        tot_blind += n_blind; tot_words += max(len(e), len(p))
+        tot_words += max(len(e), len(p))
+
+        if gold:                                             # ── 평가 모드: 정답 채점
+            e_ok = gold_align(e, gold)
+            blind = [e[i] for i in agree_idx if i not in e_ok]   # 합의했는데 정답 아님
+            n_blind = len(blind)
+            acc = (len(gold) - n_blind) / len(gold)          # 합의 채택 + 불일치 인간 교정 가정
+            print(f"{stem:<13} {n_agree:>4} {n_review:>6}개 {n_blind:>4}  "
+                  f"단어 정확도 {acc:.0%}" + (f"  ⚠️ 맹점: {blind}" if blind else ""))
+            tot_blind += n_blind
+        else:                                                # ── 운영 모드: 합의/불일치만
+            if not e and not p:
+                n_empty += 1                                 # 둘 다 무텍스트 = 합의(자동 통과)
+            elif n_review == 0:
+                n_full_agree += 1
+            else:
+                n_flag += 1
+                print(f"  검수 ▶ {stem}: easy {len(e)}단어 / paddle {len(p)}단어 — "
+                      + ", ".join(diffs[:3]) + (" …" if len(diffs) > 3 else ""))
 
     print("-" * 64)
-    print(f"합계: 합의 {tot_agree}/{tot_words} ({tot_agree/tot_words:.0%} 자동 통과) | "
-          f"검수 부담 {tot_review}개 ({tot_review/tot_words:.0%}) | 맹점 {tot_blind}개")
+    if gold:
+        print(f"합계: 합의 {tot_agree}/{tot_words} ({tot_agree/tot_words:.0%} 자동 통과) | "
+              f"검수 부담 {tot_review}개 ({tot_review/tot_words:.0%}) | 맹점 {tot_blind}개")
+    else:
+        n = n_empty + n_full_agree + n_flag
+        print(f"문서 단위: 둘 다 무텍스트 {n_empty} + 전부 합의 {n_full_agree} = "
+              f"자동 통과 {n_empty+n_full_agree}/{n} ({(n_empty+n_full_agree)/n:.0%}) | "
+              f"검수 대상 {n_flag}장 ({n_flag/n:.0%})")
+        if tot_words:
+            print(f"단어 단위(텍스트 검출분): 합의 {tot_agree}/{tot_words} ({tot_agree/tot_words:.0%})"
+                  f" | 검수 부담 {tot_review}개")
+        print("※ 운영 모드 — 정답이 없어 맹점·정확도는 측정 불가 (평가 국면에서만 가능)")
 
 
 if __name__ == "__main__":
