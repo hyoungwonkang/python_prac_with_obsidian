@@ -144,3 +144,4 @@ datasets/
 
 # rnd-ocr — 테스트 이미지·정답은 make_test_images.py로 재생성 (코드만 추적)
 30-References/rnd-ocr/export/images*/
+30-References/rnd-ocr/export/out/
