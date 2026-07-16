@@ -24,6 +24,11 @@ ko-pii==1.15.2             # 룰+사전+체크섬. ※Python 3.10 이상 필수
 # ---- 직접 라벨링 ----
 labelme==7.0.4             # 로컬 라벨링 GUI (민감 데이터 외부 업로드 불가 요건)
 
+# ---- OCR: 추출 계층 (EasyOCR — PyTorch 기반) ----
+easyocr==1.7.2             # 검출 CRAFT+인식 CRNN. 첫 실행 시 모델 자동 다운로드(~150MB)
+# ※ 비교 엔진 PaddleOCR은 별개 프레임워크(PaddlePaddle)라 이 환경에 설치 금지(의존성 충돌) —
+#    격리 venv(ocr-env)에 paddlepaddle==3.3.1 + paddleocr==3.7.0 설치 (3_사용법.md 7 참조)
+
 # ---- 통합 데모 UI ----
 gradio==6.20.0             # 탭 4개 웹 데모
 

@@ -1,7 +1,7 @@
 """
 미니 파이프라인 — 이미지 → ②OCR 추출 → ③1차 탐지(스팸 분류·NER·PII) 연결 실증.
 
-지시 3.1 후반부("출력이 BERT/NER 입력으로 이어지는")의 실물. 같은 이미지에서 나온
+"OCR 출력이 BERT/NER 입력으로 이어지는" 요건의 실물. 같은 이미지에서 나온
 텍스트 소스 3종을 같은 하류 모듈에 넣어, OCR 품질이 탐지를 어떻게 좌우하는지 비교:
   정답(ground truth — 상한선) / EasyOCR / PaddleOCR
 OCR은 엔진별 전용 환경(easy=rnd-env, paddle=ocr-env)의 **서브프로세스**로 실행하고
@@ -43,7 +43,7 @@ def ocr_text(engine: str) -> str:
     return " ".join(out.read_text(encoding="utf-8").split())
 
 
-# ---------- ③-1 스팸 분류 — 산출물 3종 세트 재사용 (지시 1 규약) ----------
+# ---------- ③-1 스팸 분류 — 산출물 3종 세트 재사용 (공용 산출물 규약) ----------
 def load_spam():
     art = REFS / "rnd-dataset-artifacts/export/artifacts/ko-spam-full"
     meta = json.loads((art / "meta.json").read_text(encoding="utf-8"))
