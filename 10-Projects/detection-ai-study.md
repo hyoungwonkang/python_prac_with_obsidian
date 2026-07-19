@@ -93,7 +93,7 @@
 - 로컬(M4 Max) 우선, 무거우면 Colab 우회 — 환경 정본 [[../30-References/pytorch-env-hybrid]]
 - 모든 실습 MLflow 기록 (한글 키 관례 유지) — [[../30-References/mlflow-practice/mlflow-terms-glossary]]
 - "미니 데이터로 우선 완주" — Alpaca OOM 교훈([[llm-from-scratch/llm-ch7-failure-log]]): 작게 시작해 실패 비용 절감
-- 진행 순서: [[llm-from-scratch]] **교재 완주(2026-07-03) → 이 트랙 진입.** **BERT·NER·YOLO·PII R&D 완료·보고**(2026-07-05~07) → **OpenCV 완료**(2026-07-08, [[../30-References/rnd-detection-models-2/00-학습메모]]) → **학습 데이터 산출물 환경 완료**(2026-07-08, [[../30-References/rnd-dataset-artifacts/00-학습메모]]) → **RULE/지시 2 완료**(2026-07-09, [[../30-References/rnd-rule-vs-bert/01-연구문서|rnd-rule-vs-bert]]) → **CLIP/지시 4 완료**(2026-07-10, [[../30-References/rnd-clip/01-연구문서|rnd-clip]]) → **통합 UXUI(지시 3) 완료**(2026-07-10 사용자 검증까지, [[../30-References/rnd-uxui-demo/01-구성도|rnd-uxui-demo]]) → **지시 4′ 완료**(2026-07-13, 직접 라벨링→학습→탐지 실증 + 병합 확장 실험) → **OCR/지시 3.1 완료**(2026-07-16, [[../30-References/rnd-ocr/01-연구문서|rnd-ocr]] — deskew+Paddle 2.4%·②품질=③성능 실증) → **지시 목록·기술 목록 전체 완료.** 다음 후보: Hybrid RAG(④ 근거검색, §2 MVP 1단계). *(순서 확정 2026-07-09: 지시 2→4→3. UXUI가 CLIP·YOLO 사용까지 표현하므로 CLIP이 UXUI에 선행, OCR은 UXUI 이후.)*
+- 진행 순서: [[llm-from-scratch]] **교재 완주(2026-07-03) → 이 트랙 진입.** **BERT·NER·YOLO·PII R&D 완료·보고**(2026-07-05~07) → **OpenCV 완료**(2026-07-08, [[../30-References/rnd-detection-models-2/00-학습메모]]) → **학습 데이터 산출물 환경 완료**(2026-07-08, [[../30-References/rnd-dataset-artifacts/00-학습메모]]) → **RULE/지시 2 완료**(2026-07-09, [[../30-References/rnd-rule-vs-bert/01-연구문서|rnd-rule-vs-bert]]) → **CLIP/지시 4 완료**(2026-07-10, [[../30-References/rnd-clip/01-연구문서|rnd-clip]]) → **통합 UXUI(지시 3) 완료**(2026-07-10 사용자 검증까지, [[../30-References/rnd-uxui-demo/01-구성도|rnd-uxui-demo]]) → **지시 4′ 완료**(2026-07-13, 직접 라벨링→학습→탐지 실증 + 병합 확장 실험) → **OCR/지시 3.1 완료**(2026-07-16, [[../30-References/rnd-ocr/01-연구문서|rnd-ocr]] — deskew+Paddle 2.4%·②품질=③성능 실증) → **지시 목록·기술 목록 전체 완료.** → **통합 패키지 재구축 착수**(2026-07-19, [[../30-References/rnd-detection-stack/로드맵|rnd-detection-stack]] — 발송본 불명으로 rnd-report-package·탐지계층-R&D-보고를 99-Archive 레거시 보관, OCR 포함 전 모듈 실행 패키지를 새로 조립). 다음 후보: Hybrid RAG(④ 근거검색, §2 MVP 1단계). *(순서 확정 2026-07-09: 지시 2→4→3. UXUI가 CLIP·YOLO 사용까지 표현하므로 CLIP이 UXUI에 선행, OCR은 UXUI 이후.)*
 
 ## 검증 방법
 
@@ -105,6 +105,7 @@
 - [[../30-References/rnd-dataset-artifacts/01-연구문서|rnd-dataset-artifacts]] — **학습 데이터 산출물 환경** (2026-07-08, 새 지시 1번 — 범용 학습기·데이터 규약·산출물 규칙)
 - [[../30-References/rnd-rule-vs-bert/01-연구문서|rnd-rule-vs-bert]] — **분류 방법 비교: Rule vs BERT vs 하이브리드** (2026-07-09, 새 지시 2번 — 문서 4종+코드 3종+학습메모)
 - [[../30-References/rnd-clip/01-연구문서|rnd-clip]] — **CLIP 이미지 상황 판단** (2026-07-09~10, 새 지시 4번 — zero-shot·linear probe·KoCLIP, 문서 4종+코드 2종+학습메모)
+- [[../30-References/rnd-detection-stack/로드맵|rnd-detection-stack]] — **OCR 포함 통합 패키지 재구축 로드맵** (2026-07-19 착수 — 레거시 결함 3건 수정·경량본 조립·발송 스냅샷 아카이브 원칙)
 - [[llm-from-scratch]] — 선행 트랙 (교재)
 - [[../30-References/rnd-bert-labeling-test-plan]] — 이 트랙의 선행 업무 산출물 (BERT 스팸 R&D)
 - [[../30-References/bert_ocr_practice_plan]] — BERT/OCR 기존 로드맵 (이 노트로 흡수·발전)
