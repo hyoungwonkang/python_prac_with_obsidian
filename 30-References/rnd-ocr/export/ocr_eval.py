@@ -49,7 +49,9 @@ def make_reader():
         return lambda p: " ".join(t for _, t, _ in reader.readtext(str(p)))
     if ENGINE == "paddle":
         from paddleocr import PaddleOCR                       # 미설치면 여기서 ImportError
-        reader = PaddleOCR(lang="korean")
+        # enable_mkldnn=False: paddle 3.3.1 oneDNN 커널이 일부 CPU에서 NotImplementedError
+        # (ConvertPirAttribute2RuntimeAttribute, WSL 실측 2026-07-19). 채점은 CPU 고정이라 속도 영향 무시.
+        reader = PaddleOCR(lang="korean", enable_mkldnn=False)
         def read(p):
             res = reader.predict(str(p))
             return " ".join(t for page in res for t in page["rec_texts"])

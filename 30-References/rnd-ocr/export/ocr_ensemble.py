@@ -10,18 +10,22 @@ OCR 앙상블 실험 — 두 엔진 교차 검증: "합의는 자동 채택, 불
   맹점     = 합의했는데 둘 다 틀린 단어 (이 정책이 놓치는 것 — 조용한 실패 후보)
   정책 정확도 = 합의 채택 + 불일치 인간 교정 후의 단어 정확도
 
-실행:  ~/rnd-env/bin/python ocr_ensemble.py       (IMAGES=images 기본, images_pre 가능)
+실행:  python ocr_ensemble.py       (rnd-env에서. IMAGES=images 기본, images_pre 가능)
+       paddle 격리 환경은 기본 ~/ocr-env — 다른 위치면 OCR_ENV=경로 로 지정.
 """
 import difflib
 import os
 import subprocess
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 IMAGES = HERE / os.environ.get("IMAGES", "images")
 OUT = HERE / "out"
-PY = {"easy": Path.home() / "rnd-env/bin/python",
-      "paddle": Path.home() / "ocr-env/bin/python"}
+# easy = 이 스크립트를 실행한 파이썬 그대로(venv 이름·위치 무관) / paddle = 격리 venv (윈도우는 Scripts 구조)
+OCR_ENV = Path(os.environ.get("OCR_ENV", Path.home() / "ocr-env")).expanduser()
+PY = {"easy": Path(sys.executable),
+      "paddle": OCR_ENV / ("Scripts/python.exe" if os.name == "nt" else "bin/python")}
 
 
 def images() -> list[Path]:
