@@ -1,0 +1,37 @@
+# 탐지 계층 R&D 통합 보고 — 전체 의존성 (버전 고정, **Python 3.12 필수**)
+# ※ 3.10·3.11 설치 불가 실측: numpy 2.5.1이 Python ≥3.12 요구 (2026-07-19 확인)
+# 설치: pip install -r requirements.txt
+# 정책: 자동(최신) 설치 금지 — 아래 조합으로만 (버전 어긋나면 KLUE 로드 실패 등 발생)
+# Windows + NVIDIA GPU는 torch만 CUDA 빌드로 별도 설치 (README 빠른 시작 참조)
+
+# ---- 딥러닝 엔진 ----
+torch==2.12.1
+numpy==2.5.1
+
+# ---- 텍스트: 분류(BERT)·NER ----
+transformers==5.13.0       # klue/bert-base·KoCLIP 로드
+datasets==5.0.0            # KLUE-NER 라벨 체계 로드 (NER 추론·학습 공통). ※5.x 필수
+seqeval==1.2.2             # NER 엔티티 F1 (재학습 시)
+accelerate==1.14.0         # transformers 학습 보조 (재학습 시)
+pandas==2.3.3              # CSV 계약(text,label)
+scikit-learn==1.9.0        # 정확도·P·R·F1 채점
+
+# ---- 이미지: YOLO·CLIP ----
+ultralytics==8.4.87        # YOLOv8n 전이학습·추론 (torchvision·opencv·pillow 동반)
+
+# ---- PII (학습 없음) ----
+ko-pii==1.15.2             # 룰+사전+체크섬
+
+# ---- 직접 라벨링 ----
+labelme==7.0.4             # 로컬 라벨링 GUI (민감 데이터 외부 업로드 불가 요건)
+
+# ---- OCR: 추출 계층 (EasyOCR — PyTorch 기반) ----
+easyocr==1.7.2             # 검출 CRAFT+인식 CRNN. 첫 실행 시 모델 자동 다운로드(~150MB)
+# ※ 비교 엔진 PaddleOCR은 별개 프레임워크(PaddlePaddle)라 이 환경에 설치 금지(의존성 충돌) —
+#    격리 venv(ocr-env)에 paddlepaddle==3.3.1 + paddleocr==3.7.0 설치 (3_사용법.md 7 참조)
+
+# ---- 통합 데모 UI ----
+gradio==6.20.0             # 탭 4개 웹 데모
+
+# ---- 실험 기록 ----
+mlflow==3.14.0             # sqlite 저장소 (파일 저장소는 유지보수 모드)

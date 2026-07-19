@@ -6,7 +6,7 @@
   - 경량본이 기본 (WEIGHTS=1 일 때만 가중치 포함) — 상사는 매번 새 파일을 받는다는 전제
   - 스팸 재생성용 csv가 없으면 조용히 건너뛰지 않고 중단 (경량본의 재생성 절차가 무너지므로)
 
-산출: <OUT>/  (기본 ~/Desktop/탐지분석계층-보고-<오늘날짜>)
+산출: <OUT>/  (기본 30-References/탐지분석계층-보고-<오늘날짜> — vault 안에서 내용 확인 후 zip·발송)
   - 최상위: README 2종·1~6 문서·requirements.txt (이 폴더에서 복사 — 통합본, 로드맵 제외)
   - rnd-*/export/: 코드만 (*.py·*.json·*.yaml·*.txt) — 개별 문서·가중치·데이터·캐시 제외
   ※ 폴더 나열 구조를 유지해야 데모(app.py)·ocr_pipeline.py의 상대경로 참조가 작동한다.
@@ -22,7 +22,7 @@ from pathlib import Path
 FRONT = Path(__file__).resolve().parent          # rnd-detection-stack (통합 문서)
 REFS = FRONT.parent                              # 30-References
 TODAY = datetime.date.today().isoformat()
-OUT = Path(os.environ.get("OUT", f"~/Desktop/탐지분석계층-보고-{TODAY}")).expanduser()
+OUT = Path(os.environ.get("OUT", REFS / f"탐지분석계층-보고-{TODAY}")).expanduser()
 
 FOLDERS = ["rnd-dataset-artifacts", "rnd-rule-vs-bert", "rnd-clip",
            "rnd-uxui-demo", "rnd-detection-models", "rnd-ocr"]
@@ -123,7 +123,8 @@ def main():
 
     print(f"\n조립 완료: {OUT}  (코드 {total}개" + (f" + 가중치 {w}개)" if INCLUDE_WEIGHTS else ", 경량본)"))
     print("자동 제외: 개인 사진·실험DB·캐시·개별 문서. PII·이미지 검색 탭은 가중치 없이도 동작.")
-    print(f"압축:  cd {OUT.parent} && zip -r '{OUT.name}.zip' '{OUT.name}'")
+    # zip은 python zipfile로 — Info-ZIP(zip -r)산 한글명 zip은 윈도우 내장 해제기가 못 연다 (2026-07-19 실측)
+    print(f"압축:  cd {OUT.parent} && python -m zipfile -c '{OUT.name}.zip' '{OUT.name}'")
     print(f"발송 후:  스냅샷을 99-Archive/{OUT.name}/ 로 보관 (발송본 추적)")
 
 
