@@ -14,7 +14,7 @@
 
 실행 예:
   DATA=../../rnd-bert-labeling-test/export/ko LIMIT=300 EPOCHS=1 NAME=ko-spam-smoke \\
-    ~/rnd-env/bin/python train_text.py
+    python train_text.py
 """
 import json
 import os

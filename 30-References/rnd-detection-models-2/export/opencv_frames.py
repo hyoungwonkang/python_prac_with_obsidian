@@ -13,8 +13,8 @@ YOLO/이미지 분석에 넣는 전처리. 파인튜닝 아님.
   EVERY   : N프레임마다 1장 저장 (기본 5)
 
 실행:
-  ~/rnd-env/bin/python opencv_frames.py
-  VIDEO=/path/clip.mp4 EVERY=10 ~/rnd-env/bin/python opencv_frames.py
+  python opencv_frames.py
+  VIDEO=/path/clip.mp4 EVERY=10 python opencv_frames.py
 산출: opencv_out/frames/ 에 frame_XXXX.png
 """
 import os

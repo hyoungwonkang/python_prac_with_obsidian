@@ -8,8 +8,8 @@ ko_pii.labels의 ALL_LABELS·LABEL_INFO·GROUPS를 읽어
 데이터셋을 어느 방향으로 늘려야 하는지 보이게 한다.
 
 실행:
-  ~/rnd-env/bin/python make_pii_schema.py
-  SAMPLES=/path/to/pii_samples.txt ~/rnd-env/bin/python make_pii_schema.py
+  python make_pii_schema.py
+  SAMPLES=/path/to/pii_samples.txt python make_pii_schema.py
 """
 import json
 import os

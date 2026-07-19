@@ -12,8 +12,8 @@ R&D 3주제(모델·라벨링·테스트)의 NER 판, 위에서 아래로:
   · LR(5e-5) · NER_SUBSET(정수면 그만큼만 — 스모크 테스트용)
 
 실행:
-  ~/rnd-env/bin/python finetune_ner.py                 # 전체
-  NER_SUBSET=800 EPOCHS=1 ~/rnd-env/bin/python finetune_ner.py   # 빠른 스모크
+  python finetune_ner.py                 # 전체
+  NER_SUBSET=800 EPOCHS=1 python finetune_ner.py   # 빠른 스모크
 """
 import os
 os.environ.setdefault("USE_TF", "0")

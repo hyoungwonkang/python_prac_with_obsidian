@@ -11,7 +11,7 @@
   외부 파일 없이도 검출→비식별이 실제로 동작하도록.
 
 파라미터: VIDEO · EVERY(기본 15) · TARGET(기본 person) · MODE(blur|mosaic)
-실행:  ~/rnd-env/bin/python opencv_pipeline.py
+실행:  python opencv_pipeline.py
 산출:  opencv_out/pipeline/deid_XXXX.png + 콘솔 프레임별 검출 수
 """
 import os

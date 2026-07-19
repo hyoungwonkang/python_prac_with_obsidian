@@ -6,7 +6,7 @@
   이미지 탭: YOLO 박스(yolov8n) + KoCLIP 한국어 상황 태그(프롬프트 실시간 편집)
 
 실행:
-  ~/rnd-env/bin/python app.py    # → http://127.0.0.1:7860
+  python app.py    # → http://127.0.0.1:7860
 모델은 첫 사용 시 로딩(지연 로딩) — 탭별 첫 응답만 수 초 걸림.
 """
 import csv
@@ -29,7 +29,7 @@ sys.path.insert(0, str(REFS / "rnd-detection-models/export"))  # predict_ner, ne
 
 SPAM_ART = REFS / "rnd-dataset-artifacts/export/artifacts/ko-spam-full"
 # 기본은 COCO 80종 기본 모델. YOLO_PT로 커스텀 산출물 교체 가능 (예: 직접 학습한 잠옷 모델)
-#   YOLO_PT=../rnd-dataset-artifacts/export/artifacts/pajama/best.pt ~/rnd-env/bin/python app.py
+#   YOLO_PT=../rnd-dataset-artifacts/export/artifacts/pajama/best.pt python app.py
 # ⚠️ 커스텀 모델은 자기가 학습한 클래스만 앎 — 잠옷 모델로 바꾸면 COCO 객체(키보드·사람)는 못 잡음
 YOLO_PT = Path(os.environ.get(
     "YOLO_PT", REFS / "rnd-detection-models/export/yolov8n.pt")).expanduser()

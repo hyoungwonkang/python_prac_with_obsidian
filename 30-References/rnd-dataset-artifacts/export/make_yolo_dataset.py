@@ -16,8 +16,8 @@ YOLO 커스텀 데이터셋 규약 스캐폴더 — "이 폴더 모양대로 채
                (규약이 실제로 학습되는지 end-to-end 증명용 — 재생성 가능이라 git 제외)
 
 실행 예:
-  NAME=my-first-labels CLASSES=사람,차량 ~/rnd-env/bin/python make_yolo_dataset.py
-  DEMO=1 ~/rnd-env/bin/python make_yolo_dataset.py
+  NAME=my-first-labels CLASSES=사람,차량 python make_yolo_dataset.py
+  DEMO=1 python make_yolo_dataset.py
 """
 import os
 import random

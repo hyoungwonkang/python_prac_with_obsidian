@@ -10,8 +10,8 @@ OpenCV 기본 영상 처리 — 로드·색공간·리사이즈·블러·엣지.
   그것도 없으면 합성 이미지를 생성 — 어떤 환경에서도 무조건 실행되도록.
 
 실행:
-  ~/rnd-env/bin/python opencv_basics.py
-  SOURCE=/path/to/img.jpg ~/rnd-env/bin/python opencv_basics.py
+  python opencv_basics.py
+  SOURCE=/path/to/img.jpg python opencv_basics.py
 산출: opencv_out/basics/ 에 gray/resized/blur/edges PNG 저장.
 """
 import os

@@ -6,7 +6,7 @@
 - 지표는 seqeval 엔티티 단위 정밀도/재현율/F1. MLflow 키는 한글 관례 유지
   (detection-ai-study 공통 규칙).
 
-실행: ~/rnd-env/bin/python eval_mlflow_ner.py
+실행: python eval_mlflow_ner.py
 사전: MLflow 서버가 127.0.0.1:5000 에서 구동 중 + ner_klue.pt 존재.
 """
 import os

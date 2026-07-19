@@ -7,7 +7,7 @@
   2) 하이브리드: OR(룰이 정상이라 한 것만 BERT가 2차 판정과 동치) / AND(둘 다 스팸일 때만)
 
 사용:
-  ~/rnd-env/bin/python analyze_errors.py
+  python analyze_errors.py
 """
 import os
 from pathlib import Path

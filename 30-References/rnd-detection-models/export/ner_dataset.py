@@ -13,7 +13,7 @@ NER 데이터 준비 — KLUE-NER 로드 + BERT subword 라벨 정렬(-100).
         평가(테스트)용으로 사용한다.
 
 단독 실행 시 데이터 통계를 출력한다:
-    ~/rnd-env/bin/python ner_dataset.py
+    python ner_dataset.py
 """
 import os
 os.environ.setdefault("USE_TF", "0")

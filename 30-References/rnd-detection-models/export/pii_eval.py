@@ -6,7 +6,7 @@ PII 커버리지 "테스트" — ko-pii가 샘플 문장의 기대 PII 유형을
 (주민번호·카드 등 형식/체크섬 검증)과 한계(문맥 의존 개체는 놓칠 수 있음)를 드러낸다.
 
 실행:
-  ~/rnd-env/bin/python pii_eval.py
+  python pii_eval.py
 """
 from pathlib import Path
 

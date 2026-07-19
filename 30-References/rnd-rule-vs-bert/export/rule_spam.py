@@ -8,7 +8,7 @@
 
 사용:
   from rule_spam import classify          # classify(text) -> 0(정상)/1(스팸)
-  ~/rnd-env/bin/python rule_spam.py       # validation으로 문턱 1~3 채점 (문턱 결정 근거 출력)
+  python rule_spam.py       # validation으로 문턱 1~3 채점 (문턱 결정 근거 출력)
 """
 import re
 

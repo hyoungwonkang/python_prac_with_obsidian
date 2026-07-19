@@ -10,8 +10,8 @@ PII 평가 데이터 라벨 검증기 — 샘플 파일의 기대 라벨이 ko-p
 통과 시 종료코드 0, 위반 발견 시 1 (CI·훅에 연결 가능).
 
 실행:
-  ~/rnd-env/bin/python validate_pii_samples.py
-  SAMPLES=/path/to/pii_samples.txt ~/rnd-env/bin/python validate_pii_samples.py
+  python validate_pii_samples.py
+  SAMPLES=/path/to/pii_samples.txt python validate_pii_samples.py
 """
 import os
 import sys

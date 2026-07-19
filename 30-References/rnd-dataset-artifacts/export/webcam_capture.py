@@ -6,7 +6,7 @@
 
 조작: 스페이스=촬영 / q 또는 ESC=종료
 사용:
-  OUT=~/Desktop/pajama-photos ~/rnd-env/bin/python webcam_capture.py
+  OUT=~/Desktop/pajama-photos python webcam_capture.py
   (첫 실행 시 맥 '카메라 접근 허용' 팝업 — 허용해야 동작)
 """
 import os

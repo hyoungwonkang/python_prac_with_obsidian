@@ -11,10 +11,10 @@ WikiAnn(ko) 토큰 분류 — 전이 사슬 A/B 실험 (NER 도메인 심화).
     B의 분류층(13칸)은 태그 체계가 달라 이식 불가 → 본체만 이식, 분류층(7칸)은 난수 신규.
 
 실행:
-  WIKIANN_SUBSET=300 EPOCHS=1 ~/rnd-env/bin/python finetune_wikiann.py     # 스모크
-  WIKIANN_SUBSET=8000 EPOCHS=2 ~/rnd-env/bin/python finetune_wikiann.py    # 실험 A
+  WIKIANN_SUBSET=300 EPOCHS=1 python finetune_wikiann.py     # 스모크
+  WIKIANN_SUBSET=8000 EPOCHS=2 python finetune_wikiann.py    # 실험 A
   WIKIANN_SUBSET=8000 EPOCHS=2 INIT_FROM=ner_klue.pt \
-      ~/rnd-env/bin/python finetune_wikiann.py                             # 실험 B
+      python finetune_wikiann.py                             # 실험 B
 """
 import os
 os.environ.setdefault("USE_TF", "0")

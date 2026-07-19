@@ -9,9 +9,9 @@ CLIP zero-shot 상황 판단 — 'CLIP 이미지 상황 판단' R&D 1단계.
       가장 가까운 문장을 고름 (유사도 → softmax 확률).
 
 사용:
-  ~/rnd-env/bin/python clip_zeroshot.py                    # coco128 샘플 N장 데모
-  N=12 ~/rnd-env/bin/python clip_zeroshot.py               # 샘플 수 변경
-  IMAGES=a.jpg,b.jpg ~/rnd-env/bin/python clip_zeroshot.py # 원하는 이미지로
+  python clip_zeroshot.py                    # coco128 샘플 N장 데모
+  N=12 python clip_zeroshot.py               # 샘플 수 변경
+  IMAGES=a.jpg,b.jpg python clip_zeroshot.py # 원하는 이미지로
   PROMPTS="...,..." 로 상황 후보 교체 (재학습 없이 분류 체계 교체 — 이게 핵심)
   MLFLOW_URI=http://127.0.0.1:5000 을 붙이면 통합 서버에 기록
 """

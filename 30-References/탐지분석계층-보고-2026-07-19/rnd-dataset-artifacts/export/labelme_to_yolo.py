@@ -9,7 +9,7 @@ datasets-own/<이름>/의 images/·labels/에 배치한다.
 
 사용:
   JSONS=~/라벨링작업폴더 DATASET=datasets-own/my-ds SPLIT=train \
-    ~/rnd-env/bin/python labelme_to_yolo.py
+    python labelme_to_yolo.py
   (JSONS: labelme가 저장한 *.json 폴더 / DATASET: make_yolo_dataset.py로 만든 뼈대 / SPLIT: train|val)
 """
 import json
@@ -71,7 +71,7 @@ def main():
 
     print(f"변환 완료: 이미지 {len(jfiles)}장 / 박스 {n_box}개 → {DATASET}/(images|labels)/{SPLIT}/")
     print("클래스별:", per_class)
-    print(f"다음 단계: DATA={DATASET / 'data.yaml'} ~/rnd-env/bin/python yolo_train_custom.py")
+    print(f"다음 단계: DATA={DATASET / 'data.yaml'} python yolo_train_custom.py")
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@
 불러와 새 텍스트를 분류한다. "학습은 한 번, 분류는 계속"의 실행 증명.
 
 실행 예:
-  ARTIFACT=artifacts/ko-spam-smoke ~/rnd-env/bin/python classify_text.py "무료 쿠폰 당첨!"
+  ARTIFACT=artifacts/ko-spam-smoke python classify_text.py "무료 쿠폰 당첨!"
   (인자 없으면 내장 데모 문장 사용)
 """
 import json

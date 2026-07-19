@@ -6,7 +6,7 @@ NER 추론/데모 — 학습된 가중치(ner_klue.pt)로 한국어 문장에서
 예측만 모아 BIO 태그를 엔티티 구간으로 병합한다.
 
 실행:
-  ~/rnd-env/bin/python predict_ner.py            # 샘플 문장 + 대화형
+  python predict_ner.py            # 샘플 문장 + 대화형
 """
 import os
 os.environ.setdefault("USE_TF", "0")

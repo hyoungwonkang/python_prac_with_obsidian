@@ -7,8 +7,8 @@
 
 기록: MLflow sqlite(이 폴더 mlflow.db), 실험 '분류방법-비교' — 방법 1개 = run 1개.
 사용:
-  ~/rnd-env/bin/python eval_compare.py
-  ARTIFACTS=경로1,경로2 ~/rnd-env/bin/python eval_compare.py   # BERT 산출물 지정(콤마 구분)
+  python eval_compare.py
+  ARTIFACTS=경로1,경로2 python eval_compare.py   # BERT 산출물 지정(콤마 구분)
 """
 import json
 import os
@@ -88,7 +88,7 @@ def main():
     print(f"고정 test셋: {TEST.name} {len(df)}건 (스팸 {sum(golds)} / 정상 {len(golds) - sum(golds)})")
 
     # 기본은 로컬 sqlite(과정 기록). 주간보고용 최종 지표는 통합 서버에:
-    #   MLFLOW_URI=http://127.0.0.1:5000 ~/rnd-env/bin/python eval_compare.py
+    #   MLFLOW_URI=http://127.0.0.1:5000 python eval_compare.py
     mlflow.set_tracking_uri(os.environ.get("MLFLOW_URI", f"sqlite:///{HERE / 'mlflow.db'}"))
     mlflow.set_experiment("분류방법-비교")
 

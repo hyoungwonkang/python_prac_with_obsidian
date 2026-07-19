@@ -9,8 +9,8 @@ YOLO 학습 — ultralytics YOLOv8n 전이학습 (COCO128 스모크).
 환경변수: EPOCHS(3) · IMGSZ(640) · DEVICE(자동: mps→cpu) · MODEL(yolov8n.pt)
 
 실행:
-  ~/rnd-env/bin/python yolo_train.py
-  EPOCHS=1 ~/rnd-env/bin/python yolo_train.py     # 빠른 스모크
+  python yolo_train.py
+  EPOCHS=1 python yolo_train.py     # 빠른 스모크
 """
 import os
 os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
