@@ -1,18 +1,21 @@
 """
 보고 문서 PDF 변환기 — mermaid 도식을 PNG로 렌더링해 MD를 PDF로 만든다.
 
-파이프라인 (외부 설치 없이 이 맥의 도구 재사용):
-  ① mermaid-cli(npx) — MD 안의 ```mermaid 블록을 모두 PNG로 렌더 (시스템 Chrome 사용, 한글 OK)
+파이프라인:
+  ① mermaid-cli(npx) — MD 안의 ```mermaid 블록을 모두 PNG로 렌더 (Chrome 사용, 한글 OK)
   ② markdown-it-py — MD → HTML (표·한글)
   ③ Chrome headless — HTML → PDF (--print-to-pdf)
 
+Chrome 탐색: CHROME=경로 오버라이드 > 맥 앱 > PATH > puppeteer 캐시(mmdc가 받아둔 것).
+한글 폰트 필요 — 리눅스/WSL은 ~/.fonts 에 한글 ttf(맑은고딕 등) + fc-cache.
 대상: 5_도식도.md, 6_보고서.md → 각각 PDF + assets/에 PNG.
-실행:  ~/rnd-env/bin/python make_pdf.py
+실행:  python make_pdf.py     (markdown-it-py 필요: pip install markdown-it-py)
 """
 import base64
 import json
 import os
 import re
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -21,8 +24,26 @@ from markdown_it import MarkdownIt
 HERE = Path(__file__).resolve().parent
 ASSETS = HERE / "assets"
 ASSETS.mkdir(exist_ok=True)
-CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 DOCS = ["5_도식도", "6_보고서"]
+
+
+def find_chrome() -> str:
+    if os.environ.get("CHROME"):
+        return os.environ["CHROME"]
+    mac = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    if os.path.exists(mac):
+        return mac
+    for name in ("google-chrome", "google-chrome-stable", "chromium", "chromium-browser"):
+        p = shutil.which(name)
+        if p:
+            return p
+    cached = sorted(Path.home().glob(".cache/puppeteer/chrome/*/chrome-linux64/chrome"))
+    if cached:
+        return str(cached[-1])
+    raise SystemExit("Chrome을 찾지 못함 — CHROME=/경로 로 지정 (또는 npx @mermaid-js/mermaid-cli 1회 실행으로 다운로드)")
+
+
+CHROME = find_chrome()
 
 PC = ASSETS / ".puppeteer.json"          # mmdc가 시스템 Chrome을 쓰도록 (크로미움 재다운로드 방지)
 PC.write_text(json.dumps({"executablePath": CHROME, "args": ["--no-sandbox"]}), encoding="utf-8")
@@ -30,7 +51,7 @@ PC.write_text(json.dumps({"executablePath": CHROME, "args": ["--no-sandbox"]}), 
 CSS = """
 @page { margin: 18mm 16mm; }
 * { box-sizing: border-box; }
-body { font-family: 'Apple SD Gothic Neo','Noto Sans KR',sans-serif; font-size: 11pt;
+body { font-family: 'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif; font-size: 11pt;
        line-height: 1.6; color: #1a1a1a; max-width: 100%; }
 h1 { font-size: 19pt; border-bottom: 2px solid #333; padding-bottom: .3em; }
 h2 { font-size: 15pt; margin-top: 1.4em; border-bottom: 1px solid #ccc; padding-bottom: .2em; }
