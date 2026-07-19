@@ -297,16 +297,18 @@ def ocr_compare(image):
 
     e0, e0avg, e0min = _easy_read(p0)
     e1, e1avg, e1min = _easy_read(p1)
-    md = ("### 두 엔진 × 전처리 전후 — 같은 이미지, 같은 잣대\n\n"
-          "| 엔진 | 원본에서 추출 | OpenCV 전처리(deskew) 후 추출 |\n|---|---|---|\n"
-          f"| EasyOCR | {e0 or '∅'}<br>*평균 확신 {e0avg:.0%} · 최저 {e0min:.0%}* "
-          f"| {e1 or '∅'}<br>*평균 확신 {e1avg:.0%} · 최저 {e1min:.0%}* |\n")
+    md = ("### 읽기 결과 — 프로그램 2개 × 사진 보정 전후\n\n"
+          "같은 사진을 서로 다른 글자 읽기 프로그램 2개(EasyOCR·PaddleOCR)가 각자 읽었습니다. "
+          "왼쪽 열은 올린 사진 그대로, 오른쪽 열은 **기울기를 자동으로 편 사진**에서 읽은 결과입니다.\n\n"
+          "| 읽기 프로그램 | 원본 사진에서 | 기울기 편 사진에서 |\n|---|---|---|\n"
+          f"| EasyOCR | {e0 or '(글자 못 찾음)'}<br>*스스로 매긴 확신 점수: 평균 {e0avg:.0%}* "
+          f"| {e1 or '(글자 못 찾음)'}<br>*스스로 매긴 확신 점수: 평균 {e1avg:.0%}* |\n")
 
     if PADDLE_PY.exists():
         try:
             pd0 = _paddle_read(p0, td / "pd0.txt")
             pd1 = _paddle_read(p1, td / "pd1.txt")
-            md += f"| PaddleOCR | {pd0 or '∅'} | {pd1 or '∅'} |\n"
+            md += f"| PaddleOCR | {pd0 or '(글자 못 찾음)'} | {pd1 or '(글자 못 찾음)'} |\n"
             # 교차 검증 (전처리본 기준) — ocr_ensemble.py 정책의 미니판
             ew, pw = e1.split(), pd1.split()
             agree, diffs = 0, []
@@ -314,20 +316,26 @@ def ocr_compare(image):
                 if op == "equal":
                     agree += a2 - a1
                 else:
-                    diffs.append(f"`{' '.join(ew[a1:a2]) or '∅'}` ↔ `{' '.join(pw[b1:b2]) or '∅'}`")
+                    diffs.append(f"`{' '.join(ew[a1:a2]) or '(없음)'}` ↔ `{' '.join(pw[b1:b2]) or '(없음)'}`")
             total = max(len(ew), len(pw)) or 1
-            md += (f"\n**교차 검증 (전처리본)** — 단어 합의 {agree}/{total} ({agree/total:.0%}) · "
-                   f"정책: **합의 = 자동 채택, 불일치만 검수** (한 엔진의 높은 확신도 다른 엔진의 증언으로 재확인)\n\n"
-                   + ("🔍 검수 대상 (Easy ↔ Paddle): " + " · ".join(diffs)
-                      if diffs else "✅ 전 단어 합의 — 검수 없이 자동 통과"))
+            md += (f"\n### 둘의 답안 맞춰보기 (기울기 편 사진 기준)\n\n"
+                   f"전체 **{total}단어 중 {agree}개({agree/total:.0%})**는 두 프로그램이 **똑같이** 읽었습니다.\n"
+                   f"- ✅ **똑같이 읽은 단어** → 맞을 가능성이 높아 그대로 믿고 씁니다 (사람이 안 봐도 됨)\n"
+                   f"- 🔍 **다르게 읽은 단어** → 적어도 하나는 틀렸다는 뜻 — 이것만 사람이 원본과 대조하면 됩니다\n\n"
+                   + ("**사람이 확인할 단어** (EasyOCR ↔ PaddleOCR): " + " · ".join(diffs)
+                      if diffs else "✅ 모든 단어가 일치 — 사람 확인 없이 통과")
+                   + "\n\n*왜 이렇게 하나요? 프로그램이 \"확신 90%\"라고 말해도 틀릴 때가 있습니다. "
+                     "하지만 만드는 방식이 다른 두 프로그램은 틀리는 버릇도 달라서, 둘이 같은 답을 내면 "
+                     "훨씬 믿을 만하고, 답이 갈리면 거기가 바로 의심 지점입니다.*")
         except RuntimeError as e:
             md += f"| PaddleOCR | ⚠️ 실행 실패 | {e} |\n"
     else:
-        md += ("| PaddleOCR | ⚠️ 격리 환경 없음 | 두 엔진 교차 검증을 보려면 `~/ocr-env` 생성 "
-               "(3_사용법 7) 또는 `OCR_ENV=경로`로 지정 |\n")
+        md += ("| PaddleOCR | (설치 안 됨) | 지금은 EasyOCR 결과만 표시 — 두 프로그램 비교까지 보려면 "
+               "PaddleOCR 격리 환경(`~/ocr-env`)을 만드세요 (`3_사용법.md` 7번) |\n")
 
-    md += ("\n\n*전처리 수칙: deskew는 무해해 상시 적용(회전 열화 64.3→9.5% 실측), 그 외 전처리는 "
-           "열화 진단 후 표적 적용. 추출 텍스트를 '텍스트 분석' 탭에 붙여 넣으면 ②추출→③탐지 인계가 됩니다.*")
+    md += ("\n\n*기울기 보정(deskew)은 손해가 없어서 항상 자동 적용됩니다 — 기울어진 사진의 오독률이 "
+           "64%→10%로 줄어든 실측이 근거. 위에서 읽어낸 텍스트를 복사해 **'텍스트 분석' 탭**에 붙여 넣으면 "
+           "스팸·개인정보 검사로 이어집니다 (사진→글자→판정의 한 줄 흐름).*")
     return pre[:, :, ::-1], md                          # BGR → RGB
 
 
@@ -442,15 +450,16 @@ with gr.Blocks(title="탐지 AI 통합 데모") as demo:
         r_ham.click(lambda s: save_label(s, 0), r_state, r_result)
         r_spam.click(lambda s: save_label(s, 1), r_state, r_result)
     with gr.Tab("OCR 추출(②)"):
-        gr.Markdown("아키텍처 **② 추출 계층** — 이미지 속 글자를 텍스트로. **OpenCV 전처리(deskew)가 자동 적용**되어 "
-                    "기울어진 이미지도 복구되고, **EasyOCR·PaddleOCR 두 엔진이 같은 이미지를 교차 검증**합니다 "
-                    "(오답 프로필이 달라 서로의 확신형 오탐을 잡음 — 합의는 자동 채택, 불일치만 검수).")
+        gr.Markdown("**사진 속 글자를 텍스트로 바꿔 줍니다** (OCR — 탐지 흐름의 ② 추출 단계).\n\n"
+                    "1. 기울어진 사진은 **자동으로 똑바로 펴서**(OpenCV 전처리) 글자가 더 잘 읽히게 하고\n"
+                    "2. 서로 다른 글자 읽기 프로그램 **2개(EasyOCR·PaddleOCR)가 각자 읽은 결과를 맞춰봅니다** — "
+                    "둘이 똑같이 읽은 단어는 그대로 믿고, **다르게 읽은 단어만 사람이 확인**하면 됩니다.")
         with gr.Row():
             with gr.Column():
-                o_in = gr.Image(label="원본 이미지 (기울어진 캡처·문서 환영)", type="pil")
-                o_btn = gr.Button("추출·비교", variant="primary")
+                o_in = gr.Image(label="글자가 있는 사진 (기울어진 캡처·문서 환영)", type="pil")
+                o_btn = gr.Button("글자 읽기 (두 프로그램 비교)", variant="primary")
             with gr.Column():
-                o_pre = gr.Image(label="OpenCV 전처리 후 (deskew 자동 적용)")
+                o_pre = gr.Image(label="자동으로 똑바로 편 사진 (OpenCV deskew)")
         o_md = gr.Markdown()
         o_btn.click(ocr_compare, o_in, [o_pre, o_md])
 
