@@ -1,8 +1,10 @@
 """
-통합 UXUI 데모 — 완료된 R&D 모듈 5개를 탭 4개짜리 데모 UI로 통합 (제작, 신규 학습 없음).
+통합 UXUI 데모 — 완료된 R&D 모듈을 탭 5개짜리 데모 UI로 통합 (제작, 신규 학습 없음).
 
   텍스트 탭: BERT 스팸 분류(산출물 3종 세트) + RULE·하이브리드(분류 방법 비교)
              + PII 마스킹(ko-pii) + NER 개체 추출(ner_klue.pt)
+  OCR 탭:    아키텍처 ② 추출 — OpenCV 전처리(deskew) + EasyOCR·PaddleOCR 교차 검증
+             (Paddle은 격리 venv 서브프로세스 — 기본 ~/ocr-env, OCR_ENV=경로 로 교체)
   이미지 탭: YOLO 박스(yolov8n) + KoCLIP 한국어 상황 태그(프롬프트 실시간 편집)
 
 실행:
@@ -10,9 +12,12 @@
 모델은 첫 사용 시 로딩(지연 로딩) — 탭별 첫 응답만 수 초 걸림.
 """
 import csv
+import difflib
 import json
 import os
+import subprocess
 import sys
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -26,6 +31,12 @@ HERE = Path(__file__).resolve().parent
 REFS = HERE.parent.parent                                  # 30-References/
 sys.path.insert(0, str(REFS / "rnd-rule-vs-bert/export"))   # rule_spam
 sys.path.insert(0, str(REFS / "rnd-detection-models/export"))  # predict_ner, ner_dataset
+sys.path.insert(0, str(REFS / "rnd-ocr/export"))            # preprocess (deskew)
+
+OCRX = REFS / "rnd-ocr/export"
+# PaddleOCR 격리 venv (의존성 충돌로 본 환경 설치 금지 — 3_사용법 7 참조). 윈도우는 Scripts 구조.
+OCR_ENV = Path(os.environ.get("OCR_ENV", Path.home() / "ocr-env")).expanduser()
+PADDLE_PY = OCR_ENV / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
 
 SPAM_ART = REFS / "rnd-dataset-artifacts/export/artifacts/ko-spam-full"
 # 기본은 COCO 80종 기본 모델. YOLO_PT로 커스텀 산출물 교체 가능 (예: 직접 학습한 잠옷 모델)
@@ -98,6 +109,13 @@ def get_koclip():
         _cache["koclip"] = (CLIPModel.from_pretrained(KOCLIP).to(DEVICE).eval(),
                             CLIPProcessor.from_pretrained(KOCLIP))
     return _cache["koclip"]
+
+
+def get_easyocr():
+    if "easyocr" not in _cache:
+        import easyocr
+        _cache["easyocr"] = easyocr.Reader(["ko", "en"], gpu=False)  # 채점 관례와 동일: CPU 고정
+    return _cache["easyocr"]
 
 
 # ---------- 텍스트 탭 ----------
@@ -240,6 +258,79 @@ def save_label(state, human_label):
             f"`text,label` 계약이라 `DATA=이 파일`로 train_text.py에 바로 학습 가능")
 
 
+# ---------- OCR 추출 탭 — 아키텍처 ②: OpenCV 전처리 + 두 엔진 교차 검증 ----------
+# rnd-ocr 실측의 화면판: deskew는 무해·상시(rotated 64.3→9.5%), 두 엔진은 오답 프로필이
+# 달라(Easy=모양 혼동 / Paddle=끝 글자 절단) 불일치가 확신형 오탐을 잡는다 (합의=자동, 불일치=검수).
+
+def _easy_read(path):
+    out = get_easyocr().readtext(str(path))
+    text = " ".join(t for _, t, _ in out)
+    confs = [c for *_, c in out]
+    return text, (sum(confs) / len(confs) if confs else 0.0), (min(confs) if confs else 0.0)
+
+
+def _paddle_read(path, out_txt):
+    """격리 venv 서브프로세스로 PaddleOCR 실행 — ocr_eval.make_reader 재사용, 파일로 인계."""
+    code = ("import pathlib, ocr_eval\n"
+            f"t = ocr_eval.make_reader()(pathlib.Path(r'{path}'))\n"
+            f"pathlib.Path(r'{out_txt}').write_text(t, encoding='utf-8')\n")
+    r = subprocess.run([str(PADDLE_PY), "-c", code], cwd=OCRX, capture_output=True,
+                       text=True, env={**os.environ, "ENGINE": "paddle"})
+    if r.returncode != 0:
+        raise RuntimeError(r.stderr[-300:])
+    return " ".join((out_txt).read_text(encoding="utf-8").split())
+
+
+def ocr_compare(image):
+    if image is None:
+        return None, "이미지를 업로드하세요."
+    import cv2
+    import numpy as np
+    from preprocess import deskew
+
+    bgr = cv2.cvtColor(np.array(image.convert("RGB")), cv2.COLOR_RGB2BGR)
+    pre = deskew(bgr)                                   # 전처리 = 표적 치료 중 무해·상시인 deskew만 자동
+    td = Path(tempfile.mkdtemp(prefix="ocr_demo_"))
+    p0, p1 = td / "orig.png", td / "pre.png"
+    cv2.imwrite(str(p0), bgr)
+    cv2.imwrite(str(p1), pre)
+
+    e0, e0avg, e0min = _easy_read(p0)
+    e1, e1avg, e1min = _easy_read(p1)
+    md = ("### 두 엔진 × 전처리 전후 — 같은 이미지, 같은 잣대\n\n"
+          "| 엔진 | 원본에서 추출 | OpenCV 전처리(deskew) 후 추출 |\n|---|---|---|\n"
+          f"| EasyOCR | {e0 or '∅'}<br>*평균 확신 {e0avg:.0%} · 최저 {e0min:.0%}* "
+          f"| {e1 or '∅'}<br>*평균 확신 {e1avg:.0%} · 최저 {e1min:.0%}* |\n")
+
+    if PADDLE_PY.exists():
+        try:
+            pd0 = _paddle_read(p0, td / "pd0.txt")
+            pd1 = _paddle_read(p1, td / "pd1.txt")
+            md += f"| PaddleOCR | {pd0 or '∅'} | {pd1 or '∅'} |\n"
+            # 교차 검증 (전처리본 기준) — ocr_ensemble.py 정책의 미니판
+            ew, pw = e1.split(), pd1.split()
+            agree, diffs = 0, []
+            for op, a1, a2, b1, b2 in difflib.SequenceMatcher(a=ew, b=pw).get_opcodes():
+                if op == "equal":
+                    agree += a2 - a1
+                else:
+                    diffs.append(f"`{' '.join(ew[a1:a2]) or '∅'}` ↔ `{' '.join(pw[b1:b2]) or '∅'}`")
+            total = max(len(ew), len(pw)) or 1
+            md += (f"\n**교차 검증 (전처리본)** — 단어 합의 {agree}/{total} ({agree/total:.0%}) · "
+                   f"정책: **합의 = 자동 채택, 불일치만 검수** (한 엔진의 높은 확신도 다른 엔진의 증언으로 재확인)\n\n"
+                   + ("🔍 검수 대상 (Easy ↔ Paddle): " + " · ".join(diffs)
+                      if diffs else "✅ 전 단어 합의 — 검수 없이 자동 통과"))
+        except RuntimeError as e:
+            md += f"| PaddleOCR | ⚠️ 실행 실패 | {e} |\n"
+    else:
+        md += ("| PaddleOCR | ⚠️ 격리 환경 없음 | 두 엔진 교차 검증을 보려면 `~/ocr-env` 생성 "
+               "(3_사용법 7) 또는 `OCR_ENV=경로`로 지정 |\n")
+
+    md += ("\n\n*전처리 수칙: deskew는 무해해 상시 적용(회전 열화 64.3→9.5% 실측), 그 외 전처리는 "
+           "열화 진단 후 표적 적용. 추출 텍스트를 '텍스트 분석' 탭에 붙여 넣으면 ②추출→③탐지 인계가 됩니다.*")
+    return pre[:, :, ::-1], md                          # BGR → RGB
+
+
 # ---------- 이미지 탭 ----------
 
 def analyze_image(image, prompts_text):
@@ -350,6 +441,19 @@ with gr.Blocks(title="탐지 AI 통합 데모") as demo:
         r_btn.click(draft_label, r_in, [r_draft, r_state])
         r_ham.click(lambda s: save_label(s, 0), r_state, r_result)
         r_spam.click(lambda s: save_label(s, 1), r_state, r_result)
+    with gr.Tab("OCR 추출(②)"):
+        gr.Markdown("아키텍처 **② 추출 계층** — 이미지 속 글자를 텍스트로. **OpenCV 전처리(deskew)가 자동 적용**되어 "
+                    "기울어진 이미지도 복구되고, **EasyOCR·PaddleOCR 두 엔진이 같은 이미지를 교차 검증**합니다 "
+                    "(오답 프로필이 달라 서로의 확신형 오탐을 잡음 — 합의는 자동 채택, 불일치만 검수).")
+        with gr.Row():
+            with gr.Column():
+                o_in = gr.Image(label="원본 이미지 (기울어진 캡처·문서 환영)", type="pil")
+                o_btn = gr.Button("추출·비교", variant="primary")
+            with gr.Column():
+                o_pre = gr.Image(label="OpenCV 전처리 후 (deskew 자동 적용)")
+        o_md = gr.Markdown()
+        o_btn.click(ocr_compare, o_in, [o_pre, o_md])
+
     with gr.Tab("이미지 분석"):
         with gr.Row():
             with gr.Column():
