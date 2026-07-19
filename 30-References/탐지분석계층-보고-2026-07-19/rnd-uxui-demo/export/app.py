@@ -434,7 +434,10 @@ with gr.Blocks(title="탐지 AI 통합 데모") as demo:
             t_cls = gr.Markdown(label="스팸 분류")
             t_pii = gr.Markdown(label="PII 마스킹")
             t_ner = gr.Markdown(label="NER 개체")
-        t_btn.click(analyze_text, t_in, [t_cls, t_pii, t_ner])
+        # 클릭 즉시 안내 표시 → 완료되면 결과로 교체 (첫 클릭은 모델 로딩으로 수십 초 — 무반응 오해 방지)
+        t_btn.click(lambda: ("⏳ **분석 중…** 첫 실행은 모델 로딩 때문에 수십 초 걸릴 수 있습니다.", "", ""),
+                    None, [t_cls, t_pii, t_ner], queue=False
+                    ).then(analyze_text, t_in, [t_cls, t_pii, t_ner])
     with gr.Tab("검수·라벨링"):
         gr.Markdown("모델 판정은 **초안(의사 라벨)**, 정답은 사람의 확정으로만 — "
                     "순환도의 \"분류 결과 →[검수]→ 데이터셋 편입\" 화살표. 확정분은 학습 데이터 산출물이 됩니다.")
